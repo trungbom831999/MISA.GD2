@@ -1,0 +1,278 @@
+<template>
+  <div class="ms-select-autocomplete-menu">
+    <div v-if="label" class="label-input">{{ label }}</div>
+    <!-- <v-autocomplete
+      class="border-radius-2"
+      :items="items"
+      outlined
+      allow-overflow
+      auto-select-first
+      no-data-text="Không có dữ liệu hiển thị."
+      :placeholder="placeholder"
+      :value="items[itemDefault]"
+      color="#2ca01c"
+      :menu-props="{ offsetOverflow: true, offsetY: true }"
+    >
+      <template v-slot:item="data">
+        <template>
+          <v-list-item-content
+            v-text="data.item"
+            :title="data.item"
+          ></v-list-item-content>
+        </template>
+      </template>
+    </v-autocomplete> -->
+    <v-autocomplete
+      class="border-radius-2"
+      v-model="friends"
+      :disabled="isUpdating"
+      :items="people"
+      chips
+      item-text="name"
+      item-value="name"
+      :menu-props="{ offsetOverflow: true, allowOverflow: true, offsetY: true }"
+      outlined
+      allow-overflow
+      auto-select-first
+      no-data-text="Không có dữ liệu hiển thị."
+      :placeholder="placeholder"
+      color="#2ca01c"
+      multiple
+    >
+      <template v-slot:append>
+        <button class="btn-add">
+          <div class="mi mi-16 mi-plus--success"></div>
+        </button>
+        <div class="v-input__icon v-input__icon--append">
+          <i
+            aria-hidden="true"
+            class="v-icon notranslate mdi mdi-menu-down theme--light"
+          ></i>
+        </div>
+      </template>
+      <template v-slot:selection="data">
+        <v-chip
+          v-bind="data.attrs"
+          close
+          @click="data.select"
+          @click:close="remove(data.item)"
+          :title="data.item.name"
+        >
+          {{ data.item.name }}
+        </v-chip>
+      </template>
+      <template v-slot:item="data">
+        <template v-if="typeof data.item !== 'object'">
+          <v-list-item-content v-text="data.item"></v-list-item-content>
+        </template>
+        <template v-else>
+          <v-list-item-avatar>
+            <img :src="data.item.avatar" />
+          </v-list-item-avatar>
+          <v-list-item-content>
+            <v-list-item-title
+              :title="data.item.name"
+              v-html="data.item.name"
+            ></v-list-item-title>
+          </v-list-item-content>
+        </template>
+      </template>
+    </v-autocomplete>
+  </div>
+</template>
+<script>
+export default {
+  props: {
+    label: {
+      type: String,
+      default: "",
+    },
+    readonly: {
+      type: Boolean,
+      default: false,
+    },
+    items: {
+      type: Array,
+      default() {
+        return [];
+      },
+    },
+    itemDefault: {
+      type: Number,
+    },
+    placeholder: {
+      type: String,
+      default: "",
+    },
+  },
+  data() {
+    const srcs = {
+      1: "https://cdn.vuetifyjs.com/images/lists/1.jpg",
+      2: "https://cdn.vuetifyjs.com/images/lists/2.jpg",
+      3: "https://cdn.vuetifyjs.com/images/lists/3.jpg",
+      4: "https://cdn.vuetifyjs.com/images/lists/4.jpg",
+      5: "https://cdn.vuetifyjs.com/images/lists/5.jpg",
+    };
+
+    return {
+      autoUpdate: true,
+      friends: ["Britta Holt"],
+      isUpdating: false,
+      name: "Midnight Crew",
+      people: [
+      {header: "GR1"},
+        {
+          name: "Sandra Adams",
+          group: "Group 1",
+          avatar: srcs[1],
+          disabled: true,
+        },
+        { name: "Ali Connors", group: "Group 1", avatar: srcs[2] },
+        {
+          name:
+            "Trevor Hansen Trevor HansenTrevor HansenTrevor HansenTrevor HansenTrevor HansenTrevor HansenTrevor HansenTrevor HansenTrevor HansenTrevor HansenTrevor Hansen",
+          group: "Group 1",
+          avatar: srcs[3],
+        },
+        { name: "Tucker Smith", group: "Group 1", avatar: srcs[2] },
+        { name: "Britta Holt", group: "Group 2", avatar: srcs[4] },
+        { name: "Jane Smith ", group: "Group 2", avatar: srcs[5] },
+        { name: "John Smith", group: "Group 2", avatar: srcs[1] },
+        { name: "Sandra Williams", group: "Group 2", avatar: srcs[3] },
+      ],
+    };
+  },
+
+  methods: {
+    remove(item) {
+      const index = this.friends.indexOf(item.name);
+      if (index >= 0) this.friends.splice(index, 1);
+    },
+  },
+  mounted() {},
+};
+</script>
+<style scoped>
+.ms-select-autocomplete-menu {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.label-input {
+  font-size: 12px;
+  font-weight: 700;
+  padding-bottom: 4px;
+  color: #111;
+}
+</style>
+<style>
+.ms-select-autocomplete-menu
+  .v-select.v-text-field--outlined:not(.v-text-field--single-line)
+  .v-select__selections {
+  padding: 6px 0;
+}
+
+/*css chips */
+.v-chip.v-size--default {
+  border-radius: 3px;
+  font-size: inherit;
+  height: unset;
+}
+
+.v-select .v-chip {
+  flex: 0 1 auto;
+  margin: 3px;
+  margin-right: 2px;
+}
+
+.ms-select-autocomplete-menu .v-chip {
+  padding: 2px 8px;
+  text-overflow: ellipsis;
+}
+
+.v-select.v-select--chips:not(.v-text-field--single-line).v-text-field--enclosed
+  .v-select__selections {
+  min-height: 32px;
+}
+
+.v-text-field--outlined fieldset {
+  bottom: 1px;
+  top: -6.5px;
+}
+
+.ms-select-autocomplete-menu .theme--light.v-chip:not(.v-chip--active) {
+  border: 1px solid #ccc;
+  background-color: #f0f0f0;
+}
+
+.ms-select-autocomplete-menu
+  .theme--light.v-text-field--outlined:not(.v-input--is-focused):not(.v-input--has-state):not(.v-input--is-disabled)
+  > .v-input__control
+  > .v-input__slot:hover
+  fieldset {
+  border: 1px solid #babec5;
+}
+
+.ms-select-autocomplete-menu
+  .theme--light.v-text-field--outlined:not(.v-input--is-focused):not(.v-input--has-state)
+  > .v-input__control
+  > .v-input__slot
+  fieldset {
+  color: #babec5;
+  border: 1px solid #babec5;
+}
+
+.ms-select-autocomplete-menu .v-chip .v-chip__content button {
+  color: #f0f0f0;
+  background-color: #000;
+  border-radius: 50%;
+  height: 12px;
+  width: 12px;
+}
+
+.ms-select-autocomplete-menu .theme--light.v-chip:hover:before {
+  opacity: 0;
+}
+
+.ms-select-autocomplete-menu .v-text-field .v-input__append-inner {
+  padding-right: 0;
+}
+
+.ms-select-autocomplete-menu .v-text-field .v-input__append-inner {
+  margin-top: 0;
+  cursor: pointer;
+  height: 100%;
+  border-bottom-right-radius: 2px;
+  border-top-right-radius: 2px;
+}
+
+.ms-select-autocomplete-menu
+  .v-text-field
+  .v-input__append-inner
+  .v-input__icon.v-input__icon--append,
+.ms-select-autocomplete-menu .v-text-field .v-input__append-inner .btn-add {
+  width: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ms-select-autocomplete-menu
+  .v-text-field
+  .v-input__append-inner
+  .v-input__icon.v-input__icon--append:hover,
+.ms-select-autocomplete-menu
+  .v-text-field
+  .v-input__append-inner
+  .btn-add:hover {
+  background-color: #e0e0e0;
+  border-color: #e0e0e0;
+}
+
+.ms-select-autocomplete-menu .v-text-field .v-input__append-inner .btn-add {
+  border-right: 1px solid #babec5;
+}
+</style>

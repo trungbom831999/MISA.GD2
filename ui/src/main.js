@@ -1,0 +1,41 @@
+import Vue from 'vue'
+import App from './App.vue'
+import 'bootstrap'
+import VueRouter from 'vue-router'
+import vuetify from './plugins/vuetify' // path to vuetify export
+import '@mdi/font/css/materialdesignicons.css'
+
+import Supplier from './components/supplier/SupplierList.vue'
+import Account from './components/account/AccountList.vue'
+import Payment from './components/payment/Payment.vue'
+
+Vue.use(VueRouter)
+
+Vue.config.productionTip = false
+
+//Các path
+const routes = [{
+        path: '/supplier',
+        component: Supplier
+    },
+    {
+        path: '/account',
+        component: Account
+    },
+    {
+        path: '/payment',
+        component: Payment
+    }
+]
+
+const router = new VueRouter({
+    routes // short for `routes: routes`
+})
+new Vue({
+    router,
+    vuetify,
+    icons: {
+        iconfont: 'mdi', // default - only for display purposes
+    },
+    render: h => h(App),
+}).$mount('#app')

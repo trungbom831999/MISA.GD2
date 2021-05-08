@@ -1,0 +1,569 @@
+/*Font*/
+
+@font-face {
+    font-family: noto_sans;
+    src: url('../assets/fonts/notosans-regular.2cb88a13.woff2') format('woff2');
+}
+
+::-webkit-input-placeholder {
+    color: #92969c;
+    font-style: italic;
+    font-weight: 500;
+    font-size: 12px;
+}
+
+
+/*scroll css*/
+
+.scroller {
+    overflow: auto;
+}
+
+.scroller::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+.scroller::-webkit-scrollbar-track-piece {
+    background-color: #f1f1f1;
+    width: 6px;
+}
+
+.flex {
+    display: flex !important;
+}
+
+.flex-grow {
+    flex-grow: 1 !important;
+}
+
+.inline {
+    display: inline !important;
+}
+
+.items-center {
+    align-items: center !important;
+}
+
+.align-center {
+    justify-content: center;
+    align-items: center;
+}
+
+.align-right {
+    justify-content: flex-end;
+    align-items: center;
+}
+
+.left-0 {
+    left: 0;
+}
+
+.text-left {
+    text-align: left !important;
+}
+
+.text-right {
+    text-align: right !important;
+}
+
+.pointer {
+    cursor: pointer !important;
+}
+
+.mouse-poiter {
+    cursor: pointer;
+}
+
+.justify {
+    justify-items: center;
+    align-items: center;
+}
+
+.justify-center {
+    justify-content: center !important;
+}
+
+.justify-between {
+    justify-content: space-between !important;
+}
+
+.justify-end {
+    justify-content: flex-end !important;
+}
+
+.sticky {
+    position: sticky !important;
+}
+
+.wiget {
+    position: sticky!important;
+    background: #fff;
+    z-index: 2!important;
+}
+
+.position-relative {
+    position: relative;
+}
+
+.left-0 {
+    left: 0;
+}
+
+.right-0 {
+    right: 0;
+}
+
+
+/*Width*/
+
+.w-full {
+    width: 100% !important;
+}
+
+.w-1\/2 {
+    width: calc(100% / 2) !important;
+    ;
+}
+
+.w-2\/5 {
+    width: 40% !important;
+}
+
+.w-3\/5 {
+    width: 60% !important;
+}
+
+.w-1\/3 {
+    width: calc(100% / 3) !important;
+}
+
+.w-2\/3 {
+    width: calc(100% / 3 * 2) !important;
+}
+
+.w-6\/7 {
+    width: calc(100% / 7 * 6) !important;
+}
+
+.w-1\/7 {
+    width: calc(100% / 7) !important;
+}
+
+.w-40 {
+    min-width: 40px;
+    width: 40px;
+}
+
+.w-100 {
+    min-width: 100px;
+    width: 100px;
+}
+
+.w-150 {
+    min-width: 150px;
+    width: 150px;
+}
+
+.w-180 {
+    min-width: 180px;
+    width: 180px;
+}
+
+.w-200 {
+    min-width: 200px;
+    width: 200px;
+}
+
+.w-250 {
+    min-width: 250px;
+    width: 250px;
+}
+
+.w-full {
+    width: 100% !important;
+}
+
+
+/*height*/
+
+@media only screen and (max-height: 768px) {
+    .h-625 {
+        height: 625px;
+    }
+}
+
+.input-focus {
+    border: 1px solid #2ca01c !important;
+}
+
+.input-error {
+    border-color: red !important;
+}
+
+th {
+    padding: 6px 9px;
+    padding-top: 5px;
+    padding-bottom: 3px;
+    border: 0;
+    text-align: left;
+    font-size: .85rem;
+}
+
+
+/* input:hover {
+    border: 1px solid #e2e2e2;
+} */
+
+
+/*margin*/
+
+.mr-6-px {
+    margin-right: 6px !important;
+}
+
+.mr-12-px {
+    margin-right: 12px;
+}
+
+.mlp-100 {
+    margin-left: 100px;
+}
+
+
+/*padding*/
+
+.pd-b-12 {
+    padding-bottom: 12px !important;
+}
+
+.pb-2 {
+    padding-bottom: .5rem!important;
+}
+
+.p-r-26 {
+    padding-right: 26px !important;
+}
+
+.p-r-6 {
+    padding-right: 6px !important;
+}
+
+.p-r-11 {
+    padding-right: 11px !important;
+}
+
+.pr-2 {
+    padding-right: .5rem!important;
+}
+
+.pr-4 {
+    padding-right: 4px !important;
+}
+
+.p-r-12 {
+    padding-right: 12px;
+}
+
+.p-t-5 {
+    padding-top: 5px;
+    padding-bottom: 6px;
+    padding-left: 10px;
+}
+
+.p-x-3 {
+    padding-left: .75rem !important;
+    padding-right: .75rem !important;
+}
+
+.p-l-16 {
+    padding-left: 16px;
+}
+
+.p-t-12 {
+    padding-top: 12px;
+}
+
+.padding-32 {
+    padding: 32px;
+}
+
+.pd-t-8 {
+    padding-top: 8px;
+}
+
+.px-2 {
+    padding-left: .5rem !important;
+    padding-right: .5rem !important;
+}
+
+
+/*ICON*/
+
+.mi-14 {
+    width: 14px;
+    height: 14px;
+    min-width: 14px;
+    min-height: 14px;
+}
+
+.mi-16 {
+    width: 16px;
+    height: 16px;
+    min-width: 16px;
+    min-height: 16px;
+}
+
+.mi-32 {
+    width: 32px;
+    height: 32px;
+    min-width: 32px;
+    min-height: 32px;
+}
+
+.mi-24 {
+    width: 24px;
+    height: 24px;
+    min-width: 24px;
+    min-height: 24px;
+}
+
+.mi {
+    background: url(../assets/img/Sprites.64af8f61.svg) no-repeat;
+    cursor: pointer;
+}
+
+
+/* .mi {
+    background: url(../assets/img/Sprites.64af8f61.svg) no-repeat;
+    cursor: pointer;
+  } */
+
+.mi-chevron-right {
+    background-position: -80px -360px;
+}
+
+.mi-search {
+    background-position: -992px -360px;
+}
+
+.mi-category {
+    background-position: -568px -30px;
+}
+
+.header-menu-icon:hover .mi-category {
+    background-position: -568px -76px;
+}
+
+.mi-setting__nav {
+    background-position: -675px -30px;
+}
+
+.header-menu-icon:hover .mi-setting__nav {
+    background-position: -144px -88px;
+}
+
+.mi-chat__nav {
+    background-position: -899px -30px;
+}
+
+.header-menu-icon:hover .mi-chat__nav {
+    background-position: -368px -88px;
+}
+
+.mi-help__nav {
+    background-position: -731px -30px;
+}
+
+.header-menu-icon:hover .mi-help__nav {
+    background-position: -200px -88px;
+}
+
+.mi-bell__nav {
+    background-position: -788px -30px;
+}
+
+.header-menu-icon:hover .mi-bell__nav {
+    background-position: -256px -88px;
+}
+
+.mi-chevron-down {
+    background-position: -1076px -32px;
+}
+
+.mi-user-avatar {
+    background-position: -352px -894px;
+}
+
+.mi-sidebar-dashboard {
+    background-position: -30px -1628px;
+}
+
+.mi-sidebar-cash {
+    background-position: -73px -1628px;
+}
+
+.mi-sidebar-bank {
+    background-position: -117px -1628px;
+}
+
+.mi-sidebar-pu {
+    background-position: -161px -1628px;
+}
+
+.mi-sidebar-sale {
+    background-position: -204px -1628px;
+}
+
+.mi-sidebar-invoice {
+    background-position: -249px -1628px;
+}
+
+.mi-sidebar-stock {
+    background-position: -291px -1628px;
+}
+
+.mi-sidebar-tools {
+    background-position: -336px -1628px;
+}
+
+.mi-sidebar-fixed-assets {
+    background-position: -378px -1630px;
+}
+
+.mi-sidebar-tax {
+    background-position: -423px -1630px;
+}
+
+.mi-sidebar-price {
+    background-position: -467px -1628px;
+}
+
+.mi-sidebar-general {
+    background-position: -510px -1628px;
+}
+
+.mi-sidebar-budget {
+    background-position: -378px -1659px;
+}
+
+.mi-sidebar-report {
+    background-position: -547px -1628px;
+}
+
+.mi-sidebar-finance {
+    background-position: -204px -1664px;
+}
+
+.mi-chevron-left--primary {
+    background-position: -224px -360px;
+}
+
+.mi-tour {
+    background-position: -984px -144px;
+}
+
+.mi-arrow-up--black {
+    background-position: -560px -359px;
+}
+
+.mi-arrow-up--white {
+    background-position: -848px -359px;
+}
+
+.funnel-icon {
+    height: 22px;
+    position: absolute;
+    width: 18px;
+    right: 8px;
+    background-position: -1814px -202px;
+}
+
+.mi-arrow-check-all {
+    background-position: -256px -143px;
+}
+
+.mi-refresh {
+    background-position: -423px -201px;
+}
+
+.mi-excel__nav {
+    background-position: -704px -200px;
+}
+
+.mi-setting__list {
+    background-position: -88px -200px;
+}
+
+.mi-chevron-up--primary {
+    background-position: -128px -360px;
+}
+
+.mi-header-option {
+    background-position: -1687px -564px;
+}
+
+.mi-arrow-up--blue {
+    background-position: -896px -359px;
+}
+
+.mi-dropdown-grey-triangle {
+    background-position: -1752px -312px;
+}
+
+.mi-arrow-dropdown {
+    background-position: -560px -359px;
+}
+
+.mi-checkbox-active {
+    background-position: -1224px -360px;
+}
+
+.mi-checkbox-active {
+    background-position: -1224px -360px;
+}
+
+.mi-help {
+    background-position: -89px -144px;
+}
+
+.mi-close {
+    background-position: -144px -144px;
+}
+
+.mi-arrow-dropdown {
+    background-position: -560px -359px;
+}
+
+.mi-delete {
+    background-position: -464px -312px;
+}
+
+.mi-plus--success {
+    background-position: -32px -312px;
+}
+
+
+/*Background*/
+
+.bg-green {
+    background-color: transparent;
+}
+
+.bg-white {
+    background: #fff !important;
+}
+
+
+/*border*/
+
+.border-color {
+    border: 0 solid #c7c7c7!important;
+}
+
+
+/*border radius*/
+
+.border-radius-2 {
+    border-radius: 2px !important;
+}
