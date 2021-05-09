@@ -314,6 +314,13 @@ th {
     min-height: 16px;
 }
 
+.mi-30 {
+    width: 30px;
+    height: 30px;
+    min-width: 30px;
+    min-height: 30px;
+}
+
 .mi-32 {
     width: 32px;
     height: 32px;
@@ -541,6 +548,11 @@ th {
 
 .mi-plus--success {
     background-position: -32px -312px;
+}
+
+.mi-calendar {
+    background-position: -124px -308px;
+    ;
 }
 
 

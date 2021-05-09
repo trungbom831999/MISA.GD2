@@ -125,11 +125,15 @@
                 </div>
 
                 <div class="w-full row-input">
-                  <select-auto-complete-menu-table label="Nhóm nhà cung cấp"></select-auto-complete-menu-table>
+                  <select-auto-complete-menu-table
+                    label="Nhóm nhà cung cấp"
+                  ></select-auto-complete-menu-table>
                 </div>
 
                 <div class="w-full row-input">
-                  <ms-input label="Nhân viên mua hàng"></ms-input>
+                  <select-auto-complete-menu-table
+                    label="Nhân viên mua hàng"
+                  ></select-auto-complete-menu-table>
                 </div>
               </div>
             </div>
@@ -278,12 +282,12 @@
                             Người nhận hóa đơn điện tử
                           </div>
                           <div class="w-full pb-2">
-                            <ms-input
-                              placeholder="Họ và tên"
-                            ></ms-input>
+                            <ms-input placeholder="Họ và tên"></ms-input>
                           </div>
                           <div class="w-full pb-2">
-                            <ms-input placeholder='Email, ngăn cách nhiều email bởi dấu chấm phẩy ";"'></ms-input>
+                            <ms-input
+                              placeholder='Email, ngăn cách nhiều email bởi dấu chấm phẩy ";"'
+                            ></ms-input>
                           </div>
                           <div class="w-1/2">
                             <ms-input placeholder="Số điện thoại"></ms-input>
@@ -766,7 +770,7 @@ import MsTextarea from "../baseControl/MsTextarea.vue";
 import MsInputDate from "../baseControl/MsInputDate.vue";
 import CheckBox from "../baseControl/CheckBox.vue";
 import SelectAutoComplete from "../baseControl/SelectAutoComplete.vue";
-import SelectAutoCompleteMenuTable from "../baseControl/SelectAutoCompleteMenuTable.vue"
+import SelectAutoCompleteMenuTable from "../baseControl/SelectAutoCompleteMenuTable.vue";
 
 export default {
   components: {
@@ -775,7 +779,7 @@ export default {
     MsInputDate,
     CheckBox,
     SelectAutoComplete,
-    SelectAutoCompleteMenuTable
+    SelectAutoCompleteMenuTable,
   },
 
   data() {
@@ -1164,14 +1168,12 @@ export default {
   margin: 11px 8px;
 }
 
-
-
 .row-input .w-input {
   width: 200px;
 }
 
-.input-date-picker .v-text-field .v-input__append-inner{
-      padding: 4px;
+.input-date-picker .v-text-field .v-input__append-inner {
+  padding: 4px;
 }
 
 .description .ms-textarea {

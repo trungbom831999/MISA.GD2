@@ -1,36 +1,20 @@
 <template>
   <div class="ms-select-autocomplete-menu">
     <div v-if="label" class="label-input">{{ label }}</div>
-    <!-- <v-autocomplete
-      class="border-radius-2"
-      :items="items"
-      outlined
-      allow-overflow
-      auto-select-first
-      no-data-text="Không có dữ liệu hiển thị."
-      :placeholder="placeholder"
-      :value="items[itemDefault]"
-      color="#2ca01c"
-      :menu-props="{ offsetOverflow: true, offsetY: true }"
-    >
-      <template v-slot:item="data">
-        <template>
-          <v-list-item-content
-            v-text="data.item"
-            :title="data.item"
-          ></v-list-item-content>
-        </template>
-      </template>
-    </v-autocomplete> -->
     <v-autocomplete
       class="border-radius-2"
       v-model="friends"
       :disabled="isUpdating"
-      :items="people"
+      :items="suppliers"
       chips
       item-text="name"
       item-value="name"
-      :menu-props="{ offsetOverflow: true, allowOverflow: true, offsetY: true }"
+      :menu-props="{
+        offsetOverflow: true,
+        allowOverflow: true,
+        offsetY: true,
+        contentClass: 'menu-select-autocomplete-menu',
+      }"
       outlined
       allow-overflow
       auto-select-first
@@ -38,6 +22,7 @@
       :placeholder="placeholder"
       color="#2ca01c"
       multiple
+      @focus="setHeaderOfListBox()"
     >
       <template v-slot:append>
         <button class="btn-add">
@@ -66,15 +51,17 @@
           <v-list-item-content v-text="data.item"></v-list-item-content>
         </template>
         <template v-else>
-          <v-list-item-avatar>
-            <img :src="data.item.avatar" />
-          </v-list-item-avatar>
-          <v-list-item-content>
-            <v-list-item-title
-              :title="data.item.name"
-              v-html="data.item.name"
-            ></v-list-item-title>
-          </v-list-item-content>
+          <div class="menu-table-row">
+            <div class="menu-table-item w-150" :title="data.item.group">
+              {{ data.item.group }}
+            </div>
+            <div class="menu-table-item w-150" :title="data.item.name">
+              {{ data.item.name }}
+            </div>
+            <div class="selected-container">
+              <div class="selected"></div>
+            </div>
+          </div>
         </template>
       </template>
     </v-autocomplete>
@@ -119,13 +106,13 @@ export default {
       friends: ["Britta Holt"],
       isUpdating: false,
       name: "Midnight Crew",
-      people: [
-      {header: "GR1"},
+      column: ["group1", "group2"],
+      suppliers: [
+        // { name: "column", col: ["gr1", "gr2"], disabled: true },
         {
           name: "Sandra Adams",
           group: "Group 1",
           avatar: srcs[1],
-          disabled: true,
         },
         { name: "Ali Connors", group: "Group 1", avatar: srcs[2] },
         {
@@ -134,7 +121,12 @@ export default {
           group: "Group 1",
           avatar: srcs[3],
         },
-        { name: "Tucker Smith", group: "Group 1", avatar: srcs[2] },
+        {
+          name: "Tucker Smith",
+          group: "Group 1",
+          avatar: srcs[2],
+          disabled: true,
+        },
         { name: "Britta Holt", group: "Group 2", avatar: srcs[4] },
         { name: "Jane Smith ", group: "Group 2", avatar: srcs[5] },
         { name: "John Smith", group: "Group 2", avatar: srcs[1] },
@@ -147,6 +139,26 @@ export default {
     remove(item) {
       const index = this.friends.indexOf(item.name);
       if (index >= 0) this.friends.splice(index, 1);
+    },
+    setHeaderOfListBox() {
+      // console.log(this.column);
+      var cols = this.column;
+      setTimeout(function () {
+        var idListBox = document.getElementsByClassName(
+          "menuable__content__active"
+        )[0].children[0].id;
+        var header = "<div class='header-menu-select-autocomplete-menu'>";
+        for (var i = 0; i < cols.length; i++) {
+          header += `<div title="${cols[i]}" class="menu-header__th" style="width: 150px; text-align: left">
+            <span>${cols[i]}</span>
+          </div>`;
+        }
+        header += "</div>";
+        var listBox = document.getElementById(idListBox);
+        // listBox.insertBefore(header, listBox.childNodes[0]);
+        listBox.insertAdjacentHTML("beforebegin", header);
+        console.log(idListBox);
+      }, 100);
     },
   },
   mounted() {},
@@ -274,5 +286,79 @@ export default {
 
 .ms-select-autocomplete-menu .v-text-field .v-input__append-inner .btn-add {
   border-right: 1px solid #babec5;
+}
+
+.menu-select-autocomplete-menu .menu-header__th {
+  padding: 0 10px;
+  height: 32px;
+  color: #111;
+  background: #f4f5f8;
+  border-collapse: collapse;
+}
+
+.menu-select-autocomplete-menu .menu-header__th {
+  padding: 0 10px;
+  height: 32px;
+  color: #111;
+  background: #f4f5f8;
+  border-collapse: collapse;
+  display: flex;
+  place-items: center;
+}
+
+.menu-select-autocomplete-menu .v-list-item {
+  padding: 0;
+}
+
+.menu-select-autocomplete-menu .header-menu-select-autocomplete-menu {
+  color: #111;
+  background: #f4f5f8;
+  align-items: center;
+  display: flex;
+  flex: 1 1 100%;
+  letter-spacing: normal;
+  min-height: 32px;
+  outline: none;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  text-decoration: none;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.menu-select-autocomplete-menu .menu-table-row {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  height: 32px;
+  line-height: 32px;
+  white-space: nowrap;
+}
+
+.menu-select-autocomplete-menu .menu-table-item {
+  padding: 0 10px;
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.selected-container {
+  width: 36px;
+  height: 20px;
+}
+
+.selected-container .selected {
+  padding-right: 10px;
+  background: url("../../assets/img/Sprites.64af8f61.svg") no-repeat;
+  background-position: -896px -312px;
+  width: 16px;
+  height: 16px;
+  display: none;
+}
+
+.menu-select-autocomplete-menu .v-list-item--active .menu-table-item {
+  color: #fff;
 }
 </style>

@@ -6,20 +6,26 @@
     transition="scale-transition"
     offset-y
     min-width="auto"
+    offset-overflow
   >
     <template v-slot:activator="{ on, attrs }">
       <v-text-field
         v-model="dateFormatted"
         hint="MM/DD/YYYY format"
         persistent-hint
-        append-icon="mdi-calendar"
         v-bind="attrs"
         @blur="date = parseDate(dateFormatted)"
         v-on="on"
         color="#2ca01c"
         outlined
         placeholder="Ngày cấp"
-      ></v-text-field>
+      >
+        <template v-slot:append>
+          <div v-on="on" style="display: flex; align-items: center">
+            <span class="mi mi-24 mi-calendar icon-datepicker"></span>
+          </div>
+        </template>
+      </v-text-field>
     </template>
     <v-date-picker
       v-model="date"
@@ -49,18 +55,30 @@ export default {
     },
   },
   methods: {
-    formatDate (date) {
-      if (!date) return null
+    formatDate(date) {
+      if (!date) return null;
 
-      const [year, month, day] = date.split('-')
-      return `${day}/${month}/${year}`
+      const [year, month, day] = date.split("-");
+      return `${day}/${month}/${year}`;
     },
-    parseDate (date) {
-      if (!date) return null
+    parseDate(date) {
+      if (!date) return null;
 
-      const [day, month,  year] = date.split('/')
-      return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`
+      const [day, month, year] = date.split("/");
+      return `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
     },
   },
 };
 </script>
+<style scoped>
+.ms-date-picker-container .icon-datepicker {
+  background-color: #fff;
+  cursor: pointer;
+  display: block;
+  width: 32px;
+  font-size: 16px;
+  color: #757575;
+  background-position-x: -120px;
+  height: 100%;
+}
+</style>
