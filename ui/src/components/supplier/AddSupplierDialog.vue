@@ -127,12 +127,22 @@
                 <div class="w-full row-input">
                   <select-auto-complete-menu-table
                     label="Nhóm nhà cung cấp"
+                    :column="colSupplierGroup"
+                    :items="supplierGroups"
+                    mainItem="supplierGroupName"
+                    chip
+                    multiple
+                    hasAddButton
                   ></select-auto-complete-menu-table>
                 </div>
 
                 <div class="w-full row-input">
                   <select-auto-complete-menu-table
                     label="Nhân viên mua hàng"
+                    :column="colPurchasingStaff"
+                    :items="purchasingStaffs"
+                    mainItem="purchasingStaffName"
+                    hasAddButton
                   ></select-auto-complete-menu-table>
                 </div>
               </div>
@@ -268,7 +278,7 @@
                             ></ms-input>
                           </div>
                           <div class="w-1/2 pb-2 input-date-picker">
-                            <ms-input-date></ms-input-date>
+                            <ms-input-date placeholder="Ngày cấp"></ms-input-date>
                           </div>
                           <div class="w-full">
                             <ms-input placeholder="Nơi cấp"></ms-input>
@@ -302,7 +312,11 @@
                       <div class="flex row-input">
                         <div class="w-input p-r-12">
                           <div class="w-full">
-                            <ms-input label="Điều khoản thanh toán"></ms-input>
+                            <select-auto-complete
+                              label="Điều khoản thanh toán"
+                              hasAddButton
+                              :items="termsOfPayment"
+                            ></select-auto-complete>
                           </div>
                         </div>
 
@@ -321,14 +335,23 @@
 
                       <div class="flex row-input">
                         <div class="flex w-input p-r-12" v-if="isCustomer">
-                          <ms-input
+                          <select-auto-complete-menu-table
                             label="Tài khoản công nợ phải thu"
-                          ></ms-input>
+                            :column="colAccountDebtCash"
+                            :items="accountDebtCashs"
+                            itemDefault="0"
+                            mainItem="accountNumber"
+                          ></select-auto-complete-menu-table>
                         </div>
                         <div class="flex w-input p-r-12">
-                          <ms-input
+                          <select-auto-complete-menu-table
                             label="Tài khoản công nợ phải trả"
-                          ></ms-input>
+                            :column="colAccountDebtPay"
+                            :items="accountDebtPay"
+                            itemDefault="0"
+                            mainItem="accountNumber"
+                            v-model="supplier.supplierAccountDebtPay"
+                          ></select-auto-complete-menu-table>
                         </div>
                       </div>
                     </div>
@@ -417,35 +440,54 @@
                                         </tr>
                                       </thead>
 
-                                      <tbody class="dis-contents">
+                                      <tbody
+                                        class="dis-contents"
+                                        id="list-bank-account"
+                                      >
                                         <tr
-                                          class="tr-values vs-table--tr tr-table-state-null select-row selected"
+                                          v-for="(
+                                            account, index
+                                          ) in listAccountBank"
+                                          :key="index"
+                                          class="tr-values vs-table--tr tr-table-state-null selected"
+                                          :indexAccount="index"
                                         >
                                           <td
                                             class="td ms-table--td dynamic-column"
                                           >
-                                            <ms-input></ms-input>
+                                            <ms-input
+                                              v-model="account.accountNumber"
+                                            ></ms-input>
                                           </td>
                                           <td
                                             class="td ms-table--td dynamic-column"
                                           >
-                                            <ms-input></ms-input>
+                                            <ms-input
+                                              v-model="account.bankName"
+                                            ></ms-input>
                                           </td>
                                           <td
                                             class="td ms-table--td dynamic-column"
                                           >
-                                            <ms-input></ms-input>
+                                            <ms-input
+                                              v-model="account.bankBranch"
+                                            ></ms-input>
                                           </td>
                                           <td
                                             class="td ms-table--td dynamic-column"
                                           >
-                                            <ms-input></ms-input>
+                                            <ms-input
+                                              v-model="account.province"
+                                            ></ms-input>
                                           </td>
                                           <td
                                             class="td ms-table--td wiget right-0"
                                           >
                                             <div
                                               class="delete-function flex justify-end align-center"
+                                              @click="
+                                                removeRowBankAccount(index)
+                                              "
                                             >
                                               <div
                                                 class="mi mi-16 mi-delete"
@@ -467,6 +509,7 @@
                         <div class="btn-grid-control">
                           <button
                             class="ms-component ms-button ms-button-size-small ms-button-secondary ms-button-secondary-disabled-false ms-button-radius-false ms-button"
+                            @click="addRowBankAccount()"
                           >
                             <div
                               class="ms-button-text ms-button--text flex align-center"
@@ -477,6 +520,7 @@
 
                           <button
                             class="ms-component ms-button ms-button-size-small ms-button-secondary ms-button-secondary-disabled-false ms-button-radius-false ms-button"
+                            @click="removeAllRowBankAccount()"
                           >
                             <div
                               class="ms-button-text ms-button--text flex align-center"
@@ -576,18 +620,27 @@
 
                                         <tbody class="dis-contents">
                                           <tr
+                                            v-for="(
+                                              place, index
+                                            ) in placeDelivery"
+                                            :key="index"
                                             class="tr-values vs-table--tr tr-table-state-null select-row selected"
                                           >
                                             <td
                                               class="td ms-table--td dynamic-column"
                                             >
-                                              <ms-input></ms-input>
+                                              <ms-input
+                                                v-model="place.address"
+                                              ></ms-input>
                                             </td>
                                             <td
                                               class="td ms-table--td wiget right-0"
                                             >
                                               <div
                                                 class="delete-function flex justify-end align-center"
+                                                @click="
+                                                  removeRowPlaceDelivery(index)
+                                                "
                                               >
                                                 <div
                                                   class="mi mi-16 mi-delete"
@@ -609,6 +662,7 @@
                           <div class="btn-grid-control">
                             <button
                               class="ms-component ms-button ms-button-size-small ms-button-secondary ms-button-secondary-disabled-false ms-button-radius-false ms-button"
+                              @click="addRowPlaceDelivery()"
                             >
                               <div
                                 class="ms-button-text ms-button--text flex align-center"
@@ -619,6 +673,7 @@
 
                             <button
                               class="ms-component ms-button ms-button-size-small ms-button-secondary ms-button-secondary-disabled-false ms-button-radius-false ms-button"
+                              @click="removeAllRowPlaceDelivery()"
                             >
                               <div
                                 class="ms-button-text ms-button--text flex align-center"
@@ -784,13 +839,133 @@ export default {
 
   data() {
     return {
-      supplierCode: "",
+      supplier: {
+        supplierCode: "",
+        supplierAccountDebtPay: "",
+      },
+
+      listAccountBank: [
+        {
+          accountNumber: "",
+          bankName: "",
+          bankBranch: "",
+          province: "",
+        },
+      ],
+
+      placeDelivery: [{ address: "" }],
+
       vocatives: ["Anh", "Bà", "Bạn", "Chị", "Ông"],
       // isOrganization: true,
       // isPersonal: false,
       typeOfSupplier: "organization", //or personal
       isCustomer: false,
+
+      colSupplierGroup: [
+        { name: "Mã nhóm KH, NCC", width: "150" },
+        { name: "Tên nhóm KH, NCC", width: "200" },
+      ],
+
+      supplierGroups: [
+        { supplierGroupCode: "NCC1", supplierGroupName: "Công ty Cổ phần CCn" },
+        { supplierGroupCode: "NC268", supplierGroupName: "Công ty CKC" },
+      ],
+
+      colPurchasingStaff: [
+        { name: "Mã nhân viên", width: "150" },
+        { name: "Tên nhân viên", width: "200" },
+      ],
+
+      purchasingStaffs: [
+        {
+          purchasingStaffCode: "NV2021",
+          purchasingStaffName: "Nguyễn Đào",
+        },
+        {
+          purchasingStaffCode: "NVk56",
+          purchasingStaffName: "Hồng Trần",
+        },
+        {
+          purchasingStaffCode: "NV1150",
+          purchasingStaffName:
+            "Nguyễn Hải Trần Nam abc abc abc abc abcacbcaccaca",
+        },
+      ],
+
+      termsOfPayment: ["Điều khoản 1", "Điều khoản 2", "Điều khoản 3"],
+
+      colAccountDebtCash: [
+        { name: "Số tài khoản", width: "150" },
+        { name: "Tên tài khoản", width: "200" },
+      ],
+
+      accountDebtCashs: [
+        { accountNumber: "123", accountName: "Ngân hàng Public" },
+        { accountNumber: "311", accountName: "Ngân hàng MB" },
+      ],
+
+      colAccountDebtPay: [
+        { name: "Số tài khoản", width: "150" },
+        { name: "Tên tài khoản", width: "200" },
+      ],
+
+      accountDebtPay: [
+        { accountNumber: "Bank1", accountName: "Ngân hàng Public" },
+        { accountNumber: "Bank2", accountName: "Ngân hàng MB" },
+      ],
     };
+  },
+
+  methods: {
+    //thêm 1 dòng tài khoản ngân hàng
+    addRowBankAccount() {
+      let newAccount = {
+        accountNumber: "",
+        bankName: "",
+        bankBranch: "",
+        province: "",
+      };
+      this.listAccountBank.push(newAccount);
+    },
+
+    // xóa 1 dòng tài khoản ngân hàng
+    removeRowBankAccount(i) {
+      this.listAccountBank.splice(i, 1);
+    },
+
+    //xóa tất cả dòng tài khoản ngân hàng
+    removeAllRowBankAccount() {
+      this.listAccountBank = [];
+      let newAccount = {
+        accountNumber: "",
+        bankName: "",
+        bankBranch: "",
+        province: "",
+      };
+      this.listAccountBank.push(newAccount);
+    },
+
+    //thêm 1 dòng địa chỉ giao hàng
+    addRowPlaceDelivery() {
+      let newPlaceDelivery = {
+        address: "",
+      };
+      this.placeDelivery.push(newPlaceDelivery);
+    },
+
+    // xóa 1 dòng địa chỉ giao hàng
+    removeRowPlaceDelivery(i) {
+      this.placeDelivery.splice(i, 1);
+    },
+
+    //xóa tất cả dòng địa chỉ giao hàng
+    removeAllRowPlaceDelivery() {
+      this.placeDelivery = [];
+      let newPlaceDelivery = {
+        address: "",
+      };
+      this.placeDelivery.push(newPlaceDelivery);
+    },
   },
 };
 </script>

@@ -12,6 +12,7 @@
       :value="items[itemDefault]"
       color="#2ca01c"
       :readonly="readonly"
+      :disabled="disabled"
       :menu-props="{ offsetOverflow: true, offsetY: true }"
     >
       <template v-slot:item="data">
@@ -42,8 +43,9 @@
 }
 </style>
 <style>
-.v-select__selection--comma {
+.ms-select .v-select__selection--comma {
     margin: 6px 4px 6px 0;
+    font-size: 13px;
 }
 
 .v-select.v-text-field--outlined:not(.v-text-field--single-line) .v-select__selections {
@@ -84,18 +86,18 @@
       border: 1px solid #babec5;
     border-radius: 2px;
   z-index: 10000 !important;
-  max-height: 256px;
+  /* max-height: 256px; */
 }
 
 .v-list.v-select-list{
   padding: 2px 0;
 }
 
-.v-application--is-ltr .v-text-field .v-input__append-inner {
-  margin-top: 1px;
+.ms-select .v-text-field .v-input__append-inner {
+  margin-top: 0px;
   /* margin-bottom: 5px; */
   cursor: pointer;
-  height: 99%;
+  height: 100%;
   border-bottom-right-radius: 2px;
   border-top-right-radius: 2px;
 }
@@ -109,8 +111,29 @@
   border-color: #e0e0e0;
 }
 
+.ms-select .v-text-field--outlined fieldset{
+  top: -6px;
+}
+
 fieldset {
   z-index: 1;
+}
+
+/**Css disable */
+.ms-select .theme--light.v-select .v-select__selection--disabled {
+    color: rgba(0, 0, 0, 0);
+}
+
+.ms-select .v-input--is-disabled:not(.v-input--is-readonly) {
+    background-color: #eff0f2;
+}
+
+.ms-select .theme--light.v-text-field--outlined:not(.v-input--is-focused):not(.v-input--has-state):not(.v-input--is-disabled)>.v-input__control>.v-input__slot:hover fieldset {
+    color: rgba(0, 0, 0, .38) !important;
+}
+
+.ms-select .theme--light.v-text-field--outlined:not(.v-input--is-focused):not(.v-input--has-state):not(.v-input--is-disabled)>.v-input__control>.v-input__slot:hover {
+    outline: 1px solid #e2e2e2 !important;
 }
 </style>
 <script>
@@ -121,6 +144,10 @@ export default {
       default: "",
     },
     readonly: {
+      type: Boolean,
+      default: false,
+    },
+    disabled: {
       type: Boolean,
       default: false,
     },

@@ -23,7 +23,7 @@
         </div>
         <div class="menu-item__title">Danh sách tài khoản</div>
       </router-link>
-      <router-link to="/payment" class="menu-item" title="Phiếu chi">
+      <router-link to="/cash" class="menu-item" title="Phiếu chi">
         <div class="menu-item__icon">
           <div class="mi mi-24 mi-sidebar-bank"></div>
         </div>

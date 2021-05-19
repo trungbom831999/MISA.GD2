@@ -3,6 +3,7 @@
     offset-y
     allow-overflow
     left
+    :top="top"
     min-width="fit-content"
   >
     <template v-slot:activator="{ on, attrs }">
@@ -10,11 +11,22 @@
         <slot name="dropdown-button"></slot>
       </div>
     </template>
-    <v-list class="v-list-menu">
+    <v-list class="v-list-menu mt-0" style="border: none">
       <slot name="dropdown-list"></slot>
     </v-list>
   </v-menu>
 </template>
+
+<script>
+export default {
+  props:{
+    top:{
+      type: Boolean,
+      default:false
+    }
+  }
+}
+</script>
 
 <style scoped>
 .v-list-menu {

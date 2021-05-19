@@ -7,21 +7,54 @@
       <div v-if="required" class="ms-input-title-require">&nbsp;*</div>
     </div>
     <span class="text-area--validate">
-      <textarea class="ms-textarea"
+      <textarea
+        class="ms-textarea"
+        :class="{ 'grid-editor': gridEditor }"
+        :rows="rows"
         v-bind="$attrs"
         v-bind:value="value"
         v-on:input="$emit('input', $event.target.value)"
+        :maxlength="maxlength"
       ></textarea>
     </span>
   </div>
 </template>
+
+<script>
+export default {
+  props: {
+    label: {
+      type: String,
+      default: "",
+    },
+    rows: {
+      type: String,
+      default: "",
+    },
+    gridEditor: {
+      type: Boolean,
+      default: false,
+    },
+    maxlength:{
+      type: String,
+      default: ""
+    },
+    required: {
+      type: Boolean,
+      default: false,
+    },
+    value: {},
+  },
+};
+</script>
+
 <style scoped>
 textarea:not(:focus):hover {
-    outline: 1px solid #e2e2e2 !important;
+  outline: 1px solid #e2e2e2 !important;
 }
 
 textarea:focus {
-    border: 1px solid #2ca01c !important;
+  border: 1px solid #2ca01c !important;
 }
 
 .ms-con-textarea {
@@ -63,20 +96,10 @@ textarea:focus {
 textarea.ms-textarea {
   line-height: 1.6;
 }
-</style>
 
-<script>
-export default {
-  props: {
-    label: {
-      type: String,
-      default: "",
-    },
-    required: {
-      type: Boolean,
-      default: false,
-    },
-    value: {},
-  },
-};
-</script>
+.ms-con-textarea .grid-editor {
+  padding: 5px 10px 6px 10px;
+  line-height: 20px;
+  overflow: hidden;
+}
+</style>

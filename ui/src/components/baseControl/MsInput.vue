@@ -10,23 +10,53 @@
     <div class="ms-component ms-con-input-label ms-input style-label">
       <div class="ms-con-input">
         <input
+          ref="input"
           v-bind="$attrs"
           v-bind:value="value"
           v-on:input="$emit('input', $event.target.value)"
           type="text"
           class="ms-input--input normal ms-input-normal"
+          :style="[textRight ? { 'text-align': 'right' } : '']"
         />
       </div>
     </div>
   </div>
 </template>
+
+<script>
+export default {
+  props: {
+    label: {
+      type: String,
+      default: "",
+    },
+    required: {
+      type: Boolean,
+      default: false,
+    },
+    textRight: {
+      type: Boolean,
+      default: false,
+    },
+    value: {},
+  },
+  methods: {
+    focusInput() {
+      console.log(this.$refs.input);
+      this.$refs.input.focus();
+      // return this.$refs.msInput;
+    },
+  },
+};
+</script>
+
 <style scoped>
 input:not(:focus):hover {
-    outline: 1px solid #e2e2e2 !important;
+  outline: 1px solid #e2e2e2 !important;
 }
 
 input:focus {
-    border: 1px solid #2ca01c !important;
+  border: 1px solid #2ca01c !important;
 }
 
 .ms-input {
@@ -90,19 +120,3 @@ input:focus {
   width: 100%;
 }
 </style>
-
-<script>
-export default {
-  props: {
-    label: {
-      type: String,
-      default: "",
-    },
-    required: {
-      type: Boolean,
-      default: false,
-    },
-    value: {},
-  },
-};
-</script>

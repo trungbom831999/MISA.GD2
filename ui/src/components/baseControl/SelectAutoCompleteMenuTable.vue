@@ -3,12 +3,16 @@
     <div v-if="label" class="label-input">{{ label }}</div>
     <v-autocomplete
       class="border-radius-2"
-      v-model="friends"
+      v-model="temporaryList"
+      v-bind:value="value"
+      v-on:input="$emit('input', temporaryList)"
       :disabled="isUpdating"
-      :items="suppliers"
-      chips
-      item-text="name"
-      item-value="name"
+      :items="items"
+      :chips="chip"
+      :deletable-chips="chip"
+      :item-text="mainItem"
+      :item-value="mainItem"
+      :itemDefault="itemDefault"
       :menu-props="{
         offsetOverflow: true,
         allowOverflow: true,
@@ -21,10 +25,10 @@
       no-data-text="Không có dữ liệu hiển thị."
       :placeholder="placeholder"
       color="#2ca01c"
-      multiple
+      :multiple="multiple"
       @focus="setHeaderOfListBox()"
     >
-      <template v-slot:append>
+      <template v-if="hasAddButton" v-slot:append>
         <button class="btn-add">
           <div class="mi mi-16 mi-plus--success"></div>
         </button>
@@ -35,15 +39,16 @@
           ></i>
         </div>
       </template>
-      <template v-slot:selection="data">
+      <template v-if="chip" v-slot:selection="data">
         <v-chip
           v-bind="data.attrs"
+          :input-value="data.selected"
           close
           @click="data.select"
           @click:close="remove(data.item)"
-          :title="data.item.name"
+          :title="data.item[mainItem]"
         >
-          {{ data.item.name }}
+          {{ data.item[mainItem] }}
         </v-chip>
       </template>
       <template v-slot:item="data">
@@ -52,11 +57,16 @@
         </template>
         <template v-else>
           <div class="menu-table-row">
-            <div class="menu-table-item w-150" :title="data.item.group">
-              {{ data.item.group }}
-            </div>
-            <div class="menu-table-item w-150" :title="data.item.name">
-              {{ data.item.name }}
+            <div
+              v-for="(cell, k, i) in data.item"
+              v-bind:key="k"
+              class="menu-table-item"
+              v-bind:title="data.item[k]"
+              v-bind:class="'w-' + column[i].width"
+              v-bind:style="[{ 'min-width': column[i].width + 'px' }, {'max-width': column[i].width + 'px'}]"
+              style="text-align: left;"
+            >
+              {{ data.item[k] }}
             </div>
             <div class="selected-container">
               <div class="selected"></div>
@@ -74,9 +84,11 @@ export default {
       type: String,
       default: "",
     },
-    readonly: {
-      type: Boolean,
-      default: false,
+    column: {
+      type: Array,
+      default() {
+        return [];
+      },
     },
     items: {
       type: Array,
@@ -84,61 +96,71 @@ export default {
         return [];
       },
     },
+    mainItem: {
+      type: String,
+      default: "",
+    },
     itemDefault: {
-      type: Number,
+      type: String,
+      default: null
+    },
+    readonly: {
+      type: Boolean,
+      default: false,
     },
     placeholder: {
       type: String,
       default: "",
     },
+    chip: {
+      type: Boolean,
+      default: false,
+    },
+    multiple: {
+      type: Boolean,
+      default: false,
+    },
+    hasAddButton: {
+      type: Boolean,
+      default: false,
+    },
+    value:{}
   },
   data() {
-    const srcs = {
-      1: "https://cdn.vuetifyjs.com/images/lists/1.jpg",
-      2: "https://cdn.vuetifyjs.com/images/lists/2.jpg",
-      3: "https://cdn.vuetifyjs.com/images/lists/3.jpg",
-      4: "https://cdn.vuetifyjs.com/images/lists/4.jpg",
-      5: "https://cdn.vuetifyjs.com/images/lists/5.jpg",
-    };
-
     return {
       autoUpdate: true,
-      friends: ["Britta Holt"],
+      temporaryList: [],
       isUpdating: false,
       name: "Midnight Crew",
-      column: ["group1", "group2"],
+      col: this.column,
       suppliers: [
         // { name: "column", col: ["gr1", "gr2"], disabled: true },
         {
           name: "Sandra Adams",
           group: "Group 1",
-          avatar: srcs[1],
         },
-        { name: "Ali Connors", group: "Group 1", avatar: srcs[2] },
+        { name: "Ali Connors", group: "Group 1" },
         {
           name:
             "Trevor Hansen Trevor HansenTrevor HansenTrevor HansenTrevor HansenTrevor HansenTrevor HansenTrevor HansenTrevor HansenTrevor HansenTrevor HansenTrevor Hansen",
           group: "Group 1",
-          avatar: srcs[3],
         },
         {
           name: "Tucker Smith",
           group: "Group 1",
-          avatar: srcs[2],
-          disabled: true,
         },
-        { name: "Britta Holt", group: "Group 2", avatar: srcs[4] },
-        { name: "Jane Smith ", group: "Group 2", avatar: srcs[5] },
-        { name: "John Smith", group: "Group 2", avatar: srcs[1] },
-        { name: "Sandra Williams", group: "Group 2", avatar: srcs[3] },
+        { name: "Britta Holt", group: "Group 2" },
+        { name: "Jane Smith ", group: "Group 2" },
+        { name: "John Smith", group: "Group 2" },
+        { name: "Sandra Williams", group: "Group 2" },
       ],
     };
   },
 
   methods: {
     remove(item) {
-      const index = this.friends.indexOf(item.name);
-      if (index >= 0) this.friends.splice(index, 1);
+      const index = this.temporaryList.indexOf(item[this.mainItem]);
+      if (index >= 0) this.temporaryList.splice(index, 1);
     },
     setHeaderOfListBox() {
       // console.log(this.column);
@@ -149,8 +171,8 @@ export default {
         )[0].children[0].id;
         var header = "<div class='header-menu-select-autocomplete-menu'>";
         for (var i = 0; i < cols.length; i++) {
-          header += `<div title="${cols[i]}" class="menu-header__th" style="width: 150px; text-align: left">
-            <span>${cols[i]}</span>
+          header += `<div title="${cols[i].name}" class="menu-header__th w-${cols[i].width}" style="width: ${cols[i].width}px; text-align: left">
+            <span>${cols[i].name}</span>
           </div>`;
         }
         header += "</div>";
@@ -158,10 +180,24 @@ export default {
         // listBox.insertBefore(header, listBox.childNodes[0]);
         listBox.insertAdjacentHTML("beforebegin", header);
         console.log(idListBox);
-      }, 100);
+      }, 20);
     },
+
+    setDefaultItem(){
+      if(this.itemDefault != null){
+        console.log(this.items[this.itemDefault][this.mainItem]);
+        if(this.multiple){
+        this.temporaryList.push(this.items[this.itemDefault][this.mainItem]);
+        }
+        else{
+          this.temporaryList = this.items[this.itemDefault][this.mainItem];
+        }
+      }
+    }
   },
-  mounted() {},
+  mounted() {
+    this.setDefaultItem();
+  },
 };
 </script>
 <style scoped>
@@ -171,6 +207,7 @@ export default {
   position: relative;
   display: flex;
   flex-direction: column;
+  margin: 0;
 }
 
 .label-input {
@@ -210,8 +247,12 @@ export default {
   min-height: 32px;
 }
 
-.v-text-field--outlined fieldset {
-  bottom: 1px;
+.ms-select-autocomplete-menu .v-autocomplete.v-input>.v-input__control>.v-input__slot {
+    background-color: #fff;
+}
+
+.ms-select-autocomplete-menu .v-text-field--outlined fieldset {
+  bottom: 0px;
   top: -6.5px;
 }
 
@@ -237,12 +278,23 @@ export default {
   border: 1px solid #babec5;
 }
 
+.ms-select-autocomplete-menu .v-chip .v-chip__content {
+  max-width: 96%;
+  padding-right: 12px;
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 .ms-select-autocomplete-menu .v-chip .v-chip__content button {
   color: #f0f0f0;
   background-color: #000;
   border-radius: 50%;
   height: 12px;
   width: 12px;
+  position: absolute;
+  right: 8px;
 }
 
 .ms-select-autocomplete-menu .theme--light.v-chip:hover:before {
@@ -288,6 +340,10 @@ export default {
   border-right: 1px solid #babec5;
 }
 
+.menu-select-autocomplete-menu {
+  transition: opacity 0.1s, transform 0.1s, width 0.2s ease;
+  margin: 0 !important;
+}
 .menu-select-autocomplete-menu .menu-header__th {
   padding: 0 10px;
   height: 32px;
@@ -360,5 +416,9 @@ export default {
 
 .menu-select-autocomplete-menu .v-list-item--active .menu-table-item {
   color: #fff;
+}
+
+.ms-select-autocomplete-menu .v-select__selection--comma {
+  margin: 0;
 }
 </style>

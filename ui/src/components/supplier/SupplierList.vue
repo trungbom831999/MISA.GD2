@@ -626,11 +626,17 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 .body {
   padding-right: 30px;
   overflow: scroll;
   height: calc(100vh - 48px);
+}
+</style>
+<style>
+.popup-payment .con-ms-popup>.ms-popup-content>.ms-popup--content {
+    overflow: visible;
+    padding: 0;
 }
 .body-di {
   max-height: unset !important;

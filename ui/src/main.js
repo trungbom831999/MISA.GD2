@@ -7,7 +7,7 @@ import '@mdi/font/css/materialdesignicons.css'
 
 import Supplier from './components/supplier/SupplierList.vue'
 import Account from './components/account/AccountList.vue'
-import Payment from './components/payment/Payment.vue'
+import Cash from './components/payment/Cash.vue'
 
 Vue.use(VueRouter)
 
@@ -23,8 +23,8 @@ const routes = [{
         component: Account
     },
     {
-        path: '/payment',
-        component: Payment
+        path: '/cash',
+        component: Cash
     }
 ]
 

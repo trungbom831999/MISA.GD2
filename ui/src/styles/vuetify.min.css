@@ -2641,7 +2641,7 @@
 
 html {
     box-sizing: border-box;
-    overflow-y: scroll;
+    overflow-y: overlay;
     -webkit-text-size-adjust: 100%;
     word-break: normal;
     -moz-tab-size: 4;
@@ -16546,7 +16546,7 @@ html.overflow-y-hidden {
 }
 
 .v-autocomplete.v-select.v-input--is-focused input {
-    min-width: 64px
+    /* min-width: 64px */
 }
 
 .v-autocomplete:not(.v-input--is-focused).v-select--chips input {
@@ -17094,7 +17094,7 @@ html.overflow-y-hidden {
 .v-text-field.v-text-field--enclosed:not(.v-text-field--rounded)>.v-input__control>.v-input__slot {
     padding: 0 13px;
     padding-right: 0;
-    padding-bottom: 1px;
+    padding-bottom: 0px;
 }
 
 .v-text-field.v-text-field--enclosed .v-text-field__details {
@@ -17659,7 +17659,7 @@ html.overflow-y-hidden {
     margin-bottom: 8px;
     min-height: inherit;
     position: relative;
-    transition: .3s cubic-bezier(.25, .8, .5, 1);
+    /* transition: .3s cubic-bezier(.25, .8, .5, 1); */
     width: 100%
 }
 

@@ -106,7 +106,7 @@
 </template>
 
 <style>
-header {
+.navbar-sticky  header {
   background-color: #fff;
   padding: 0;
   height: 48px;
@@ -130,7 +130,7 @@ header {
 .navbar-sticky {
   padding: 0;
   background: none;
-  z-index: 1000;
+  z-index: 200;
   top: 0;
   position: absolute;
   width: 100%;

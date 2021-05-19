@@ -1,0 +1,2 @@
+v-bind:class="'w-' + column[i].width"
+v-bind:style="{ width: column[i].width + 'px' }"
