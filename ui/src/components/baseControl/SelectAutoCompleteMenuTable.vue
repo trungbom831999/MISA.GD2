@@ -11,7 +11,7 @@
       :chips="chip"
       :deletable-chips="chip"
       :item-text="mainItem"
-      :item-value="mainItem"
+      :item-value="valueItem ? valueItem : mainItem"
       :itemDefault="itemDefault"
       :menu-props="{
         offsetOverflow: true,
@@ -27,6 +27,7 @@
       color="#2ca01c"
       :multiple="multiple"
       @focus="setHeaderOfListBox()"
+      :readonly="readonly"
     >
       <template v-if="hasAddButton" v-slot:append>
         <button class="btn-add">
@@ -45,7 +46,7 @@
           :input-value="data.selected"
           close
           @click="data.select"
-          @click:close="remove(data.item)"
+          @click:close="readonly? '' : remove(data.item)"
           :title="data.item[mainItem]"
         >
           {{ data.item[mainItem] }}
@@ -63,8 +64,11 @@
               class="menu-table-item"
               v-bind:title="data.item[k]"
               v-bind:class="'w-' + column[i].width"
-              v-bind:style="[{ 'min-width': column[i].width + 'px' }, {'max-width': column[i].width + 'px'}]"
-              style="text-align: left;"
+              v-bind:style="[
+                { 'min-width': column[i].width + 'px' },
+                { 'max-width': column[i].width + 'px' },
+              ]"
+              style="text-align: left"
             >
               {{ data.item[k] }}
             </div>
@@ -100,9 +104,13 @@ export default {
       type: String,
       default: "",
     },
+    valueItem: {
+      type: String,
+      default: "",
+    },
     itemDefault: {
       type: String,
-      default: null
+      default: null,
     },
     readonly: {
       type: Boolean,
@@ -124,7 +132,7 @@ export default {
       type: Boolean,
       default: false,
     },
-    value:{}
+    value: {},
   },
   data() {
     return {
@@ -141,8 +149,7 @@ export default {
         },
         { name: "Ali Connors", group: "Group 1" },
         {
-          name:
-            "Trevor Hansen Trevor HansenTrevor HansenTrevor HansenTrevor HansenTrevor HansenTrevor HansenTrevor HansenTrevor HansenTrevor HansenTrevor HansenTrevor Hansen",
+          name: "Trevor Hansen Trevor HansenTrevor HansenTrevor HansenTrevor HansenTrevor HansenTrevor HansenTrevor HansenTrevor HansenTrevor HansenTrevor HansenTrevor Hansen",
           group: "Group 1",
         },
         {
@@ -156,10 +163,19 @@ export default {
       ],
     };
   },
-
+  watch: {
+    value() {
+      this.temporaryList = this.value;
+    },
+    valueItem() {
+      if (!this.valueItem) {
+        this.valueItem = this.mainItem;
+      }
+    },
+  },
   methods: {
     remove(item) {
-      const index = this.temporaryList.indexOf(item[this.mainItem]);
+      const index = this.temporaryList.indexOf(item[this.valueItem]);
       if (index >= 0) this.temporaryList.splice(index, 1);
     },
     setHeaderOfListBox() {
@@ -180,23 +196,38 @@ export default {
         // listBox.insertBefore(header, listBox.childNodes[0]);
         listBox.insertAdjacentHTML("beforebegin", header);
         console.log(idListBox);
-      }, 20);
+      }, 50);
     },
 
-    setDefaultItem(){
-      if(this.itemDefault != null){
-        console.log(this.items[this.itemDefault][this.mainItem]);
-        if(this.multiple){
-        this.temporaryList.push(this.items[this.itemDefault][this.mainItem]);
-        }
-        else{
+    setDefaultItem() {
+      if (this.itemDefault != null) {
+        //console.log(this.items[this.itemDefault][this.mainItem]);
+        if (this.multiple) {
+          this.temporaryList.push(this.items[this.itemDefault][this.mainItem]);
+        } else {
           this.temporaryList = this.items[this.itemDefault][this.mainItem];
         }
       }
-    }
+    },
+
+    //kiểm tra phần tử có trong mảng hay không
+    checkIsInItems(item) {
+      if (!this.valueItem) {
+        this.valueItem = this.mainItem;
+      }
+      for (let i in this.items) {
+        if (item == i[this.valueItem]) {
+          console.log("có");
+          return true;
+        }
+      }
+      return false;
+    },
   },
+  created() {},
   mounted() {
     this.setDefaultItem();
+    this.temporaryList = this.value;
   },
 };
 </script>
@@ -221,7 +252,7 @@ export default {
 .ms-select-autocomplete-menu
   .v-select.v-text-field--outlined:not(.v-text-field--single-line)
   .v-select__selections {
-  padding: 6px 0;
+  /*padding: 6px 0;*/
 }
 
 /*css chips */
@@ -247,13 +278,16 @@ export default {
   min-height: 32px;
 }
 
-.ms-select-autocomplete-menu .v-autocomplete.v-input>.v-input__control>.v-input__slot {
-    background-color: #fff;
+.ms-select-autocomplete-menu
+  .v-autocomplete.v-input
+  > .v-input__control
+  > .v-input__slot {
+  background-color: #fff;
 }
 
 .ms-select-autocomplete-menu .v-text-field--outlined fieldset {
   bottom: 0px;
-  top: -6.5px;
+  top: -5.5px;
 }
 
 .ms-select-autocomplete-menu .theme--light.v-chip:not(.v-chip--active) {

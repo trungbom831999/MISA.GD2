@@ -16,6 +16,7 @@
           v-on:input="$emit('input', $event.target.value)"
           type="text"
           class="ms-input--input normal ms-input-normal"
+          :class="error ? 'input-validate-error' : ''"
           :style="[textRight ? { 'text-align': 'right' } : '']"
         />
       </div>
@@ -34,6 +35,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    error: {
+      type: Boolean,
+      default: false,
+    },
     textRight: {
       type: Boolean,
       default: false,
@@ -42,7 +47,7 @@ export default {
   },
   methods: {
     focusInput() {
-      console.log(this.$refs.input);
+      // console.log(this.$refs.input);
       this.$refs.input.focus();
       // return this.$refs.msInput;
     },
@@ -55,7 +60,7 @@ input:not(:focus):hover {
   outline: 1px solid #e2e2e2 !important;
 }
 
-input:focus {
+input:not(.input-validate-error):focus {
   border: 1px solid #2ca01c !important;
 }
 

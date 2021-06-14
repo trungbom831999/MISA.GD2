@@ -32,7 +32,7 @@
                         ></ms-select>
                       </div>
 
-                      <div class="combo-header">
+                      <!-- <div class="combo-header">
                         <label class="inline-label"
                           >Phương thức thanh toán</label
                         >
@@ -41,7 +41,7 @@
                           :items="paymentMethods"
                           :itemDefault="0"
                         ></ms-select>
-                      </div>
+                      </div> -->
                     </div>
 
                     <div class="header-detail-buttons flex">
@@ -81,7 +81,7 @@
                         <div class="w-3/4">
                           <div class="m-row basic-information flex">
                             <div class="w-4/5">
-                              <div class="m-row flex row-input">
+                              <!-- <div class="m-row flex row-input">
                                 <div class="w-3/7">
                                   <select-auto-complete-menu-table
                                     label="Tài khoản chi"
@@ -94,7 +94,7 @@
                                 <div class="w-4/7 flex-grow pxs-4">
                                   <ms-input></ms-input>
                                 </div>
-                              </div>
+                              </div> -->
 
                               <div class="m-row flex row-input">
                                 <div class="w-3/7">
@@ -107,11 +107,11 @@
                                   ></select-auto-complete-menu-table>
                                 </div>
                                 <div class="w-4/7 flex-grow pxs-4">
-                                  <ms-input label="Địa chỉ"></ms-input>
+                                  <ms-input label="Người nhận"></ms-input>
                                 </div>
                               </div>
 
-                              <div class="m-row flex row-input">
+                              <!-- <div class="m-row flex row-input">
                                 <div class="w-3/7">
                                   <select-auto-complete-menu-table
                                     label="Tài khoản nhận"
@@ -123,12 +123,18 @@
                                 <div class="w-4/7 flex-grow pxs-4">
                                   <ms-input></ms-input>
                                 </div>
+                              </div> -->
+
+                              <div class="m-row flex row-input">
+                                <div class="w-full p-r-16">
+                                  <ms-input label="Địa chỉ"></ms-input>
+                                </div>
                               </div>
 
                               <div class="m-row flex row-input">
                                 <div class="w-full p-r-16">
                                   <ms-input
-                                    label="Nội dung thanh toán"
+                                    label="Lý do chi"
                                     v-model="payment.reasonPay"
                                   ></ms-input>
                                 </div>
@@ -137,7 +143,7 @@
                               <div
                                 class="m-row flex row-input n-padding-bottom"
                               >
-                                <div class="w-3/7">
+                                <div class="w-3/7 p-r-14">
                                   <select-auto-complete-menu-table
                                     label="Nhân viên"
                                     :column="colEmployee"
@@ -146,7 +152,7 @@
                                     :hasAddButton="true"
                                   ></select-auto-complete-menu-table>
                                 </div>
-                                <div class="w-4/7 p-l-12 p-r-16">
+                                <!-- <div class="w-4/7 p-l-12 p-r-16">
                                   <div class="m-row reference flex">
                                     <div class="ms-reference">
                                       <div class="reference-title">
@@ -157,8 +163,8 @@
                                       </div>
                                     </div>
                                   </div>
-                                </div>
-                                <!-- <div class="w-4/7 flex width-240">
+                                </div> -->
+                                <div class="w-4/7 flex width-240">
                                   <ms-input
                                     label="Kèm theo"
                                     placeholder="Số lượng"
@@ -167,15 +173,15 @@
                                   <div class="root-invoice px-2">
                                     chứng từ gốc
                                   </div>
-                                </div> -->
+                                </div>
                               </div>
 
-                              <!-- <div class="m-row reference flex">
+                              <div class="m-row reference flex">
                                 <div class="ms-reference">
                                   <div class="reference-title">Tham chiếu</div>
                                   <div class="ms-reference-show-more">...</div>
                                 </div>
-                              </div> -->
+                              </div>
                             </div>
 
                             <div class="w-1/5">
@@ -189,16 +195,16 @@
 
                               <div class="row-input-right">
                                 <ms-input-date
-                                  label="Ngày chứng từ"
+                                  label="Ngày phiếu chi"
                                   placeholder="dd/mm/yyyy"
-                                  v-model="payment.licenseDate"
+                                  v-model="payment.paymentDate"
                                 ></ms-input-date>
                               </div>
 
                               <div class="row-input-right">
                                 <ms-input
-                                  label="Số chứng từ"
-                                  v-model="payment.licenseNumber"
+                                  label="Số phiếu chi"
+                                  v-model="payment.paymentNumber"
                                 ></ms-input>
                               </div>
                             </div>
@@ -232,11 +238,17 @@
                             <div class="label-option">Loại tiền</div>
                             <div class="combo-editor currency-combobox">
                               <select-auto-complete-menu-table
+                                v-model="typeOfMoney"
                                 :column="colTypeOfMoney"
                                 :items="typeOfMoneys"
                                 itemDefault="0"
                                 mainItem="moneyCode"
                               ></select-auto-complete-menu-table>
+                            </div>
+
+                            <div v-if="typeOfMoney != 'VND'" class="label-option">Tỷ giá</div>
+                            <div v-if="typeOfMoney != 'VND'" class="cls-width-exchange-rate">
+                              <ms-input textRight></ms-input>
                             </div>
                           </div>
                         </div>
@@ -287,8 +299,8 @@
                                                 <th
                                                   class="dynamic-header p-0"
                                                   style="
-                                                    min-width: 334px;
-                                                    width: 334px;
+                                                    min-width: 186px;
+                                                    width: 186px;
                                                     top: 0px;
                                                   "
                                                 >
@@ -309,8 +321,8 @@
                                                 <th
                                                   class="dynamic-header p-0"
                                                   style="
-                                                    min-width: 124px;
-                                                    width: 124px;
+                                                    min-width: 100px;
+                                                    width: 100px;
                                                     top: 0px;
                                                   "
                                                 >
@@ -331,8 +343,8 @@
                                                 <th
                                                   class="dynamic-header p-0"
                                                   style="
-                                                    min-width: 122px;
-                                                    width: 122px;
+                                                    min-width: 100px;
+                                                    width: 100px;
                                                     top: 0px;
                                                   "
                                                 >
@@ -353,8 +365,8 @@
                                                 <th
                                                   class="dynamic-header p-0"
                                                   style="
-                                                    min-width: 180px;
-                                                    width: 180px;
+                                                    min-width: 150px;
+                                                    width: 150px;
                                                     top: 0px;
                                                   "
                                                 >
@@ -372,11 +384,33 @@
                                                   </div>
                                                 </th>
 
+                                                <th v-if="typeOfMoney != 'VND'"
+                                                  class="dynamic-header p-0"
+                                                  style="
+                                                    min-width: 150px;
+                                                    width: 150px;
+                                                    top: 0px;
+                                                  "
+                                                >
+                                                  <div
+                                                    class="flex th-height text-right"
+                                                  >
+                                                    <div
+                                                      class="th-table padding-th w-full cursor-pointer"
+                                                      style="
+                                                        justify-content: flex-end;
+                                                      "
+                                                    >
+                                                      <span>Quy đổi</span>
+                                                    </div>
+                                                  </div>
+                                                </th>
+
                                                 <th
                                                   class="dynamic-header p-0"
                                                   style="
-                                                    min-width: 176px;
-                                                    width: 176px;
+                                                    min-width: 150px;
+                                                    width: 150px;
                                                     top: 0px;
                                                   "
                                                 >
@@ -397,8 +431,8 @@
                                                 <th
                                                   class="dynamic-header p-0"
                                                   style="
-                                                    min-width: 288px;
-                                                    width: 288px;
+                                                    min-width: 250px;
+                                                    width: 250px;
                                                     top: 0px;
                                                   "
                                                 >
@@ -412,6 +446,253 @@
                                                       "
                                                     >
                                                       <span>Tên đối tượng</span>
+                                                    </div>
+                                                  </div>
+                                                </th>
+
+                                                <th
+                                                  class="dynamic-header p-0"
+                                                  style="
+                                                    min-width: 151px;
+                                                    width: 151px;
+                                                    top: 0px;
+                                                  "
+                                                  title="Khoản mục chi phí"
+                                                >
+                                                  <div
+                                                    class="flex th-height text-left"
+                                                  >
+                                                    <div
+                                                      class="th-table padding-th w-full cursor-pointer"
+                                                      style="
+                                                        justify-content: left;
+                                                      "
+                                                    >
+                                                      <span>Khoản mục CP</span>
+                                                    </div>
+                                                  </div>
+                                                </th>
+
+                                                <th
+                                                  class="dynamic-header p-0"
+                                                  style="
+                                                    min-width: 250px;
+                                                    width: 250px;
+                                                    top: 0px;
+                                                  "
+                                                  title="Tên khoản mục chi phí"
+                                                >
+                                                  <div
+                                                    class="flex th-height text-left"
+                                                  >
+                                                    <div
+                                                      class="th-table padding-th w-full cursor-pointer"
+                                                      style="
+                                                        justify-content: left;
+                                                      "
+                                                    >
+                                                      <span
+                                                        >Tên khoản mục CP</span
+                                                      >
+                                                    </div>
+                                                  </div>
+                                                </th>
+
+                                                <th
+                                                  class="dynamic-header p-0"
+                                                  style="
+                                                    min-width: 150px;
+                                                    width: 150px;
+                                                    top: 0px;
+                                                  "
+                                                >
+                                                  <div
+                                                    class="flex th-height text-left"
+                                                  >
+                                                    <div
+                                                      class="th-table padding-th w-full cursor-pointer"
+                                                      style="
+                                                        justify-content: left;
+                                                      "
+                                                    >
+                                                      <span>Đơn vị</span>
+                                                    </div>
+                                                  </div>
+                                                </th>
+
+                                                <th
+                                                  class="dynamic-header p-0"
+                                                  style="
+                                                    min-width: 150px;
+                                                    width: 150px;
+                                                    top: 0px;
+                                                  "
+                                                >
+                                                  <div
+                                                    class="flex th-height text-left"
+                                                  >
+                                                    <div
+                                                      class="th-table padding-th w-full cursor-pointer"
+                                                      style="
+                                                        justify-content: left;
+                                                      "
+                                                    >
+                                                      <span>Tên đơn vị</span>
+                                                    </div>
+                                                  </div>
+                                                </th>
+
+                                                <th
+                                                  class="dynamic-header p-0"
+                                                  style="
+                                                    min-width: 150px;
+                                                    width: 150px;
+                                                    top: 0px;
+                                                  "
+                                                  title="Đối tượng tập hợp chi phí"
+                                                >
+                                                  <div
+                                                    class="flex th-height text-left"
+                                                  >
+                                                    <div
+                                                      class="th-table padding-th w-full cursor-pointer"
+                                                      style="
+                                                        justify-content: left;
+                                                      "
+                                                    >
+                                                      <span>Đối tượng THCP</span>
+                                                    </div>
+                                                  </div>
+                                                </th>
+
+                                                <th
+                                                  class="dynamic-header p-0"
+                                                  style="
+                                                    min-width: 150px;
+                                                    width: 150px;
+                                                    top: 0px;
+                                                  "
+                                                >
+                                                  <div
+                                                    class="flex th-height text-left"
+                                                  >
+                                                    <div
+                                                      class="th-table padding-th w-full cursor-pointer"
+                                                      style="
+                                                        justify-content: left;
+                                                      "
+                                                    >
+                                                      <span>Công trình</span>
+                                                    </div>
+                                                  </div>
+                                                </th>
+
+                                                <th
+                                                  class="dynamic-header p-0"
+                                                  style="
+                                                    min-width: 150px;
+                                                    width: 150px;
+                                                    top: 0px;
+                                                  "
+                                                >
+                                                  <div
+                                                    class="flex th-height text-left"
+                                                  >
+                                                    <div
+                                                      class="th-table padding-th w-full cursor-pointer"
+                                                      style="
+                                                        justify-content: left;
+                                                      "
+                                                    >
+                                                      <span>Đơn đặt hàng</span>
+                                                    </div>
+                                                  </div>
+                                                </th>
+
+                                                <th
+                                                  class="dynamic-header p-0"
+                                                  style="
+                                                    min-width: 150px;
+                                                    width: 150px;
+                                                    top: 0px;
+                                                  "
+                                                >
+                                                  <div
+                                                    class="flex th-height text-left"
+                                                  >
+                                                    <div
+                                                      class="th-table padding-th w-full cursor-pointer"
+                                                      style="
+                                                        justify-content: left;
+                                                      "
+                                                    >
+                                                      <span>Hợp đồng bán</span>
+                                                    </div>
+                                                  </div>
+                                                </th>
+
+                                                <th
+                                                  class="dynamic-header p-0"
+                                                  style="
+                                                    min-width: 150px;
+                                                    width: 150px;
+                                                    top: 0px;
+                                                  "
+                                                >
+                                                  <div
+                                                    class="flex th-height text-left"
+                                                  >
+                                                    <div
+                                                      class="th-table padding-th w-full cursor-pointer"
+                                                      style="
+                                                        justify-content: left;
+                                                      "
+                                                    >
+                                                      <span>Đơn mua hàng</span>
+                                                    </div>
+                                                  </div>
+                                                </th>
+
+                                                <th
+                                                  class="dynamic-header p-0"
+                                                  style="
+                                                    min-width: 150px;
+                                                    width: 150px;
+                                                    top: 0px;
+                                                  "
+                                                >
+                                                  <div
+                                                    class="flex th-height text-left"
+                                                  >
+                                                    <div
+                                                      class="th-table padding-th w-full cursor-pointer"
+                                                      style="
+                                                        justify-content: left;
+                                                      "
+                                                    >
+                                                      <span>Hợp đồng mua</span>
+                                                    </div>
+                                                  </div>
+                                                </th>
+
+                                                <th
+                                                  class="dynamic-header p-0"
+                                                  style="
+                                                    min-width: 150px;
+                                                    width: 150px;
+                                                    top: 0px;
+                                                  "
+                                                >
+                                                  <div
+                                                    class="flex th-height text-left"
+                                                  >
+                                                    <div
+                                                      class="th-table padding-th w-full cursor-pointer"
+                                                      style="
+                                                        justify-content: left;
+                                                      "
+                                                    >
+                                                      <span>Mã thống kê</span>
                                                     </div>
                                                   </div>
                                                 </th>
@@ -444,7 +725,11 @@
                                             </thead>
 
                                             <tbody class="dis-contents">
-                                              <tr v-for="(account, index) in accounting" :key="index"
+                                              <tr
+                                                v-for="(
+                                                  account, index
+                                                ) in accounting"
+                                                :key="index"
                                                 class="tr-values vs-table--tr tr-table-state-null selected"
                                               >
                                                 <td
@@ -462,7 +747,9 @@
                                                 <td
                                                   class="td ms-table--td text-center ms-grid-row-number"
                                                 >
-                                                  <div class="stt-cell">{{index + 1}}</div>
+                                                  <div class="stt-cell">
+                                                    {{ index + 1 }}
+                                                  </div>
                                                 </td>
 
                                                 <td
@@ -474,7 +761,9 @@
                                                         gridEditor
                                                         rows="1"
                                                         maxlength="255"
-                                                        v-model="account.description"
+                                                        v-model="
+                                                          account.description
+                                                        "
                                                       ></ms-textarea>
                                                     </div>
                                                   </div>
@@ -487,9 +776,10 @@
                                                     <select-auto-complete-menu-table
                                                       :column="colAccountDebt"
                                                       :items="accountDebt"
-                                                      mainItem="accountNumber"  
-                                                      v-model="account.accountDebt"
-
+                                                      mainItem="accountNumber"
+                                                      v-model="
+                                                        account.accountDebt
+                                                      "
                                                     ></select-auto-complete-menu-table>
                                                   </div>
                                                 </td>
@@ -502,7 +792,9 @@
                                                       :column="colAccountDebt"
                                                       :items="accountDebt"
                                                       mainItem="accountNumber"
-                                                      v-model="account.accountReceive"
+                                                      v-model="
+                                                        account.accountReceive
+                                                      "
                                                     ></select-auto-complete-menu-table>
                                                   </div>
                                                 </td>
@@ -514,6 +806,16 @@
                                                     <ms-input
                                                       textRight
                                                       v-model="account.money"
+                                                    ></ms-input>
+                                                  </div>
+                                                </td>
+
+                                                <td v-if="typeOfMoney != 'VND'"
+                                                  class="td ms-table--td dynamic-column"
+                                                >
+                                                  <div class="editable">
+                                                    <ms-input
+                                                      textRight
                                                     ></ms-input>
                                                   </div>
                                                 </td>
@@ -534,7 +836,97 @@
                                                 <td
                                                   class="td ms-table--td dynamic-column"
                                                 >
-                                                  <div class="editable"></div>
+                                                  <div class="editable">
+                                                    <ms-input></ms-input>
+                                                  </div>
+                                                </td>
+
+                                                <td
+                                                  class="td ms-table--td dynamic-column"
+                                                >
+                                                  <div class="editable">
+                                                    <ms-input></ms-input>
+                                                  </div>
+                                                </td>
+                                                
+                                                <td
+                                                  class="td ms-table--td dynamic-column"
+                                                >
+                                                  <div class="editable">
+                                                    <ms-input></ms-input>
+                                                  </div>
+                                                </td>
+                                                
+                                                <td
+                                                  class="td ms-table--td dynamic-column"
+                                                >
+                                                  <div class="editable">
+                                                    <ms-input></ms-input>
+                                                  </div>
+                                                </td>
+                                                
+                                                <td
+                                                  class="td ms-table--td dynamic-column"
+                                                >
+                                                  <div class="editable">
+                                                    <ms-input></ms-input>
+                                                  </div>
+                                                </td>
+                                                
+                                                <td
+                                                  class="td ms-table--td dynamic-column"
+                                                >
+                                                  <div class="editable">
+                                                    <ms-input></ms-input>
+                                                  </div>
+                                                </td>
+                                                
+                                                <td
+                                                  class="td ms-table--td dynamic-column"
+                                                >
+                                                  <div class="editable">
+                                                    <ms-input></ms-input>
+                                                  </div>
+                                                </td>
+                                                
+                                                <td
+                                                  class="td ms-table--td dynamic-column"
+                                                >
+                                                  <div class="editable">
+                                                    <ms-input></ms-input>
+                                                  </div>
+                                                </td>
+                                                
+                                                <td
+                                                  class="td ms-table--td dynamic-column"
+                                                >
+                                                  <div class="editable">
+                                                    <ms-input></ms-input>
+                                                  </div>
+                                                </td>
+                                                
+                                                <td
+                                                  class="td ms-table--td dynamic-column"
+                                                >
+                                                  <div class="editable">
+                                                    <ms-input></ms-input>
+                                                  </div>
+                                                </td>
+                                                
+                                                <td
+                                                  class="td ms-table--td dynamic-column"
+                                                >
+                                                  <div class="editable">
+                                                    <ms-input></ms-input>
+                                                  </div>
+                                                </td>
+                                                
+                                                <td
+                                                  class="td ms-table--td dynamic-column"
+                                                >
+                                                  <div class="editable">
+                                                    <ms-input></ms-input>
+                                                  </div>
                                                 </td>
 
                                                 <td
@@ -542,7 +934,9 @@
                                                 >
                                                   <div
                                                     class="delete-function flex justify-center align-center"
-                                                    @click="deleteRowAccounting(index)"
+                                                    @click="
+                                                      deleteRowAccounting(index)
+                                                    "
                                                   >
                                                     <div
                                                       class="mi mi-16 mi-delete"
@@ -605,6 +999,78 @@
                                                   style="text-align: right"
                                                 >
                                                   <span>0,0</span>
+                                                </th>
+                                                <th v-if="typeOfMoney != 'VND'"
+                                                  class="dynamic-column"
+                                                  style="text-align: right"
+                                                >
+                                                  <span>0</span>
+                                                </th>
+                                                <th
+                                                  class="dynamic-column"
+                                                  style="text-align: left"
+                                                >
+                                                  <span></span>
+                                                </th>
+                                                <th
+                                                  class="dynamic-column"
+                                                  style="text-align: left"
+                                                >
+                                                  <span></span>
+                                                </th>
+                                                <th
+                                                  class="dynamic-column"
+                                                  style="text-align: left"
+                                                >
+                                                  <span></span>
+                                                </th>
+                                                <th
+                                                  class="dynamic-column"
+                                                  style="text-align: left"
+                                                >
+                                                  <span></span>
+                                                </th>
+                                                <th
+                                                  class="dynamic-column"
+                                                  style="text-align: left"
+                                                >
+                                                  <span></span>
+                                                </th>
+                                                <th
+                                                  class="dynamic-column"
+                                                  style="text-align: left"
+                                                >
+                                                  <span></span>
+                                                </th>
+                                                <th
+                                                  class="dynamic-column"
+                                                  style="text-align: left"
+                                                >
+                                                  <span></span>
+                                                </th>
+                                                <th
+                                                  class="dynamic-column"
+                                                  style="text-align: left"
+                                                >
+                                                  <span></span>
+                                                </th>
+                                                <th
+                                                  class="dynamic-column"
+                                                  style="text-align: left"
+                                                >
+                                                  <span></span>
+                                                </th>
+                                                <th
+                                                  class="dynamic-column"
+                                                  style="text-align: left"
+                                                >
+                                                  <span></span>
+                                                </th>
+                                                <th
+                                                  class="dynamic-column"
+                                                  style="text-align: left"
+                                                >
+                                                  <span></span>
                                                 </th>
                                                 <th
                                                   class="dynamic-column"
@@ -724,17 +1190,20 @@
                                   name="button"
                                   class="ms-component ms-button ms-button-size-footer ms-button-primary ms-button-primary-disabled-false ms-button-radius-false ms-button ms-radius-false ms-dropdown-style-footer ms-radius-false ms-dropdown-type-primary ms-dropdown-padding-custom-primary"
                                 >
-                                  <div v-if="isSaveAndAddNew"
+                                  <div
+                                    v-if="isSaveAndAddNew"
                                     class="ms-button-text ms-button--text flex align-center"
                                   >
                                     Cất và Thêm
                                   </div>
-                                  <div v-if="isSaveAndClose"
+                                  <div
+                                    v-if="isSaveAndClose"
                                     class="ms-button-text ms-button--text flex align-center"
                                   >
                                     Cất và Đóng
                                   </div>
-                                  <div v-if="isSaveAndPrint"
+                                  <div
+                                    v-if="isSaveAndPrint"
                                     class="ms-button-text ms-button--text flex align-center"
                                   >
                                     Cất và In
@@ -851,9 +1320,10 @@ export default {
       payment: {
         reasonPay: "Chi tiền cho",
         accountingDate: "",
-        licenseDate: "",
-        licenseNumber: "UNC0123",
+        paymentDate: "",
+        paymentNumber: "PC0123",
       },
+      typeOfMoney: 'VND',
 
       typeOfPayment: [
         "1. Tạm ứng cho nhân viên",
@@ -964,7 +1434,7 @@ export default {
           moneyName: "Việt Nam Đồng",
         },
         {
-          moneyCode: "USA",
+          moneyCode: "USD",
           moneyName: "Đô la Mỹ",
         },
       ],
@@ -984,13 +1454,15 @@ export default {
         },
       ],
 
-      accounting: [{
-        description: "Chi tiền cho",
-        accountDebt: "12345",
-        accountReceive: "6688",
-        money: "0",
-        object: "NV123"
-      }],
+      accounting: [
+        {
+          description: "Chi tiền cho",
+          accountDebt: "12345",
+          accountReceive: "6688",
+          money: "0",
+          object: "NV123",
+        },
+      ],
 
       isSaveAndAddNew: true,
       isSaveAndClose: false,
@@ -1009,62 +1481,64 @@ export default {
     },
 
     //xóa 1 dòng trong bảng hạch toán
-    deleteRowAccounting(i){
+    deleteRowAccounting(i) {
       this.accounting.splice(i, 1);
     },
 
     //thêm dòng bảng hạch toán
-    addRowAccounting(){
+    addRowAccounting() {
       let newAccount = {
         description: "",
         accountDebt: "",
         accountReceive: "",
         money: "0",
-        object: ""
+        object: "",
       };
       this.accounting.push(newAccount);
     },
 
     //xóa tất cả dòng trong bảng hạch toán
-    removeAllRowAccounting(){
+    removeAllRowAccounting() {
       this.accounting = [];
       let newAccount = {
         description: "",
         accountDebt: "",
         accountReceive: "",
         money: "0",
-        object: ""
+        object: "",
       };
       this.accounting.push(newAccount);
     },
 
     //Đổi kiểu cho button Cất
-    setButtonSaveAndAddNew(){
-      this.isSaveAndAddNew= true;
-      this.isSaveAndClose= false;
-      this.isSaveAndPrint= false;
+    setButtonSaveAndAddNew() {
+      this.isSaveAndAddNew = true;
+      this.isSaveAndClose = false;
+      this.isSaveAndPrint = false;
     },
-    setButtonSaveAndClose(){
-      this.isSaveAndAddNew= false;
-      this.isSaveAndClose= true;
-      this.isSaveAndPrint= false;
+    setButtonSaveAndClose() {
+      this.isSaveAndAddNew = false;
+      this.isSaveAndClose = true;
+      this.isSaveAndPrint = false;
     },
-    setButtonSaveAndPrint(){
-      this.isSaveAndAddNew= false;
-      this.isSaveAndClose= false;
-      this.isSaveAndPrint= true;
+    setButtonSaveAndPrint() {
+      this.isSaveAndAddNew = false;
+      this.isSaveAndClose = false;
+      this.isSaveAndPrint = true;
     },
     currentDate() {
       const current = new Date();
-      const date = `${current.getDate()}/${current.getMonth()+1}/${current.getFullYear()}`;
+      const date = `${current.getDate()}/${
+        current.getMonth() + 1
+      }/${current.getFullYear()}`;
       return date;
-    }
+    },
   },
 
-  created(){
+  created() {
     this.payment.accountingDate = this.currentDate();
-    this.payment.licenseDate = this.currentDate();
-  }
+    this.payment.paymentDate = this.currentDate();
+  },
 };
 </script>
 
@@ -1371,6 +1845,10 @@ export default {
 .grid-tab .grid-option .currency-combobox {
   max-width: 100px;
   width: 100px;
+}
+
+.cls-width-exchange-rate {
+    width: 90px;
 }
 
 .ms-tabs-position-top .con-slot-tabs {

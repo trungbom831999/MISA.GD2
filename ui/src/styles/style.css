@@ -5,11 +5,28 @@
     src: url('../assets/fonts/notosans-regular.2cb88a13.woff2') format('woff2');
 }
 
+* {
+    font-family: noto_sans, Open Sans local;
+}
+
 ::-webkit-input-placeholder {
     color: #92969c;
     font-style: italic;
     font-weight: 500;
     font-size: 12px;
+}
+
+input[type="date"]::-webkit-inner-spin-button,
+input[type="date"]::-webkit-calendar-picker-indicator {
+    display: none;
+    -webkit-appearance: none;
+}
+
+
+/* error input */
+
+.input-validate-error {
+    border-color: red !important;
 }
 
 
@@ -38,7 +55,12 @@
 }
 
 .flex-row-reverse {
-    flex-direction: row-reverse!important;
+    flex-direction: row-reverse !important;
+}
+
+.content {
+    display: flex;
+    align-items: flex-start;
 }
 
 .inline {
@@ -76,7 +98,7 @@
 }
 
 .text-center {
-    text-align: center!important;
+    text-align: center !important;
 }
 
 .text-left {
@@ -117,7 +139,7 @@
 }
 
 .wiget {
-    position: sticky!important;
+    position: sticky !important;
     background: #fff;
     z-index: 20 !important;
 }
@@ -252,7 +274,7 @@
 }
 
 .width-350 {
-    width: 350px!important;
+    width: 350px !important;
 }
 
 .w-full {
@@ -310,11 +332,11 @@ th {
 }
 
 .mr-3 {
-    margin-right: .75rem!important;
+    margin-right: .75rem !important;
 }
 
 .mb-5 {
-    margin-bottom: 1.25rem!important;
+    margin-bottom: 1.25rem !important;
 }
 
 .mlp-100 {
@@ -329,7 +351,7 @@ th {
 }
 
 .pb-2 {
-    padding-bottom: .5rem!important;
+    padding-bottom: .5rem !important;
 }
 
 .n-padding-bottom {
@@ -337,7 +359,7 @@ th {
 }
 
 .pr-2 {
-    padding-right: .5rem!important;
+    padding-right: .5rem !important;
 }
 
 .pr-4 {
@@ -432,6 +454,13 @@ th {
     min-height: 18px;
 }
 
+.mi-24 {
+    width: 24px;
+    height: 24px;
+    min-width: 24px;
+    min-height: 24px;
+}
+
 .mi-30 {
     width: 30px;
     height: 30px;
@@ -446,11 +475,11 @@ th {
     min-height: 32px;
 }
 
-.mi-24 {
-    width: 24px;
-    height: 24px;
-    min-width: 24px;
-    min-height: 24px;
+.mi-48 {
+    width: 48px;
+    height: 48px;
+    min-width: 48px;
+    min-height: 48px;
 }
 
 .mi {
@@ -693,6 +722,30 @@ th {
     background-position: -539px -203px;
 }
 
+.mi-exclamation-error-48-2 {
+    background-position: -24px -954px;
+}
+
+.mi-exclamation-warning-48 {
+    background-position: -592px -456px;
+}
+
+.mi-process-cash {
+    background-image: url(../assets/img/qt_TienMat.svg);
+}
+
+.mi-h-340 {
+    height: 340px;
+}
+
+.mi-process-customer {
+    background-position: -872px -200px;
+}
+
+.mi-process-provider {
+    background-position: -928px -200px;
+}
+
 
 /*Background*/
 
@@ -708,7 +761,7 @@ th {
 /*border*/
 
 .border-color {
-    border: 0 solid #c7c7c7!important;
+    border: 0 solid #c7c7c7 !important;
 }
 
 

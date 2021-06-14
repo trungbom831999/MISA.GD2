@@ -20,6 +20,51 @@
   </label>
 </template>
 
+<script>
+export default {
+  props:{
+    label:{
+      type: String,
+      default: ""
+    },
+    value:{}
+  },
+  watch:{
+    value(newV){
+      if(newV){
+        this.isChecked = true;
+      }
+      else{
+        this.isChecked = false;
+      }
+    }
+  },
+  data() {
+    return {
+      isChecked: false,
+    };
+  },
+  methods:{
+      show(){
+          console.log(this.isChecked);
+      },
+
+      changeInputCheckbox(){
+          if(this.isChecked == true){
+              this.isChecked = false;
+          }
+          else{
+              this.isChecked = true;
+          }
+          console.log(this.isChecked);
+      }
+  },
+  // created(){
+  //   this.show();
+  // }
+};
+</script>
+
 <style scoped>
 .con-ms-checkbox {
   justify-content: flex-start;
@@ -91,34 +136,3 @@
   height: 100%;
 }
 </style>
-<script>
-export default {
-  props:{
-    label:{
-      type: String,
-      default: ""
-    },
-    value:{}
-  },
-  data() {
-    return {
-      isChecked: this.value,
-    };
-  },
-  methods:{
-      show(){
-          console.log(this.isChecked);
-      },
-
-      changeInputCheckbox(){
-          if(this.isChecked == true){
-              this.isChecked = false;
-          }
-          else{
-              this.isChecked = true;
-          }
-          console.log(this.isChecked);
-      }
-  }
-};
-</script>

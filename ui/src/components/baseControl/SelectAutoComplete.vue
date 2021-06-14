@@ -6,7 +6,7 @@
       </div>
       <div v-if="required" class="ms-input-title-require">&nbsp;*</div>
     </div>
-    <v-autocomplete
+    <!-- <v-autocomplete
       class="border-radius-2"
       :items="items"
       outlined
@@ -17,8 +17,24 @@
       :value="items[itemDefault]"
       color="#2ca01c"
       :menu-props="{ offsetOverflow: true, offsetY: true }"
+    > -->
+    <v-autocomplete
+      class="border-radius-2"
+      v-model="temporaryList"
+      v-bind="$attrs"
+      v-bind:value="value"
+      v-on:input="$emit('input', temporaryList)"
+      :items="items"
+      outlined
+      allow-overflow
+      auto-select-first
+      no-data-text="Không có dữ liệu hiển thị."
+      :placeholder="placeholder"
+      color="#2ca01c"
+      :menu-props="{ offsetOverflow: true, offsetY: true }"
+      :readonly="readonly"
     >
-    <template v-if="hasAddButton" v-slot:append>
+      <template v-if="hasAddButton" v-slot:append>
         <button class="btn-add">
           <div class="mi mi-16 mi-plus--success"></div>
         </button>
@@ -72,12 +88,35 @@ export default {
       type: Boolean,
       default: false,
     },
+    value: {},
+  },
+  watch:{
+     value() {
+      this.temporaryList = this.value;
+    },
   },
   data() {
-    return {};
+    return {
+      temporaryList: "",
+    };
   },
-  methods: {},
-  mounted() {},
+  methods: {
+    setValue() {
+      if (this.value) {
+        for (let i = 0; i < this.items.length; i++) {
+          if (this.value == this.items[i]) {
+            this.temporaryList = this.items[i];
+            break;
+          }
+        }
+      } else if (this.itemDefault) {
+        this.temporaryList = this.items[this.itemDefault];
+      }
+    },
+  },
+  mounted() {
+    this.setValue();
+  },
 };
 </script>
 <style scoped>
@@ -172,16 +211,23 @@ fieldset {
   z-index: 1;
 }
 
-.ms-select-autocomplete .v-text-field--outlined fieldset{
+.ms-select-autocomplete .v-text-field--outlined fieldset {
   top: -6px;
 }
 
-.ms-select-autocomplete .theme--light.v-text-field--outlined:not(.v-input--is-focused):not(.v-input--has-state):not(.v-input--is-disabled)>.v-input__control>.v-input__slot:hover fieldset {
-    color: rgba(0, 0, 0, .38) !important;;
+.ms-select-autocomplete
+  .theme--light.v-text-field--outlined:not(.v-input--is-focused):not(.v-input--has-state):not(.v-input--is-disabled)
+  > .v-input__control
+  > .v-input__slot:hover
+  fieldset {
+  color: rgba(0, 0, 0, 0.38) !important;
 }
 
-.ms-select-autocomplete .theme--light.v-text-field--outlined:not(.v-input--is-focused):not(.v-input--has-state):not(.v-input--is-disabled)>.v-input__control>.v-input__slot:hover{
-    outline: 1px solid #e2e2e2 !important;
+.ms-select-autocomplete
+  .theme--light.v-text-field--outlined:not(.v-input--is-focused):not(.v-input--has-state):not(.v-input--is-disabled)
+  > .v-input__control
+  > .v-input__slot:hover {
+  outline: 1px solid #e2e2e2 !important;
 }
 
 .ms-select-autocomplete .v-text-field .v-input__append-inner {
@@ -211,10 +257,7 @@ fieldset {
   .v-text-field
   .v-input__append-inner
   .v-input__icon.v-input__icon--append:hover,
-.ms-select-autocomplete
-  .v-text-field
-  .v-input__append-inner
-  .btn-add:hover {
+.ms-select-autocomplete .v-text-field .v-input__append-inner .btn-add:hover {
   background-color: #e0e0e0;
   border-color: #e0e0e0;
 }

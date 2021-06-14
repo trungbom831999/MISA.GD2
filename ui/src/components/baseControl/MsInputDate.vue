@@ -6,44 +6,6 @@
       </div>
       <div v-if="required" class="ms-input-title-require">&nbsp;*</div>
     </div>
-    <!-- <div class="form-date">
-      <v-menu
-        ref="menu"
-        v-model="menu"
-        :close-on-content-click="false"
-        transition="scale-transition"
-        offset-y
-        min-width="auto"
-        left
-        offset-overflow
-      >
-        <template v-slot:activator="{ on, attrs }">
-          <input
-            type="text"
-            class="input-date"
-            v-bind:value="value"
-            v-on:input="$emit('input', dateFormatted)"
-            :placeholder="placeholder"
-            @blur="date = parseDate(dateFormatted)"
-          />
-          <span
-            class="mi mi-30 mi-calendar icon-datepicker"
-            v-bind="attrs"
-            v-on="on"
-          ></span>
-        </template>
-        <v-date-picker
-          v-model="date"
-          no-title
-          @input="menu = false"
-          next-icon="mdi-arrow-right"
-          prev-icon="mdi-arrow-left"
-          color="#2ca01c"
-          locale="vi-CZ"
-          style="max-height: 400px"
-        ></v-date-picker>
-      </v-menu>
-    </div> -->
 
     <v-menu
       ref="menu"
@@ -53,16 +15,17 @@
       offset-y
       min-width="auto"
       offset-overflow
+      :readonly="readonly"
     >
       <template v-slot:activator="{ on, attrs }">
         <v-text-field
           ref="input"
-          v-model="dateFormatted"
+          :type="value ? 'date' : 'text'"
+          v-model="date"
           v-bind:value="value"
           v-on:input="$emit('input', dateFormatted)"
           v-on:blur="$emit('input', dateFormatted)"
           v-on:focus="$emit('input', dateFormatted)"
-          @
           hint="MM/DD/YYYY format"
           persistent-hint
           v-bind="attrs"
@@ -70,6 +33,8 @@
           color="#2ca01c"
           outlined
           :placeholder="placeholder"
+          onfocus="(this.type='date')"
+          :readonly="readonly"
         >
           <template v-slot:append>
             <div v-on="on" style="display: flex; align-items: center">
@@ -79,6 +44,7 @@
         </v-text-field>
       </template>
       <v-date-picker
+        v-if="!readonly"
         v-model="date"
         no-title
         @input="menu = false"
@@ -99,6 +65,10 @@ export default {
       type: String,
       default: "",
     },
+    readonly: {
+      type: Boolean,
+      default: false,
+    },
     required: {
       type: Boolean,
       default: false,
@@ -110,7 +80,8 @@ export default {
     value: {},
   },
   data: () => ({
-    date: new Date().toISOString().substr(0, 10),
+    // date: new Date().toISOString().substr(0, 10),
+    date: "",
     dateFormatted: "",
     menu: false,
   }),
@@ -120,26 +91,35 @@ export default {
     },
   },
   watch: {
+    value(newV) {
+      if (newV) {
+        this.dateFormatted = newV;
+        this.date = this.parseDate(this.dateFormatted);
+        if (!this.dateFormatted) {
+          this.date = this.dateFormatted;
+        }
+      }
+    },
     date() {
       this.dateFormatted = this.formatDate(this.date);
     },
-    menu(newV){
-      if(!newV){
+    menu(newV) {
+      if (!newV) {
         this.focusInput();
       }
-    }
+    },
   },
   methods: {
     formatDate(date) {
-      if (!date) return null;
+      if (!date) return "";
 
       const [year, month, day] = date.split("-");
       return `${day}/${month}/${year}`;
     },
     parseDate(date) {
-      if (!date) return null;
-
-      const [day, month, year] = date.split("/");
+      if (!date) return "";
+      console.log(date);
+      let [day, month, year] = date.split("/");
       return `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
     },
 

@@ -11,7 +11,13 @@
       </a>
     </div>
     <div id="menu-list" class="scroller">
-      <router-link to="/supplier" class="menu-item" title="Nhà cung cấp">
+      <router-link to="/index" class="menu-item" title="Trang chủ">
+        <div class="menu-item__icon">
+          <div class="mi mi-24 mi-sidebar-cash"></div>
+        </div>
+        <div class="menu-item__title">Tiền mặt</div>
+      </router-link>
+      <!-- <router-link to="/supplier" class="menu-item" title="Nhà cung cấp">
         <div class="menu-item__icon">
           <div class="mi mi-24 mi-sidebar-dashboard"></div>
         </div>
@@ -28,112 +34,7 @@
           <div class="mi mi-24 mi-sidebar-bank"></div>
         </div>
         <div class="menu-item__title">Phiếu chi</div>
-      </router-link>
-
-      <a href="#" class="menu-item" title="Tổng quan"
-        ><div class="menu-item__icon">
-          <div class="mi mi-24 mi-sidebar-dashboard"></div>
-        </div>
-        <div class="menu-item__title">Tổng quan</div>
-      </a>
-
-      <a href="#" class="menu-item" title="Tiền mặt"
-        ><div class="menu-item__icon">
-          <div class="mi mi-24 mi-sidebar-cash"></div>
-        </div>
-        <div class="menu-item__title">Tiền mặt</div>
-      </a>
-
-      <a href="#" class="menu-item" title="Tiền gửi"
-        ><div class="menu-item__icon">
-          <div class="mi mi-24 mi-sidebar-bank"></div>
-        </div>
-        <div class="menu-item__title">Tiền gửi</div>
-      </a>
-
-      <a href="#" class="menu-item" title="Mua hàng"
-        ><div class="menu-item__icon">
-          <div class="mi mi-24 mi-sidebar-pu"></div>
-        </div>
-        <div class="menu-item__title">Mua hàng</div>
-      </a>
-
-      <a href="#" class="menu-item" title="Bán hàng"
-        ><div class="menu-item__icon">
-          <div class="mi mi-24 mi-sidebar-sale"></div>
-        </div>
-        <div class="menu-item__title">Bán hàng</div>
-      </a>
-
-      <a href="#" class="menu-item" title="Quản lý hóa đơn"
-        ><div class="menu-item__icon">
-          <div class="mi mi-24 mi-sidebar-invoice"></div>
-        </div>
-        <div class="menu-item__title">Quản lý hóa đơn</div>
-      </a>
-
-      <a href="#" class="menu-item" title="Kho"
-        ><div class="menu-item__icon">
-          <div class="mi mi-24 mi-sidebar-stock"></div>
-        </div>
-        <div class="menu-item__title">Kho</div>
-      </a>
-
-      <a href="#" class="menu-item" title="Công cụ dụng cụ"
-        ><div class="menu-item__icon">
-          <div class="mi mi-24 mi-sidebar-tools"></div>
-        </div>
-        <div class="menu-item__title">Công cụ dụng cụ</div>
-      </a>
-
-      <a href="#" class="menu-item" title="Tài sản cố định"
-        ><div class="menu-item__icon">
-          <div class="mi mi-24 mi-sidebar-fixed-assets"></div>
-        </div>
-        <div class="menu-item__title">Tài sản cố định</div>
-      </a>
-
-      <a href="#" class="menu-item" title="Thuế"
-        ><div class="menu-item__icon">
-          <div class="mi mi-24 mi-sidebar-tax"></div>
-        </div>
-        <div class="menu-item__title">Thuế</div>
-      </a>
-
-      <a href="#" class="menu-item" title="Giá thành"
-        ><div class="menu-item__icon">
-          <div class="mi mi-24 mi-sidebar-price"></div>
-        </div>
-        <div class="menu-item__title">Giá thành</div>
-      </a>
-
-      <a href="#" class="menu-item" title="Tổng hợp"
-        ><div class="menu-item__icon">
-          <div class="mi mi-24 mi-sidebar-general"></div>
-        </div>
-        <div class="menu-item__title">Tổng hợp</div>
-      </a>
-
-      <a href="#" class="menu-item" title="Ngân sách"
-        ><div class="menu-item__icon">
-          <div class="mi mi-24 mi-sidebar-budget"></div>
-        </div>
-        <div class="menu-item__title">Ngân sách</div>
-      </a>
-
-      <a href="#" class="menu-item" title="Báo cáo"
-        ><div class="menu-item__icon">
-          <div class="mi mi-24 mi-sidebar-report"></div>
-        </div>
-        <div class="menu-item__title">Báo cáo</div>
-      </a>
-
-      <a href="#" class="menu-item" title="Phân tích tài chính"
-        ><div class="menu-item__icon">
-          <div class="mi mi-24 mi-sidebar-finance"></div>
-        </div>
-        <div class="menu-item__title">Phân tích tài chính</div>
-      </a>
+      </router-link> -->
     </div>
   </div>
 </template>

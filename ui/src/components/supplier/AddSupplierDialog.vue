@@ -1,7 +1,16 @@
 <template>
-  <div class="modal fade" id="add-supplier-dialog">
-    <div class="modal-dialog modal-xl modal-dialog-centered">
-      <div class="modal-content h-625">
+  <div class="ms-popup popup-customer-vendor" id="add-supplier-dialog">
+    <div
+      class="ms-component con-ms-popup"
+      :style="[!isShowPopup ? { display: 'none' } : { display: 'flex' }]"
+      @keyup.esc="$emit('closePopup', false)"
+      tabindex="0"
+    >
+      <div class="ms-popup--background" style="z-index: unset"></div>
+      <div
+        class="modal-content h-625"
+        style="min-width: 900px; max-width: 900px; width: 900px"
+      >
         <!-- Dialog Header -->
         <div class="modal-header border-0 p-0">
           <div class="ms-popup--title">
@@ -15,7 +24,7 @@
                       id="organization"
                       name="radio-group"
                       value="organization"
-                      v-model="typeOfSupplier"
+                      v-model="supplier.typeofsupplier"
                     />
                     <label for="organization" class="mr-4">Tổ chức</label>
                   </div>
@@ -25,7 +34,7 @@
                       id="personal"
                       name="radio-group"
                       value="personal"
-                      v-model="typeOfSupplier"
+                      v-model="supplier.typeofsupplier"
                     />
                     <label for="personal">Cá nhân</label>
                   </div>
@@ -34,7 +43,7 @@
               <check-box
                 class="mlp-100"
                 label="Là khách hàng"
-                v-model="isCustomer"
+                v-model="supplier.iscustomer"
               ></check-box>
             </div>
           </div>
@@ -48,6 +57,7 @@
               class="mi mi-24 mi-close"
               data-dismiss="modal"
               title="Đóng (ESC)"
+              @click="closePopup()"
             ></div>
           </div>
         </div>
@@ -59,45 +69,77 @@
               <div class="w-1/2 p-r-26">
                 <div class="flex row-input">
                   <div
-                    v-if="typeOfSupplier == 'organization'"
+                    v-if="supplier.typeofsupplier == 'organization'"
                     class="w-2/5 p-r-12 position-relative"
                   >
-                    <ms-input label="Mã số thuế"></ms-input>
-                  </div>
-                  <div
-                    class="w-3/5"
-                    :class="{ 'p-r-12': typeOfSupplier == 'personal' }"
-                  >
                     <ms-input
-                      label="Mã nhà cung cấp"
-                      :required="true"
+                      label="Mã số thuế"
+                      ref="inputSupplierTaxCode"
+                      v-model="supplier.suppliertaxcode"
+                      :readonly="isReadOnly ? true : false"
                     ></ms-input>
                   </div>
                   <div
-                    v-if="typeOfSupplier == 'personal'"
+                    class="w-3/5"
+                    :class="{ 'p-r-12': supplier.typeofsupplier == 'personal' }"
+                  >
+                    <ms-input
+                      label="Mã nhà cung cấp"
+                      ref="inputSupplierCode"
+                      v-model="supplier.suppliercode"
+                      :required="true"
+                      :error="
+                        (supplier.suppliercode ? false : true) && mustValidate
+                      "
+                      :readonly="isReadOnly ? true : false"
+                    ></ms-input>
+                  </div>
+                  <div
+                    v-if="supplier.typeofsupplier == 'personal'"
                     class="w-2/5 p-r-12 position-relative"
                   >
-                    <ms-input label="Mã số thuế"></ms-input>
+                    <ms-input
+                      label="Mã số thuế"
+                      v-model="supplier.suppliertaxcode"
+                      :readonly="isReadOnly ? true : false"
+                    ></ms-input>
                   </div>
                 </div>
 
                 <div class="w-full row-input position-relative">
                   <ms-input
-                    v-if="typeOfSupplier == 'organization'"
+                    v-if="supplier.typeofsupplier == 'organization'"
                     label="Tên nhà cung cấp"
+                    ref="inputSupplierName"
+                    v-model="supplier.suppliername"
                     :required="true"
+                    :error="
+                      (supplier.suppliername ? false : true) && mustValidate
+                    "
+                    :readonly="isReadOnly ? true : false"
                   ></ms-input>
-                  <div v-if="typeOfSupplier == 'personal'">
+                  <div v-if="supplier.typeofsupplier == 'personal'">
                     <div class="label-input">Tên nhà cung cấp</div>
                     <div class="flex">
-                      <div class="w-1/3 pr-2">
+                      <div class="w-1/3 pr-2 personalVocative">
                         <select-auto-complete
                           placeholder="Xưng hô"
                           :items="vocatives"
+                          v-model="supplier.suppliervocative"
+                          :readonly="isReadOnly ? true : false"
                         ></select-auto-complete>
                       </div>
                       <div class="w-2/3">
-                        <ms-input label="" placeholder="Họ và tên"></ms-input>
+                        <ms-input
+                          label=""
+                          placeholder="Họ và tên"
+                          v-model="supplier.suppliername"
+                          :error="
+                            (supplier.suppliername ? false : true) &&
+                            mustValidate
+                          "
+                          :readonly="isReadOnly ? true : false"
+                        ></ms-input>
                       </div>
                     </div>
                   </div>
@@ -107,6 +149,8 @@
                   <ms-textarea
                     label="Địa chỉ"
                     placeholder="VD: Số 82 Duy Tân, Dịch Vọng Hậu, Cầu Giấy, Hà Nội"
+                    v-model="supplier.supplieraddress"
+                    :readonly="isReadOnly ? true : false"
                   ></ms-textarea>
                 </div>
               </div>
@@ -114,13 +158,21 @@
               <div class="w-1/2">
                 <div
                   class="flex row-input"
-                  v-if="typeOfSupplier == 'organization'"
+                  v-if="supplier.typeofsupplier == 'organization'"
                 >
                   <div class="w-2/5 p-r-12 position-relative">
-                    <ms-input label="Điện thoại"></ms-input>
+                    <ms-input
+                      label="Điện thoại"
+                      v-model="supplier.supplierphone"
+                      :readonly="isReadOnly ? true : false"
+                    ></ms-input>
                   </div>
                   <div class="w-3/5">
-                    <ms-input label="Website"></ms-input>
+                    <ms-input
+                      label="Website"
+                      v-model="supplier.supplierwebsite"
+                      :readonly="isReadOnly ? true : false"
+                    ></ms-input>
                   </div>
                 </div>
 
@@ -129,11 +181,15 @@
                     label="Nhóm nhà cung cấp"
                     :column="colSupplierGroup"
                     :items="supplierGroups"
+                    valueItem="supplierGroupCode"
                     mainItem="supplierGroupName"
                     chip
                     multiple
                     hasAddButton
+                    v-model="supplier.listsuppliergroup"
+                    :readonly="isReadOnly ? true : false"
                   ></select-auto-complete-menu-table>
+                  <!-- v-model="supplier.listsuppliergroup" -->
                 </div>
 
                 <div class="w-full row-input">
@@ -141,8 +197,11 @@
                     label="Nhân viên mua hàng"
                     :column="colPurchasingStaff"
                     :items="purchasingStaffs"
+                    valueItem="purchasingStaffCode"
                     mainItem="purchasingStaffName"
                     hasAddButton
+                    v-model="supplier.purchasingstaffcode"
+                    :readonly="isReadOnly ? true : false"
                   ></select-auto-complete-menu-table>
                 </div>
               </div>
@@ -198,7 +257,7 @@
                       <div class="w-1/2 p-r-26">
                         <div
                           class="w-full pb-2"
-                          v-if="typeOfSupplier == 'organization'"
+                          v-if="supplier.typeofsupplier == 'organization'"
                         >
                           <div class="label-input">Người liên hệ</div>
                           <div class="flex">
@@ -206,53 +265,92 @@
                               <select-auto-complete
                                 placeholder="Xưng hô"
                                 :items="vocatives"
+                                v-model="supplier.personcontactvocative"
+                                :readonly="isReadOnly ? true : false"
                               ></select-auto-complete>
                             </div>
                             <div class="w-2/3">
                               <ms-input
                                 label=""
                                 placeholder="Họ và tên"
+                                v-model="supplier.personcontactname"
+                                :readonly="isReadOnly ? true : false"
                               ></ms-input>
                             </div>
                           </div>
                         </div>
+                        <div
+                          class="w-full pb-2"
+                          v-if="supplier.typeofsupplier == 'organization'"
+                        >
+                          <ms-input
+                            id="email"
+                            placeholder="Email"
+                            v-model="supplier.personcontactemail"
+                            :readonly="isReadOnly ? true : false"
+                          ></ms-input>
+                        </div>
 
                         <div
-                          v-if="typeOfSupplier == 'personal'"
+                          class="w-1/2 pb-2"
+                          v-if="supplier.typeofsupplier == 'organization'"
+                        >
+                          <ms-input
+                            placeholder="Số điện thoại"
+                            v-model="supplier.personcontactphone"
+                            :readonly="isReadOnly ? true : false"
+                          ></ms-input>
+                        </div>
+
+                        <div
+                          v-if="supplier.typeofsupplier == 'personal'"
                           class="label-input"
                         >
                           Thông tin liên hệ
                         </div>
-                        <div class="w-full pb-2">
-                          <ms-input id="email" placeholder="Email"></ms-input>
+                        <div
+                          class="w-full pb-2"
+                          v-if="supplier.typeofsupplier == 'personal'"
+                        >
+                          <ms-input
+                            id="email"
+                            placeholder="Email"
+                            v-model="supplier.infocontactemail"
+                            :readonly="isReadOnly ? true : false"
+                          ></ms-input>
                         </div>
 
                         <div
                           class="w-1/2 pb-2"
-                          v-if="typeOfSupplier == 'organization'"
+                          v-if="supplier.typeofsupplier == 'personal'"
                         >
-                          <ms-input placeholder="Số điện thoại"></ms-input>
+                          <ms-input
+                            placeholder="Điện thoại di động"
+                            v-model="supplier.infocontactphone"
+                            :readonly="isReadOnly ? true : false"
+                          ></ms-input>
                         </div>
                         <div
                           class="w-1/2 pb-2"
-                          v-if="typeOfSupplier == 'personal'"
+                          v-if="supplier.typeofsupplier == 'personal'"
                         >
-                          <ms-input placeholder="Điện thoại di động"></ms-input>
-                        </div>
-                        <div
-                          class="w-1/2 pb-2"
-                          v-if="typeOfSupplier == 'personal'"
-                        >
-                          <ms-input placeholder="Điện thoại cố định"></ms-input>
+                          <ms-input
+                            placeholder="Điện thoại cố định"
+                            v-model="supplier.infocontactlandlinephone"
+                            :readonly="isReadOnly ? true : false"
+                          ></ms-input>
                         </div>
                         <div class="w-full">
                           <ms-input
                             v-if="
-                              typeOfSupplier == 'personal' ||
-                              (typeOfSupplier == 'organization' && isCustomer)
+                              supplier.typeofsupplier == 'personal' ||
+                              (supplier.typeofsupplier == 'organization' &&
+                                supplier.iscustomer)
                             "
                             label="Đại diện theo PL"
                             placeholder="Đại diện theo PL"
+                            v-model="supplier.legalrepresentation"
+                            :readonly="isReadOnly ? true : false"
                           ></ms-input>
                         </div>
                       </div>
@@ -260,47 +358,76 @@
                       <div class="w-1/2">
                         <div
                           class="w-full"
-                          v-if="typeOfSupplier == 'organization' && !isCustomer"
+                          v-if="
+                            supplier.typeofsupplier == 'organization' &&
+                            !supplier.iscustomer
+                          "
                         >
                           <ms-input
                             label="Đại diện theo PL"
                             placeholder="Đại diện theo PL"
+                            v-model="supplier.legalrepresentation"
+                            :readonly="isReadOnly ? true : false"
                           ></ms-input>
                         </div>
 
-                        <div v-if="typeOfSupplier == 'personal'">
+                        <div v-if="supplier.typeofsupplier == 'personal'">
                           <div class="label-input">
                             Thông tin CMND/Thẻ căn cước
                           </div>
                           <div class="w-1/2 pb-2">
                             <ms-input
                               placeholder="Số CMND/Thẻ căn cước"
+                              v-model="supplier.identitycardnumber"
+                              :readonly="isReadOnly ? true : false"
                             ></ms-input>
                           </div>
                           <div class="w-1/2 pb-2 input-date-picker">
-                            <ms-input-date placeholder="Ngày cấp"></ms-input-date>
+                            <ms-input-date
+                              title="Ngày cấp"
+                              placeholder="Ngày cấp"
+                              v-model="supplier.identitycarddateprovied"
+                              :readonly="isReadOnly ? true : false"
+                            ></ms-input-date>
                           </div>
                           <div class="w-full">
-                            <ms-input placeholder="Nơi cấp"></ms-input>
+                            <ms-input
+                              placeholder="Nơi cấp"
+                              v-model="supplier.identitycardaddress"
+                              :readonly="isReadOnly ? true : false"
+                            ></ms-input>
                           </div>
                         </div>
 
                         <div
-                          v-if="typeOfSupplier == 'organization' && isCustomer"
+                          v-if="
+                            supplier.typeofsupplier == 'organization' &&
+                            supplier.iscustomer
+                          "
                         >
                           <div class="label-input">
                             Người nhận hóa đơn điện tử
                           </div>
                           <div class="w-full pb-2">
-                            <ms-input placeholder="Họ và tên"></ms-input>
+                            <ms-input
+                              placeholder="Họ và tên"
+                              v-model="supplier.receiverebillname"
+                              :readonly="isReadOnly ? true : false"
+                            ></ms-input>
                           </div>
                           <div class="w-full pb-2">
                             <ms-input
                               placeholder='Email, ngăn cách nhiều email bởi dấu chấm phẩy ";"'
+                              v-model="supplier.receiverebillemail"
+                              :readonly="isReadOnly ? true : false"
                             ></ms-input>
                           </div>
                           <div class="w-1/2">
-                            <ms-input placeholder="Số điện thoại"></ms-input>
+                            <ms-input
+                              placeholder="Số điện thoại"
+                              v-model="supplier.receiverebillphone"
+                              :readonly="isReadOnly ? true : false"
+                            ></ms-input>
                           </div>
                         </div>
                       </div>
@@ -316,31 +443,48 @@
                               label="Điều khoản thanh toán"
                               hasAddButton
                               :items="termsOfPayment"
+                              v-model="supplier.termofpayment"
+                              :readonly="isReadOnly ? true : false"
                             ></select-auto-complete>
                           </div>
                         </div>
 
                         <div class="w-input p-r-12">
                           <div class="w-full">
-                            <ms-input label="Số ngày được nợ"></ms-input>
+                            <ms-input
+                              label="Số ngày được nợ"
+                              textRight
+                              v-model="supplier.numberofdaysowned"
+                              :readonly="isReadOnly ? true : false"
+                            ></ms-input>
                           </div>
                         </div>
 
                         <div class="w-input p-r-12">
                           <div class="w-full">
-                            <ms-input label="Số nợ tối đa"></ms-input>
+                            <ms-input
+                              label="Số nợ tối đa"
+                              textRight
+                              v-model="supplier.maxdebt"
+                              :readonly="isReadOnly ? true : false"
+                            ></ms-input>
                           </div>
                         </div>
                       </div>
 
                       <div class="flex row-input">
-                        <div class="flex w-input p-r-12" v-if="isCustomer">
+                        <div
+                          class="flex w-input p-r-12"
+                          v-if="supplier.iscustomer"
+                        >
                           <select-auto-complete-menu-table
                             label="Tài khoản công nợ phải thu"
                             :column="colAccountDebtCash"
                             :items="accountDebtCashs"
                             itemDefault="0"
                             mainItem="accountNumber"
+                            v-model="supplier.accountdebtcash"
+                            :readonly="isReadOnly ? true : false"
                           ></select-auto-complete-menu-table>
                         </div>
                         <div class="flex w-input p-r-12">
@@ -350,7 +494,8 @@
                             :items="accountDebtPay"
                             itemDefault="0"
                             mainItem="accountNumber"
-                            v-model="supplier.supplierAccountDebtPay"
+                            v-model="supplier.accountdebtpay"
+                            :readonly="isReadOnly ? true : false"
                           ></select-auto-complete-menu-table>
                         </div>
                       </div>
@@ -380,7 +525,12 @@
                                               class="flex th-height text-left"
                                             >
                                               <div
-                                                class="th-table padding-th w-full cursor-pointer"
+                                                class="
+                                                  th-table
+                                                  padding-th
+                                                  w-full
+                                                  cursor-pointer
+                                                "
                                               >
                                                 <span>Số tài khoản</span>
                                               </div>
@@ -392,7 +542,12 @@
                                               class="flex th-height text-left"
                                             >
                                               <div
-                                                class="th-table padding-th w-full cursor-pointer"
+                                                class="
+                                                  th-table
+                                                  padding-th
+                                                  w-full
+                                                  cursor-pointer
+                                                "
                                               >
                                                 <span>Tên ngân hàng</span>
                                               </div>
@@ -404,7 +559,12 @@
                                               class="flex th-height text-left"
                                             >
                                               <div
-                                                class="th-table padding-th w-full cursor-pointer"
+                                                class="
+                                                  th-table
+                                                  padding-th
+                                                  w-full
+                                                  cursor-pointer
+                                                "
                                               >
                                                 <span>Chi nhánh</span>
                                               </div>
@@ -419,7 +579,12 @@
                                               class="flex th-height text-left"
                                             >
                                               <div
-                                                class="th-table padding-th w-full cursor-pointer"
+                                                class="
+                                                  th-table
+                                                  padding-th
+                                                  w-full
+                                                  cursor-pointer
+                                                "
                                               >
                                                 <span
                                                   >Tỉnh/TP của ngân hàng</span
@@ -429,7 +594,11 @@
                                           </th>
 
                                           <th
-                                            class="text-right wiget wiget-title right-0"
+                                            class="
+                                              text-right
+                                              wiget wiget-title
+                                              right-0
+                                            "
                                             style="
                                               min-width: 40px;
                                               width: 40px;
@@ -447,44 +616,88 @@
                                         <tr
                                           v-for="(
                                             account, index
-                                          ) in listAccountBank"
+                                          ) in supplier.listaccountbank"
                                           :key="index"
-                                          class="tr-values vs-table--tr tr-table-state-null selected"
+                                          class="
+                                            tr-values
+                                            vs-table--tr
+                                            tr-table-state-null
+                                            selected
+                                          "
                                           :indexAccount="index"
                                         >
                                           <td
-                                            class="td ms-table--td dynamic-column"
+                                            class="
+                                              td
+                                              ms-table--td
+                                              dynamic-column
+                                            "
                                           >
                                             <ms-input
                                               v-model="account.accountNumber"
+                                              :readonly="
+                                                isReadOnly ? true : false
+                                              "
                                             ></ms-input>
                                           </td>
                                           <td
-                                            class="td ms-table--td dynamic-column"
+                                            class="
+                                              td
+                                              ms-table--td
+                                              dynamic-column
+                                            "
                                           >
                                             <ms-input
                                               v-model="account.bankName"
+                                              :readonly="
+                                                isReadOnly ? true : false
+                                              "
                                             ></ms-input>
                                           </td>
                                           <td
-                                            class="td ms-table--td dynamic-column"
+                                            class="
+                                              td
+                                              ms-table--td
+                                              dynamic-column
+                                            "
                                           >
                                             <ms-input
                                               v-model="account.bankBranch"
+                                              :readonly="
+                                                isReadOnly ? true : false
+                                              "
                                             ></ms-input>
                                           </td>
                                           <td
-                                            class="td ms-table--td dynamic-column"
+                                            class="
+                                              td
+                                              ms-table--td
+                                              dynamic-column
+                                            "
                                           >
                                             <ms-input
                                               v-model="account.province"
+                                              :readonly="
+                                                isReadOnly ? true : false
+                                              "
                                             ></ms-input>
                                           </td>
                                           <td
-                                            class="td ms-table--td wiget right-0"
+                                            class="
+                                              td
+                                              ms-table--td
+                                              wiget
+                                              right-0
+                                            "
                                           >
                                             <div
-                                              class="delete-function flex justify-end align-center"
+                                              v-if="!isReadOnly"
+                                              class="
+                                                delete-function
+                                                flex
+                                                justify-end
+                                                align-center
+                                              "
                                               @click="
                                                 removeRowBankAccount(index)
                                               "
@@ -508,22 +721,50 @@
                       <div class="grid-control-item">
                         <div class="btn-grid-control">
                           <button
-                            class="ms-component ms-button ms-button-size-small ms-button-secondary ms-button-secondary-disabled-false ms-button-radius-false ms-button"
+                            v-if="!isReadOnly"
+                            class="
+                              ms-component
+                              ms-button
+                              ms-button-size-small
+                              ms-button-secondary
+                              ms-button-secondary-disabled-false
+                              ms-button-radius-false
+                              ms-button
+                            "
                             @click="addRowBankAccount()"
                           >
                             <div
-                              class="ms-button-text ms-button--text flex align-center"
+                              class="
+                                ms-button-text
+                                ms-button--text
+                                flex
+                                align-center
+                              "
                             >
                               <div>Thêm dòng</div>
                             </div>
                           </button>
 
                           <button
-                            class="ms-component ms-button ms-button-size-small ms-button-secondary ms-button-secondary-disabled-false ms-button-radius-false ms-button"
+                            v-if="!isReadOnly"
+                            class="
+                              ms-component
+                              ms-button
+                              ms-button-size-small
+                              ms-button-secondary
+                              ms-button-secondary-disabled-false
+                              ms-button-radius-false
+                              ms-button
+                            "
                             @click="removeAllRowBankAccount()"
                           >
                             <div
-                              class="ms-button-text ms-button--text flex align-center"
+                              class="
+                                ms-button-text
+                                ms-button--text
+                                flex
+                                align-center
+                              "
                             >
                               <div>Xóa hết dòng</div>
                             </div>
@@ -541,11 +782,17 @@
                           <div class="w-1/2 p-r-12">
                             <select-auto-complete
                               placeholder="Quốc gia"
+                              v-model="supplier.otheraddressnation"
+                              :items="nation"
+                              :readonly="isReadOnly ? true : false"
                             ></select-auto-complete>
                           </div>
                           <div class="w-1/2">
                             <select-auto-complete
                               placeholder="Tỉnh/Thành phố"
+                              v-model="supplier.otheraddressprovince"
+                              :items="province"
+                              :readonly="isReadOnly ? true : false"
                             ></select-auto-complete>
                           </div>
                         </div>
@@ -554,11 +801,17 @@
                           <div class="w-1/2 p-r-12">
                             <select-auto-complete
                               placeholder="Quận/Huyện"
+                              v-model="supplier.otheraddressdistrict"
+                              :items="district"
+                              :readonly="isReadOnly ? true : false"
                             ></select-auto-complete>
                           </div>
                           <div class="w-1/2">
                             <select-auto-complete
                               placeholder="Xã/Phường"
+                              v-model="supplier.otheraddresssubdistrict"
+                              :items="subdistrict"
+                              :readonly="isReadOnly ? true : false"
                             ></select-auto-complete>
                           </div>
                         </div>
@@ -597,7 +850,12 @@
                                                 class="flex th-height text-left"
                                               >
                                                 <div
-                                                  class="th-table padding-th w-full cursor-pointer"
+                                                  class="
+                                                    th-table
+                                                    padding-th
+                                                    w-full
+                                                    cursor-pointer
+                                                  "
                                                 >
                                                   <span
                                                     >Địa điểm giao hàng</span
@@ -607,7 +865,11 @@
                                             </th>
 
                                             <th
-                                              class="text-right wiget wiget-title right-0"
+                                              class="
+                                                text-right
+                                                wiget wiget-title
+                                                right-0
+                                              "
                                               style="
                                                 min-width: 40px;
                                                 width: 40px;
@@ -622,22 +884,46 @@
                                           <tr
                                             v-for="(
                                               place, index
-                                            ) in placeDelivery"
+                                            ) in supplier.listplacedelivery"
                                             :key="index"
-                                            class="tr-values vs-table--tr tr-table-state-null select-row selected"
+                                            class="
+                                              tr-values
+                                              vs-table--tr
+                                              tr-table-state-null
+                                              select-row
+                                              selected
+                                            "
                                           >
                                             <td
-                                              class="td ms-table--td dynamic-column"
+                                              class="
+                                                td
+                                                ms-table--td
+                                                dynamic-column
+                                              "
                                             >
                                               <ms-input
                                                 v-model="place.address"
+                                                :readonly="
+                                                  isReadOnly ? true : false
+                                                "
                                               ></ms-input>
                                             </td>
                                             <td
-                                              class="td ms-table--td wiget right-0"
+                                              class="
+                                                td
+                                                ms-table--td
+                                                wiget
+                                                right-0
+                                              "
                                             >
                                               <div
-                                                class="delete-function flex justify-end align-center"
+                                                v-if="!isReadOnly"
+                                                class="
+                                                  delete-function
+                                                  flex
+                                                  justify-end
+                                                  align-center
+                                                "
                                                 @click="
                                                   removeRowPlaceDelivery(index)
                                                 "
@@ -661,22 +947,50 @@
                         <div class="grid-control-item">
                           <div class="btn-grid-control">
                             <button
-                              class="ms-component ms-button ms-button-size-small ms-button-secondary ms-button-secondary-disabled-false ms-button-radius-false ms-button"
+                              v-if="!isReadOnly"
+                              class="
+                                ms-component
+                                ms-button
+                                ms-button-size-small
+                                ms-button-secondary
+                                ms-button-secondary-disabled-false
+                                ms-button-radius-false
+                                ms-button
+                              "
                               @click="addRowPlaceDelivery()"
                             >
                               <div
-                                class="ms-button-text ms-button--text flex align-center"
+                                class="
+                                  ms-button-text
+                                  ms-button--text
+                                  flex
+                                  align-center
+                                "
                               >
                                 <div>Thêm dòng</div>
                               </div>
                             </button>
 
                             <button
-                              class="ms-component ms-button ms-button-size-small ms-button-secondary ms-button-secondary-disabled-false ms-button-radius-false ms-button"
+                              v-if="!isReadOnly"
+                              class="
+                                ms-component
+                                ms-button
+                                ms-button-size-small
+                                ms-button-secondary
+                                ms-button-secondary-disabled-false
+                                ms-button-radius-false
+                                ms-button
+                              "
                               @click="removeAllRowPlaceDelivery()"
                             >
                               <div
-                                class="ms-button-text ms-button--text flex align-center"
+                                class="
+                                  ms-button-text
+                                  ms-button--text
+                                  flex
+                                  align-center
+                                "
                               >
                                 <div>Xóa hết dòng</div>
                               </div>
@@ -689,7 +1003,11 @@
 
                   <div id="note-tab" class="tab-pane fade">
                     <div class="tab-con-content description">
-                      <ms-textarea> </ms-textarea>
+                      <ms-textarea
+                        v-model="supplier.suppliernote"
+                        :readonly="isReadOnly ? true : false"
+                      >
+                      </ms-textarea>
                     </div>
                   </div>
                 </div>
@@ -697,14 +1015,20 @@
             </div>
           </div>
 
-          <div class="ms-popup-footer">
+          <div class="ms-popup-footer" v-if="!isReadOnly">
             <div class="divide"></div>
             <div class="flex footer-button-group">
               <div class="w-full flex align-right">
                 <div class="flex align-right">
                   <div class="p-x-3">
                     <button
-                      class="ms-button-size-default ms-button-secondary ms-button-radius-false ms-button"
+                      class="
+                        ms-button-size-default
+                        ms-button-secondary
+                        ms-button-radius-false
+                        ms-button
+                      "
+                      @click="saveSupplier()"
                     >
                       <div
                         class="ms-button-text ms-button--text flex align-center"
@@ -715,7 +1039,13 @@
                   </div>
                   <div>
                     <button
-                      class="ms-button-size-default ms-button-primary ms-button-radius-false ms-button"
+                      class="
+                        ms-button-size-default
+                        ms-button-primary
+                        ms-button-radius-false
+                        ms-button
+                      "
+                      @click="saveSupplierAndAddNew()"
                     >
                       <div
                         class="ms-button-text ms-button--text flex align-center"
@@ -729,8 +1059,13 @@
 
               <div class="w-1/2" style="position: absolute">
                 <button
-                  class="ms-button-size-default ms-button-secondary ms-button-radius-false ms-button"
-                  data-dismiss="modal"
+                  class="
+                    ms-button-size-default
+                    ms-button-secondary
+                    ms-button-radius-false
+                    ms-button
+                  "
+                  @click="closePopup()"
                 >
                   <div class="ms-button-text ms-button--text flex align-center">
                     Hủy
@@ -744,41 +1079,6 @@
     </div>
 
     <!-- thông báo lỗi  -->
-    <!-- <div class="modal fade" id="error-dialog">
-      <div
-        class="modal-dialog modal-dialog-centered"
-        style="width: 444px; min-width: 444px"
-      >
-        <div class="modal-content">
-          <div class="padding-32">
-            <div class="content">
-              <div class="icon-message">
-                <div class="mi mi-48 mi-exclamation-error-48-2"></div>
-              </div>
-              <div class="message-content p-l-16 p-t-12">
-                <span id="idMessageError" class="message"
-                  ></span
-                >
-              </div>
-            </div>
-            <div class="mess-line"></div>
-            <div class="mess-footer">
-              <div class="Center">
-                <button
-                  name="button"
-                  class="ms-component ms-button ms-button-size-default ms-button-primary ms-button-primary-disabled-false ms-button-radius-false ms-button"
-                  @click="hideErrorDialog()"
-                >
-                  <div class="ms-button-text ms-button--text flex align-center">
-                    Đóng
-                  </div>
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div> -->
 
     <div class="con-ms-message-box" id="error-dialog">
       <div class="message-center">
@@ -800,7 +1100,16 @@
                   <div class="Center">
                     <button
                       name="button"
-                      class="ms-component ms-button ms-button-size-default ms-button-primary ms-button-primary-disabled-false ms-button-radius-false ms-button"
+                      class="
+                        ms-component
+                        ms-button
+                        ms-button-size-default
+                        ms-button-primary
+                        ms-button-primary-disabled-false
+                        ms-button-radius-false
+                        ms-button
+                      "
+                      @click="hideErrorDialog()"
                     >
                       <div
                         class="ms-button-text ms-button--text flex align-center"
@@ -820,13 +1129,17 @@
 </template>
 
 <script>
+var localhost = "https://localhost:44350/api/Suppliers/";
+
 import MsInput from "../baseControl/MsInput.vue";
 import MsTextarea from "../baseControl/MsTextarea.vue";
 import MsInputDate from "../baseControl/MsInputDate.vue";
 import CheckBox from "../baseControl/CheckBox.vue";
 import SelectAutoComplete from "../baseControl/SelectAutoComplete.vue";
 import SelectAutoCompleteMenuTable from "../baseControl/SelectAutoCompleteMenuTable.vue";
+import EventBus from "../../main.js";
 
+import * as axios from "axios";
 export default {
   components: {
     MsInput,
@@ -837,29 +1150,113 @@ export default {
     SelectAutoCompleteMenuTable,
   },
 
+  props: {
+    isShowPopup: {
+      type: Boolean,
+      default: false,
+    },
+    idSupplier: {
+      type: String,
+      default: "",
+    },
+  },
+  watch: {
+    isShowPopup(newV) {
+      if (newV) {
+        var m = this;
+        setTimeout(function () {
+          if (m.supplier.typeofsupplier == "organization") {
+            m.focusInput("inputSupplierTaxCode");
+          } else if (m.supplier.typeofsupplier == "personal") {
+            m.focusInput("inputSupplierCode");
+          }
+          m.mustValidate = false;
+        }, 200);
+      }
+    },
+    idSupplier(newV) {
+      var m = this;
+      if (newV) {
+        setTimeout(function () {
+          m.getSupplier(newV);
+          m.mustValidate = false;
+        }, 100);
+      } else {
+        setTimeout(function () {
+          m.resetInfoSupplier();
+          m.mustValidate = false;
+        }, 100);
+      }
+      console.log(newV);
+    },
+  },
+
   data() {
     return {
+      isEdit: false,
+      isReadOnly: false,
+      mustValidate: false,
+      inputFocus: "",
       supplier: {
-        supplierCode: "",
-        supplierAccountDebtPay: "",
+        typeofsupplier: "organization",
+        iscustomer: false,
+        suppliername: "",
+        suppliervocative: "",
+        supplierphone: "",
+        supplierwebsite: "",
+        supplieraddress: "",
+        listsuppliergroup: [],
+        purchasingstaffcode: "",
+        personcontactvocative: "",
+        personcontactname: "",
+        personcontactemail: "",
+        personcontactphone: "",
+        receiverebillname: "",
+        receiverebillemail: "",
+        receiverebillphone: "",
+        legalrepresentation: "",
+        infocontactemail: "",
+        infocontactphone: "",
+        infocontactlandlinephone: "",
+        identitycardnumber: "",
+        identitycarddateprovied: "",
+        identitycardaddress: "",
+        termofpayment: "",
+        numberofdaysowned: 0,
+        maxdebt: 0,
+        accountdebtcash: "123",
+        accountdebtpay: "Bank1",
+        listaccountbank: [
+          {
+            accountNumber: "",
+            bankName: "",
+            bankBranch: "",
+            province: "",
+          },
+        ],
+        otheraddressnation: "",
+        otheraddressprovince: "",
+        otheraddressdistrict: "",
+        otheraddresssubdistrict: "",
+        listplacedelivery: [{ address: "" }],
+        suppliernote: "",
+        suppliercode: "",
+        suppliertaxcode: "",
+        idsupplier: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
       },
 
-      listAccountBank: [
-        {
-          accountNumber: "",
-          bankName: "",
-          bankBranch: "",
-          province: "",
-        },
-      ],
+      // listAccountBank: [
+      //   {
+      //     accountNumber: "",
+      //     bankName: "",
+      //     bankBranch: "",
+      //     province: "",
+      //   },
+      // ],
 
-      placeDelivery: [{ address: "" }],
+      // placeDelivery: [{ address: "" }],
 
       vocatives: ["Anh", "Bà", "Bạn", "Chị", "Ông"],
-      // isOrganization: true,
-      // isPersonal: false,
-      typeOfSupplier: "organization", //or personal
-      isCustomer: false,
 
       colSupplierGroup: [
         { name: "Mã nhóm KH, NCC", width: "150" },
@@ -869,6 +1266,8 @@ export default {
       supplierGroups: [
         { supplierGroupCode: "NCC1", supplierGroupName: "Công ty Cổ phần CCn" },
         { supplierGroupCode: "NC268", supplierGroupName: "Công ty CKC" },
+        { supplierGroupCode: "NCC6", supplierGroupName: "Tập đoàn Vin Fly" },
+        { supplierGroupCode: "NCX35", supplierGroupName: "Bất động sản 2land" },
       ],
 
       colPurchasingStaff: [
@@ -913,10 +1312,45 @@ export default {
         { accountNumber: "Bank1", accountName: "Ngân hàng Public" },
         { accountNumber: "Bank2", accountName: "Ngân hàng MB" },
       ],
+
+      nation: ["Việt Nam", "Mỹ"],
+      province: ["Hà Nội", "TP Hồ Chí Minh", "Hà Nam"],
+      district: ["Cầu Giấy", "Hai Bà Trưng", "Đống Đa"],
+      subdistrict: ["Yên Hòa", "Trung Hòa", "Nhân Chính", "Vĩnh Trụ"],
     };
   },
 
   methods: {
+    //đóng popup
+    closePopup() {
+      this.$emit("closePopup", false);
+    },
+
+    //yêu cầu table load lại data
+    loadData() {
+      this.$emit("loadData");
+    },
+
+    //focus input chứa ref
+
+    focusInput(refInput) {
+      this.$refs[refInput].focusInput();
+      // document.getElementsByClassName('ms-input--input')[0].focus();
+      // this.$refs.msInput.$el.querySelectorAll("input")[0].focus();
+      // console.log(this.$refs.msInput.$el.querySelectorAll("input")[0]);
+    },
+
+    showErrorDialog(content) {
+      document.getElementById("idMessageError").innerHTML = content;
+      document.getElementById("error-dialog").style.display = "block";
+    },
+
+    hideErrorDialog() {
+      document.getElementById("error-dialog").style.display = "none";
+      // document.getElementById(this.inputFocus).focus();
+      this.focusInput(this.inputFocus);
+    },
+
     //thêm 1 dòng tài khoản ngân hàng
     addRowBankAccount() {
       let newAccount = {
@@ -925,24 +1359,24 @@ export default {
         bankBranch: "",
         province: "",
       };
-      this.listAccountBank.push(newAccount);
+      this.supplier.listaccountbank.push(newAccount);
     },
 
     // xóa 1 dòng tài khoản ngân hàng
     removeRowBankAccount(i) {
-      this.listAccountBank.splice(i, 1);
+      this.supplier.listaccountbank.splice(i, 1);
     },
 
     //xóa tất cả dòng tài khoản ngân hàng
     removeAllRowBankAccount() {
-      this.listAccountBank = [];
+      this.supplier.listaccountbank = [];
       let newAccount = {
         accountNumber: "",
         bankName: "",
         bankBranch: "",
         province: "",
       };
-      this.listAccountBank.push(newAccount);
+      this.supplier.listaccountbank.push(newAccount);
     },
 
     //thêm 1 dòng địa chỉ giao hàng
@@ -950,22 +1384,272 @@ export default {
       let newPlaceDelivery = {
         address: "",
       };
-      this.placeDelivery.push(newPlaceDelivery);
+      this.supplier.listplacedelivery.push(newPlaceDelivery);
     },
 
     // xóa 1 dòng địa chỉ giao hàng
     removeRowPlaceDelivery(i) {
-      this.placeDelivery.splice(i, 1);
+      this.supplier.listplacedelivery.splice(i, 1);
     },
 
     //xóa tất cả dòng địa chỉ giao hàng
     removeAllRowPlaceDelivery() {
-      this.placeDelivery = [];
+      this.supplier.listplacedelivery = [];
       let newPlaceDelivery = {
         address: "",
       };
-      this.placeDelivery.push(newPlaceDelivery);
+      this.supplier.listplacedelivery.push(newPlaceDelivery);
     },
+
+    //validate 2 trường required
+    checkInfoSupplier() {
+      if (this.supplier.suppliercode.trim() == "") {
+        this.showErrorDialog("Mã nhà cung cấp không được để trống");
+        this.mustValidate = true;
+        this.inputFocus = "inputSupplierCode";
+        return false;
+      } else if (this.supplier.suppliername.trim() == "") {
+        this.showErrorDialog("Tên nhà cung cấp không được để trống");
+        this.mustValidate = true;
+        this.inputFocus = "inputSupplierName";
+        return false;
+      } else {
+        return true;
+      }
+    },
+
+    //đổi định dạng ngày để push
+    formatDateToPush(date) {
+      if (!date) return null;
+
+      let [day, month, year] = date.split("/");
+      let newDate = `${year}-${month}-${day}`;
+      return new Date(newDate).toISOString();
+    },
+
+    //đổi định dạng ngày để hiển thị
+    formatDateToShow(date) {
+      if (!date) return "";
+
+      date = new Date(date);
+      let day = date.getDate();
+      let month = date.getMonth() + 1;
+      let year = date.getFullYear();
+      return `${day}/${month}/${year}`;
+    },
+
+    async getSupplier(id) {
+      // const response = await axios.get(localhost + id);
+      // this.supplier = response.data;
+      // this.supplier.identitycarddateprovied = this.formatDateToShow(
+      //   response.data.identitycarddateprovied
+      // );
+      // if (this.supplier.typeofsupplier == "organization") {
+      //   this.focusInput("inputSupplierTaxCode");
+      // } else if (this.supplier.typeofsupplier == "personal") {
+      //   this.focusInput("inputSupplierCode");
+      // }
+      // console.log(response.data);
+
+      let m = this;
+      axios({
+        method: "get",
+        url: localhost + id,
+      })
+        .then(function (response) {
+          //thành công
+          console.log(response.data);
+          m.supplier = response.data;
+          m.supplier.listsuppliergroup = JSON.parse(
+            m.supplier.listsuppliergroup
+          );
+          m.supplier.listplacedelivery = JSON.parse(
+            m.supplier.listplacedelivery
+          );
+          m.supplier.listaccountbank = JSON.parse(m.supplier.listaccountbank);
+          m.supplier.identitycarddateprovied = m.formatDateToShow(
+            response.data.identitycarddateprovied
+          );
+          if (m.supplier.typeofsupplier == "organization") {
+            m.focusInput("inputSupplierTaxCode");
+          } else if (m.supplier.typeofsupplier == "personal") {
+            m.focusInput("inputSupplierCode");
+          }
+        })
+        .catch(function (error) {
+          //gặp lỗi
+          console.log(error);
+        });
+    },
+
+    //reset thông tin sau khi lưu
+    resetInfoSupplier() {
+      this.mustValidate = false;
+      this.inputFocus = "";
+      this.supplier = {
+        typeofsupplier: "organization",
+        iscustomer: false,
+        suppliername: "",
+        suppliervocative: "",
+        supplierphone: "",
+        supplierwebsite: "",
+        supplieraddress: "",
+        listsuppliergroup: [],
+        purchasingstaffcode: "",
+        personcontactvocative: "",
+        personcontactname: "",
+        personcontactemail: "",
+        personcontactphone: "",
+        receiverebillname: "",
+        receiverebillemail: "",
+        receiverebillphone: "",
+        legalrepresentation: "",
+        infocontactemail: "",
+        infocontactphone: "",
+        infocontactlandlinephone: "",
+        identitycardnumber: "",
+        identitycarddateprovied: "",
+        identitycardaddress: "",
+        termofpayment: "",
+        numberofdaysowned: 0,
+        maxdebt: 0,
+        accountdebtcash: "123",
+        accountdebtpay: "Bank1",
+        listaccountbank: [
+          {
+            accountNumber: "",
+            bankName: "",
+            bankBranch: "",
+            province: "",
+          },
+        ],
+        otheraddressnation: "",
+        otheraddressprovince: "",
+        otheraddressdistrict: "",
+        otheraddresssubdistrict: "",
+        listplacedelivery: [{ address: "" }],
+        suppliernote: "",
+        suppliercode: "",
+        suppliertaxcode: "",
+        idsupplier: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+      };
+
+      this.isEdit = false;
+    },
+
+    //ấn nút CẤT
+    saveSupplier() {
+      if (this.checkInfoSupplier()) {
+        if (this.isEdit) {
+          this.editSupplier();
+        } else {
+          this.addSupplier();
+        }
+      }
+    },
+
+    editSupplier() {
+      let editSupplier = this.supplier;
+      editSupplier.idsupplier = this.idSupplier;
+      editSupplier.listsuppliergroup = JSON.stringify(
+        this.supplier.listsuppliergroup
+      );
+      editSupplier.listaccountbank = JSON.stringify(
+        this.supplier.listaccountbank
+      );
+      editSupplier.listplacedelivery = JSON.stringify(
+        this.supplier.listplacedelivery
+      );
+      editSupplier.identitycarddateprovied = this.formatDateToPush(
+        editSupplier.identitycarddateprovied
+      );
+      console.log(editSupplier);
+      // this.resetInfoSupplier();
+      // this.closePopup();
+      var m = this;
+      axios({
+        method: "put",
+        url: localhost + this.idSupplier,
+        data: editSupplier,
+      })
+        .then(function (response) {
+          //thành công
+          console.log(response);
+          m.resetInfoSupplier();
+          m.closePopup();
+          m.loadData();
+        })
+        .catch(function (error) {
+          //gặp lỗi
+          var noti = error.response.data;
+          m.showErrorDialog(noti.userMsg);
+          if (noti.errorCode == "misa-001") {
+            m.inputFocus = "inputSupplierCode";
+          }
+        });
+    },
+
+    addSupplier() {
+      this.supplier.idsupplier = "3fa85f64-5717-4562-b3fc-2c963f66afa6";
+      this.supplier.listsuppliergroup = JSON.stringify(
+        this.supplier.listsuppliergroup
+      );
+      this.supplier.listaccountbank = JSON.stringify(
+        this.supplier.listaccountbank
+      );
+      this.supplier.listplacedelivery = JSON.stringify(
+        this.supplier.listplacedelivery
+      );
+      this.supplier.identitycarddateprovied = this.formatDateToPush(
+        this.supplier.identitycarddateprovied
+      );
+      console.log(this.supplier);
+
+      var m = this;
+      axios({
+        method: "post",
+        url: localhost,
+        data: this.supplier,
+      })
+        .then(function (response) {
+          //thành công
+          console.log(response);
+          m.resetInfoSupplier();
+          m.closePopup();
+          m.loadData();
+        })
+        .catch(function (error) {
+          //gặp lỗi
+          var noti = error.response.data;
+          m.showErrorDialog(noti.userMsg);
+          if (noti.errorCode == "misa-001") {
+            m.inputFocus = "inputSupplierCode";
+          }
+        });
+    },
+
+    //ấn nút cất và thêm
+    saveSupplierAndAddNew() {
+      if (this.checkInfoSupplier()) {
+        if (this.isEdit) {
+          this.editSupplierAndAddNew();
+        } else {
+          this.addSupplierAndAddNew();
+        }
+      }
+    },
+
+    editSupplierAndAddNew() {
+      this.resetInfoSupplier();
+    },
+
+    addSupplierAndAddNew() {
+      this.resetInfoSupplier();
+    },
+  },
+  created() {
+    EventBus.$on("setIsEdit", (data) => (this.isEdit = data));
+    EventBus.$on("setIsReadOnly", (data) => (this.isReadOnly = data));
   },
 };
 </script>
@@ -1313,7 +1997,7 @@ export default {
   margin-right: 2px;
   color: #111;
   padding: 0 8px;
-  margin-top: 6px;
+  margin-top: 7px;
   transition: all 0.2s ease;
   display: flex;
   place-items: center;
@@ -1345,10 +2029,6 @@ export default {
 
 .row-input .w-input {
   width: 200px;
-}
-
-.input-date-picker .v-text-field .v-input__append-inner {
-  padding: 4px;
 }
 
 .description .ms-textarea {
@@ -1464,8 +2144,21 @@ export default {
   border-radius: 3px;
 }
 
-.mi-exclamation-error-48-2 {
-  background-position: -24px -954px;
+.message-content {
+  overflow: auto;
+  max-height: 400px;
+  margin-bottom: 32px;
+}
+
+.mess-line {
+  height: 1px;
+  background: #b8bcc3;
+  margin-bottom: 20px;
+}
+
+.mess-footer {
+  position: relative;
+  height: 36px;
 }
 
 .Center {
@@ -1493,6 +2186,10 @@ export default {
 .close-alert-btn {
   margin-left: 16px;
   margin-top: -2px;
+}
+
+.personalVocative .ms-select-autocomplete .v-text-field--outlined fieldset {
+  top: -4.5px;
 }
 </style>
 
@@ -1621,7 +2318,7 @@ export default {
 }
 
 .tab-content .grid-control-item .btn-grid-control {
-  padding: 10px 0 0 0 !important;
+  padding: 10px 0 2px 0 !important;
 }
 
 .grid-control-item .btn-grid-control button {

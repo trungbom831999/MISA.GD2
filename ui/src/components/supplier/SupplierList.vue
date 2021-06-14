@@ -16,7 +16,15 @@
                   <template slot="dropdown-button">
                     <button
                       name="button"
-                      class="ms-component ms-button ms-button-secondary ms-con-dropdown-radius-true-true ms-padding-is-single-true-size-default expand-more-button ms-button-size-default"
+                      class="
+                        ms-component
+                        ms-button
+                        ms-button-secondary
+                        ms-con-dropdown-radius-true-true
+                        ms-padding-is-single-true-size-default
+                        expand-more-button
+                        ms-button-size-default
+                      "
                     >
                       <div
                         class="ms-button-text ms-button--text flex align-center"
@@ -28,7 +36,10 @@
                   </template>
                   <template slot="dropdown-list">
                     <div
-                      class="ms-component ms-dropdown-item-secondary-false ms-dropdown--item"
+                      class="
+                        ms-component ms-dropdown-item-secondary-false
+                        ms-dropdown--item
+                      "
                     >
                       <a class="ms-dropdown--item-link"
                         >Gộp nhà cung cấp tự động
@@ -41,9 +52,20 @@
               <div class="add-btn ms-dropdown">
                 <button
                   name="button"
-                  class="ms-component ms-button ms-button-size-default ms-button-primary ms-radius-true ms-dropdown-style-default"
-                  data-toggle="modal"
-                  data-target="#add-supplier-dialog"
+                  class="
+                    ms-component
+                    ms-button
+                    ms-button-size-default
+                    ms-button-primary
+                    ms-radius-true
+                    ms-dropdown-style-default
+                  "
+                  @click="
+                    showPopup(),
+                      setIsEditFalse(),
+                      setIsReadOnlyFalse(),
+                      (idSupplier = '')
+                  "
                 >
                   <div class="ms-button-text ms-button--text flex align-center">
                     Thêm
@@ -53,7 +75,14 @@
                   <template slot="dropdown-button">
                     <button
                       name="button"
-                      class="ms-component ms-button ms-padding-is-single-false-size-default ms-con-dropdown-radius-false-true ms-padding-is-single-false-size-default ms-button-primary"
+                      class="
+                        ms-component
+                        ms-button
+                        ms-padding-is-single-false-size-default
+                        ms-con-dropdown-radius-false-true
+                        ms-padding-is-single-false-size-default
+                        ms-button-primary
+                      "
                     >
                       <div
                         class="ms-button-text ms-button--text flex align-center"
@@ -67,7 +96,10 @@
                   </template>
                   <template slot="dropdown-list">
                     <div
-                      class="ms-component ms-dropdown-item-secondary-false ms-dropdown--item"
+                      class="
+                        ms-component ms-dropdown-item-secondary-false
+                        ms-dropdown--item
+                      "
                     >
                       <a class="ms-dropdown--item-link">Nhập từ Excel </a>
                     </div>
@@ -152,10 +184,23 @@
                     <template slot="dropdown-button">
                       <button
                         name="button"
-                        class="ms-component ms-button ms-button-secondary ms-con-dropdown-radius-true-true ms-padding-is-single-true-size-default expand-more-button ms-button-size-default"
+                        class="
+                          ms-component
+                          ms-button
+                          ms-button-secondary
+                          ms-con-dropdown-radius-true-true
+                          ms-padding-is-single-true-size-default
+                          expand-more-button
+                          ms-button-size-default
+                        "
                       >
                         <div
-                          class="ms-button-text ms-button--text flex align-center"
+                          class="
+                            ms-button-text
+                            ms-button--text
+                            flex
+                            align-center
+                          "
                         >
                           <span class="pr-1">Thực hiện hàng loạt</span>
                           <div class="mi mi-16 mi-arrow-up--black">&nbsp;</div>
@@ -164,12 +209,18 @@
                     </template>
                     <template slot="dropdown-list">
                       <div
-                        class="ms-component ms-dropdown-item-secondary-false ms-dropdown--item"
+                        class="
+                          ms-component ms-dropdown-item-secondary-false
+                          ms-dropdown--item
+                        "
                       >
                         <a class="ms-dropdown--item-link">Xóa </a>
                       </div>
                       <div
-                        class="ms-component ms-dropdown-item-secondary-false ms-dropdown--item"
+                        class="
+                          ms-component ms-dropdown-item-secondary-false
+                          ms-dropdown--item
+                        "
                       >
                         <a class="ms-dropdown--item-link">Gộp </a>
                       </div>
@@ -184,10 +235,23 @@
                     <template slot="dropdown-button">
                       <button
                         name="button"
-                        class="ms-component ms-button ms-button-secondary ms-con-dropdown-radius-true-true ms-padding-is-single-true-size-default expand-more-button ms-button-size-default"
+                        class="
+                          ms-component
+                          ms-button
+                          ms-button-secondary
+                          ms-con-dropdown-radius-true-true
+                          ms-padding-is-single-true-size-default
+                          expand-more-button
+                          ms-button-size-default
+                        "
                       >
                         <div
-                          class="ms-button-text ms-button--text flex align-center"
+                          class="
+                            ms-button-text
+                            ms-button--text
+                            flex
+                            align-center
+                          "
                         >
                           <span class="pr-1">Lọc</span>
                           <div class="mi mi-16 mi-arrow-up--black">&nbsp;</div>
@@ -211,7 +275,13 @@
                   placeholder="Nhập từ khóa tìm kiếm"
                 />
                 <label
-                  class="icon-inputx notranslate ms-input--icon icon-after mi-search mi mi-16"
+                  class="
+                    icon-inputx
+                    notranslate
+                    ms-input--icon
+                    icon-after
+                    mi-search mi mi-16
+                  "
                   for="input-search-supplier"
                 ></label>
               </div>
@@ -285,7 +355,7 @@
 
                     <th class="ms-th-viewer dymamic-col header w-250">
                       <span class="ms-head-title flex justify-left"
-                        >Tên đơn vị
+                        >Mã số thuế
                         <div class="mi mi-16" style="display: none"></div>
                       </span>
                       <div
@@ -296,29 +366,7 @@
 
                     <th class="ms-th-viewer dymamic-col header w-150">
                       <span class="ms-head-title flex justify-left"
-                        >Số tài khoản
-                        <div class="mi mi-16" style="display: none"></div>
-                      </span>
-                      <div
-                        class="mi mi-16 icon-head mi-header-option"
-                        style="display: none"
-                      ></div>
-                    </th>
-
-                    <th class="ms-th-viewer dymamic-col header w-250">
-                      <span class="ms-head-title flex justify-left"
-                        >Số tài khoản
-                        <div class="mi mi-16" style="display: none"></div>
-                      </span>
-                      <div
-                        class="mi mi-16 icon-head mi-header-option"
-                        style="display: none"
-                      ></div>
-                    </th>
-
-                    <th class="ms-th-viewer dymamic-col header w-250">
-                      <span class="ms-head-title flex justify-left"
-                        >Chi nhánh
+                        >CMTND
                         <div class="mi mi-16" style="display: none"></div>
                       </span>
                       <div
@@ -353,33 +401,27 @@
                 <tr
                   class="ms-tr-viewer"
                   v-for="supplier in suppliers"
-                  :key="supplier.supplierId"
-                  :supplierId="supplier.supplierId"
+                  :key="supplier.idsupplier"
+                  :idsupplier="supplier.idsupplier"
                 >
                   <td class="ms-out-left-white-16"></td>
                   <td class="ms-td-viewer ms-td-multi" style="left: 16px">
                     <check-box></check-box>
                   </td>
                   <td class="ms-td-viewer text-left">
-                    {{ supplier.supplierCode }}
+                    {{ supplier.suppliercode }}
                   </td>
                   <td class="ms-td-viewer text-left">
-                    {{ supplier.supplierName }}
+                    {{ supplier.suppliername }}
                   </td>
                   <td class="ms-td-viewer text-left">
-                    {{ supplier.supplierAddress }}
+                    {{ supplier.supplieraddress }}
                   </td>
                   <td class="ms-td-viewer text-left">
-                    {{ supplier.supplierDebt }}
+                    {{ supplier.suppliertaxcode }}
                   </td>
                   <td class="ms-td-viewer text-left">
-                    {{ supplier.supplierTaxCode }}
-                  </td>
-                  <td class="ms-td-viewer text-left">
-                    {{ supplier.supplierPhone }}
-                  </td>
-                  <td class="ms-td-viewer text-left">
-                    {{ supplier.branchName }}
+                    {{ supplier.identitycardnumber }}
                   </td>
                   <td class="ms-td-viewer text-left">Đang sử dụng</td>
                   <td class="ms-td-viewer ms-td-wiget text-right">
@@ -387,19 +429,61 @@
                       <div class="ms-dropdown">
                         <button
                           class="ms-button edit-btn"
-                          data-toggle="modal"
-                          data-target="#add-supplier-dialog"
+                          @click="
+                            showPopup(),
+                              setIsEditTrue(),
+                              setIsReadOnlyFalse(),
+                              (idSupplier = supplier.idsupplier)
+                          "
                         >
                           <div class="ms-button-text flex align-center">
                             Sửa
                           </div>
                         </button>
-
-                        <button class="ms-button function-btn">
-                          <div class="ms-button-text flex align-center">
-                            <div class="mi mi-16 mi-arrow-up--blue">&nbsp;</div>
-                          </div>
-                        </button>
+                        <dropdown-button>
+                          <template slot="dropdown-button">
+                            <button class="ms-button function-btn">
+                              <div class="ms-button-text flex align-center">
+                                <div class="mi mi-16 mi-arrow-up--blue">
+                                  &nbsp;
+                                </div>
+                              </div>
+                            </button>
+                          </template>
+                          <template slot="dropdown-list">
+                            <div
+                              class="
+                                ms-component ms-dropdown-item-secondary-false
+                                ms-dropdown--item
+                              "
+                            >
+                              <a
+                                class="ms-dropdown--item-link"
+                                @click="
+                                  (idSupplierDelete = supplier.idsupplier),
+                                    showDeleteDialog(supplier.suppliercode)
+                                "
+                                >Xóa
+                              </a>
+                            </div>
+                            <div
+                              class="
+                                ms-component ms-dropdown-item-secondary-false
+                                ms-dropdown--item
+                              "
+                            >
+                              <a
+                                class="ms-dropdown--item-link"
+                                @click="
+                                  showPopup(),
+                                    setIsReadOnlyTrue(),
+                                    (idSupplier = supplier.idsupplier)
+                                "
+                                >Xem
+                              </a>
+                            </div>
+                          </template>
+                        </dropdown-button>
                       </div>
                     </div>
                   </td>
@@ -525,18 +609,94 @@
         </div>
       </div>
     </div>
-    <add-supplier-dialog></add-supplier-dialog>
+    <div class="con-ms-message-box" id="delete-dialog" style="display: none">
+      <div class="message-center">
+        <div class="ms-message-bg"></div>
+        <div class="drag-it-dude">
+          <div class="ms-mesage-box">
+            <div style="width: 444px; min-width: 444px">
+              <div class="padding-32">
+                <div class="content">
+                  <div class="icon-message">
+                    <div class="mi mi-48 mi-exclamation-warning-48"></div>
+                  </div>
+                  <div class="message-content p-l-16 p-t-12">
+                    <span id="idMessageDelete" class="message"></span>
+                  </div>
+                </div>
+                <div class="mess-line"></div>
+                <div class="mess-footer">
+                  <div class="RightSecond">
+                    <button
+                      name="button"
+                      class="
+                        ms-component
+                        ms-button
+                        ms-button-size-default
+                        ms-button-primary
+                        ms-button-primary-disabled-false
+                        ms-button-radius-false
+                        ms-button
+                      "
+                      @click="deleteSupplier()"
+                    >
+                      <div
+                        class="ms-button-text ms-button--text flex align-center"
+                      >
+                        Có
+                      </div>
+                    </button>
+                  </div>
+
+                  <div class="Left">
+                    <button
+                      name="button"
+                      class="
+                        ms-component
+                        ms-button
+                        ms-button-size-default
+                        ms-button-secondary
+                        ms-button-secondary-disabled-false
+                        ms-button-radius-false
+                        ms-button
+                      "
+                      @click="hideDeleteDialog()"
+                    >
+                      <div
+                        class="ms-button-text ms-button--text flex align-center"
+                      >
+                        Không
+                      </div>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <add-supplier-dialog
+      @closePopup="closePopup"
+      @loadData="loadData"
+      :isShowPopup="isShowPopup"
+      :idSupplier="idSupplier"
+    ></add-supplier-dialog>
   </div>
 </template>
 
 
 <script>
+var localhost = "https://localhost:44350/api/Suppliers/";
+
 import DropdownButton from "../baseControl/DropdownButton.vue";
 import CheckBox from "../baseControl/CheckBox.vue";
-import MsSelect from '../baseControl/MsSelect.vue'
+import MsSelect from "../baseControl/MsSelect.vue";
 // import SelectAutoComplete from "../baseControl/SelectAutoComplete.vue";
 import AddSupplierDialog from "../supplier/AddSupplierDialog.vue";
+import EventBus from "../../main.js";
 
+import * as axios from "axios";
 export default {
   name: "SupplierList",
   components: {
@@ -549,58 +709,62 @@ export default {
   data() {
     return {
       loading: false,
-      suppliers: [
-        {
-          supplierId: "1",
-          supplierCode: "123456",
-          supplierName: "Công ty trách nhiệm hữu hạn KT",
-          supplierAddress: "Khu ngoại giao đoàn",
-          supplierDebt: 0,
-          supplierTaxCode: "123456789",
-          supplierPhone: "0968866868",
-          branchName: "Đường Láng",
-        },
-        {
-          supplierId: "2",
-          supplierCode: "123456",
-          supplierName: "Công ty trách nhiệm hữu hạn KT",
-          supplierAddress: "Khu ngoại giao đoàn",
-          supplierDebt: 0,
-          supplierTaxCode: "123456789",
-          supplierPhone: "0968866868",
-          branchName: "Đường Láng",
-        },
-        {
-          supplierId: "3",
-          supplierCode: "123456",
-          supplierName: "Công ty trách nhiệm hữu hạn KT",
-          supplierAddress: "Khu ngoại giao đoàn",
-          supplierDebt: 0,
-          supplierTaxCode: "123456789",
-          supplierPhone: "0968866868",
-          branchName: "Đường Láng",
-        },
-        {
-          supplierId: "4",
-          supplierCode: "123456",
-          supplierName: "Công ty trách nhiệm hữu hạn KT",
-          supplierAddress: "Khu ngoại giao đoàn",
-          supplierDebt: 0,
-          supplierTaxCode: "123456789",
-          supplierPhone: "0968866868",
-          branchName: "Đường Láng",
-        },
-        {
-          supplierId: "5",
-          supplierCode: "123456",
-          supplierName: "Công ty trách nhiệm hữu hạn KT",
-          supplierAddress: "Khu ngoại giao đoàn",
-          supplierDebt: 0,
-          supplierTaxCode: "123456789",
-          supplierPhone: "0968866868",
-          branchName: "Đường Láng",
-        },
-      ],
+      isShowPopup: false,
+      // suppliers: [
+      //   {
+      //     supplierId: "1",
+      //     supplierCode: "123456",
+      //     supplierName: "Công ty trách nhiệm hữu hạn KT",
+      //     supplierAddress: "Khu ngoại giao đoàn",
+      //     supplierDebt: 0,
+      //     supplierTaxCode: "123456789",
+      //     supplierPhone: "0968866868",
+      //     branchName: "Đường Láng",
+      //   },
+      //   {
+      //     supplierId: "2",
+      //     supplierCode: "123456",
+      //     supplierName: "Công ty trách nhiệm hữu hạn KT",
+      //     supplierAddress: "Khu ngoại giao đoàn",
+      //     supplierDebt: 0,
+      //     supplierTaxCode: "123456789",
+      //     supplierPhone: "0968866868",
+      //     branchName: "Đường Láng",
+      //   },
+      //   {
+      //     supplierId: "3",
+      //     supplierCode: "123456",
+      //     supplierName: "Công ty trách nhiệm hữu hạn KT",
+      //     supplierAddress: "Khu ngoại giao đoàn",
+      //     supplierDebt: 0,
+      //     supplierTaxCode: "123456789",
+      //     supplierPhone: "0968866868",
+      //     branchName: "Đường Láng",
+      //   },
+      //   {
+      //     supplierId: "4",
+      //     supplierCode: "123456",
+      //     supplierName: "Công ty trách nhiệm hữu hạn KT",
+      //     supplierAddress: "Khu ngoại giao đoàn",
+      //     supplierDebt: 0,
+      //     supplierTaxCode: "123456789",
+      //     supplierPhone: "0968866868",
+      //     branchName: "Đường Láng",
+      //   },
+      //   {
+      //     supplierId: "5",
+      //     supplierCode: "123456",
+      //     supplierName: "Công ty trách nhiệm hữu hạn KT",
+      //     supplierAddress: "Khu ngoại giao đoàn",
+      //     supplierDebt: 0,
+      //     supplierTaxCode: "123456789",
+      //     supplierPhone: "0968866868",
+      //     branchName: "Đường Láng",
+      //   },
+      // ],
+      idSupplier: "",
+      idSupplierDelete: "",
+      suppliers: [],
 
       recordInPage: [
         "10 bản ghi trên 1 trang",
@@ -613,15 +777,90 @@ export default {
   },
   methods: {
     setWidthForPagination() {
-      var width = document.getElementsByClassName("ms-table-viewer")[0]
-        .offsetWidth;
-      // console.log(width);
+      var width =
+        document.getElementsByClassName("ms-table-viewer")[0].offsetWidth;
+      console.log(width);
+      // document.getElementsByClassName("ms-pagination")[0].style.width =
+      //   width + "px";
       document.getElementsByClassName("ms-pagination")[0].style.width =
-        width + "px";
+        "1497px";
+    },
+
+    showPopup() {
+      this.isShowPopup = true;
+    },
+
+    closePopup(value) {
+      this.isShowPopup = value;
+    },
+
+    setIsEditTrue() {
+      EventBus.$emit("setIsEdit", true);
+    },
+
+    setIsEditFalse() {
+      EventBus.$emit("setIsEdit", false);
+    },
+
+    setIsReadOnlyTrue() {
+      EventBus.$emit("setIsReadOnly", true);
+    },
+
+    setIsReadOnlyFalse() {
+      EventBus.$emit("setIsReadOnly", false);
+    },
+
+    setIdSupplier(id) {
+      this.idSupplier = id;
+    },
+
+    showDeleteDialog(suppliercode) {
+      console.log(suppliercode);
+      document.getElementById("idMessageDelete").innerHTML =
+        "Bạn có thực sự muốn xóa Nhà cung cấp < " + suppliercode + " > không?";
+      document.getElementById("delete-dialog").style.display = "block";
+    },
+
+    hideDeleteDialog() {
+      document.getElementById("delete-dialog").style.display = "none";
+    },
+
+    async deleteSupplier() {
+      let m = this;
+      await axios({
+        method: "delete",
+        url: localhost + this.idSupplierDelete,
+      })
+        .then(function (response) {
+          //thành công
+          console.log(response);
+          m.hideDeleteDialog();
+          //load lại data sau khi xóa
+          m.loadData();
+        })
+        .catch(function (response) {
+          //gặp lỗi
+          console.log(response);
+        });
+    },
+
+    async loadData() {
+      this.loading = true;
+      const response = await axios.get(localhost);
+
+      console.log(response.data);
+      this.loading = false;
+      this.suppliers = response.data;
+      this.setWidthForPagination();
+
+      this.idSupplier = "";
     },
   },
+  async created() {
+    this.loadData();
+  },
   mounted() {
-    this.setWidthForPagination();
+    // this.setWidthForPagination();
   },
 };
 </script>
@@ -634,9 +873,9 @@ export default {
 }
 </style>
 <style>
-.popup-payment .con-ms-popup>.ms-popup-content>.ms-popup--content {
-    overflow: visible;
-    padding: 0;
+.popup-payment .con-ms-popup > .ms-popup-content > .ms-popup--content {
+  overflow: visible;
+  padding: 0;
 }
 .body-di {
   max-height: unset !important;
@@ -1361,5 +1600,11 @@ export default {
   position: relative;
   display: block;
   color: rgba(0, 0, 0, 0.7);
+}
+
+/* dialog Xóa  */
+.RightSecond {
+  float: right;
+  padding-left: 8px;
 }
 </style>
