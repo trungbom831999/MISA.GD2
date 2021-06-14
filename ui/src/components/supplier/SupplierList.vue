@@ -273,6 +273,8 @@
                   class="input-search hasIcon"
                   type="text"
                   placeholder="Nhập từ khóa tìm kiếm"
+                  v-model="keyWordSearch"
+                  @keyup.enter="searchSupplier()"
                 />
                 <label
                   class="
@@ -283,6 +285,7 @@
                     mi-search mi mi-16
                   "
                   for="input-search-supplier"
+                  @click="searchSupplier()"
                 ></label>
               </div>
             </div>
@@ -678,7 +681,7 @@
     </div>
     <add-supplier-dialog
       @closePopup="closePopup"
-      @loadData="loadData"
+      @loadData="searchSupplier"
       :isShowPopup="isShowPopup"
       :idSupplier="idSupplier"
     ></add-supplier-dialog>
@@ -773,6 +776,8 @@ export default {
         "50 bản ghi trên 1 trang",
         "100 bản ghi trên 1 trang",
       ],
+
+      keyWordSearch: "",
     };
   },
   methods: {
@@ -851,16 +856,30 @@ export default {
       console.log(response.data);
       this.loading = false;
       this.suppliers = response.data;
-      this.setWidthForPagination();
 
       this.idSupplier = "";
+    },
+
+    async searchSupplier() {
+      if (!this.keyWordSearch) {
+        this.loadData();
+      } else {
+        this.loading = true;
+        const response = await axios.get(localhost+"search?keyword="+this.keyWordSearch);
+
+        console.log(response.data);
+        this.loading = false;
+        this.suppliers = response.data;
+
+        this.idSupplier = "";
+      }
     },
   },
   async created() {
     this.loadData();
   },
   mounted() {
-    // this.setWidthForPagination();
+    this.setWidthForPagination();
   },
 };
 </script>

@@ -108,7 +108,7 @@ namespace test2.Controllers
                     var erroInfo = new
                     {
                         devMsg = "SupplierCode duplucate!",
-                        userMsg = "Mã nhà cung cấp <"+ supplier.Suppliercode + "> đã tồn tại",
+                        userMsg = "Mã nhà cung cấp <" + supplier.Suppliercode + "> đã tồn tại",
                         errorCode = "misa-001",
                         moreInfo = "https://openapi.misa.com.vn/errorcode/misa-001",
                         traceId = "ba9587fd-1a79-4ac5-a0ca-2c9f74dfd3fb"
@@ -140,6 +140,30 @@ namespace test2.Controllers
             await _context.SaveChangesAsync();
 
             return NoContent();
+        }
+
+        // GET: api/Suppliers/5
+        [HttpGet("search")]
+        public async Task<ActionResult<IEnumerable<Supplier>>> SearchSupplier(string keyword)
+        {
+            keyword = keyword.ToLower();
+            var supplier = await _context.Suppliers.Where(
+            s => s.Suppliercode.ToLower().Contains(keyword) ||
+            s.Suppliername.ToLower().Contains(keyword) ||
+            s.Supplieraddress.ToLower().Contains(keyword) ||
+            s.Suppliertaxcode.ToLower().Contains(keyword) ||
+            s.Identitycardnumber.ToLower().Contains(keyword)).OrderBy(x => x.Suppliercode).ToListAsync();
+
+            //var supplier = await _context.Suppliers.Where(s =>
+            //s.Suppliercode.IndexOf(keyword, StringComparison.OrdinalIgnoreCase) != -1 ||
+            //s.Suppliername.IndexOf(keyword, StringComparison.OrdinalIgnoreCase) != -1 ||
+            //s.Supplieraddress.IndexOf(keyword, StringComparison.OrdinalIgnoreCase) != -1 ||
+            //s.Suppliertaxcode.IndexOf(keyword, StringComparison.OrdinalIgnoreCase) != -1 ||
+            //s.Identitycardnumber.IndexOf(keyword, StringComparison.OrdinalIgnoreCase) != -1).ToListAsync();
+
+
+
+            return supplier;
         }
 
         private bool SupplierExists(Guid id)

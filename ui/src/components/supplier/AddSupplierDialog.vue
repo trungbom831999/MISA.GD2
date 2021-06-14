@@ -1640,11 +1640,83 @@ export default {
     },
 
     editSupplierAndAddNew() {
-      this.resetInfoSupplier();
+      let editSupplier = this.supplier;
+      editSupplier.idsupplier = this.idSupplier;
+      editSupplier.listsuppliergroup = JSON.stringify(
+        this.supplier.listsuppliergroup
+      );
+      editSupplier.listaccountbank = JSON.stringify(
+        this.supplier.listaccountbank
+      );
+      editSupplier.listplacedelivery = JSON.stringify(
+        this.supplier.listplacedelivery
+      );
+      editSupplier.identitycarddateprovied = this.formatDateToPush(
+        editSupplier.identitycarddateprovied
+      );
+      console.log(editSupplier);
+      // this.resetInfoSupplier();
+      // this.closePopup();
+      var m = this;
+      axios({
+        method: "put",
+        url: localhost + this.idSupplier,
+        data: editSupplier,
+      })
+        .then(function (response) {
+          //thành công
+          console.log(response);
+          m.resetInfoSupplier();
+          m.focusInput("inputSupplierTaxCode");
+          m.loadData();
+        })
+        .catch(function (error) {
+          //gặp lỗi
+          var noti = error.response.data;
+          m.showErrorDialog(noti.userMsg);
+          if (noti.errorCode == "misa-001") {
+            m.inputFocus = "inputSupplierCode";
+          }
+        });
     },
 
     addSupplierAndAddNew() {
-      this.resetInfoSupplier();
+      this.supplier.idsupplier = "3fa85f64-5717-4562-b3fc-2c963f66afa6";
+      this.supplier.listsuppliergroup = JSON.stringify(
+        this.supplier.listsuppliergroup
+      );
+      this.supplier.listaccountbank = JSON.stringify(
+        this.supplier.listaccountbank
+      );
+      this.supplier.listplacedelivery = JSON.stringify(
+        this.supplier.listplacedelivery
+      );
+      this.supplier.identitycarddateprovied = this.formatDateToPush(
+        this.supplier.identitycarddateprovied
+      );
+      console.log(this.supplier);
+
+      var m = this;
+      axios({
+        method: "post",
+        url: localhost,
+        data: this.supplier,
+      })
+        .then(function (response) {
+          //thành công
+          console.log(response);
+          m.resetInfoSupplier();
+          m.focusInput("inputSupplierTaxCode");
+          m.loadData();
+        })
+        .catch(function (error) {
+          //gặp lỗi
+          var noti = error.response.data;
+          m.showErrorDialog(noti.userMsg);
+          if (noti.errorCode == "misa-001") {
+            m.inputFocus = "inputSupplierCode";
+          }
+        });
     },
   },
   created() {
