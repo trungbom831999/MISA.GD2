@@ -274,6 +274,7 @@
                   type="text"
                   placeholder="Nhập từ khóa tìm kiếm"
                   v-model="keyWordSearch"
+                  @keydown="searchSupplierKeyUp()"
                   @keyup.enter="searchSupplier()"
                 />
                 <label
@@ -551,7 +552,7 @@
               >
                 <div class="left-pagination">
                   <div class="total-record">
-                    Tổng số: <b>{{ suppliers.length }}</b> bản ghi
+                    Tổng số: <b>{{ suppliersLength }}</b> bản ghi
                   </div>
                 </div>
                 <div class="flex postion-pagination align-center">
@@ -587,21 +588,37 @@
                     </div> -->
                     <ms-select
                       :items="recordInPage"
-                      :itemDefault="1"
+                      v-model="pageSizeInSelect"
                     ></ms-select>
                   </div>
 
                   <div style="display: flex; align-items: center">
-                    <div class="mr-3 pointer unselect disableText">Trước</div>
+                    <div
+                      class="mr-3 pointer"
+                      :class="{ disableText: pageNumber == 1 }"
+                      @click="prePage()"
+                    >
+                      Trước
+                    </div>
                     <div class="page-index">
-                      <div class="pl-2 pr-2 pointer pageSelected">1</div>
-                      <div class="pl-2 pr-2 pointer">2</div>
+                      <div class="pl-2 pr-2 pointer pageSelected">
+                        {{ pageNumber }}
+                      </div>
+                      <!-- <div class="pl-2 pr-2 pointer">2</div>
                       <div class="pl-2 pr-2 pointer">3</div>
                       <div class="pl-2 pr-2"></div>
                       <div class="pl-2 pr-2 pointer">...</div>
-                      <div class="pl-2 pr-2 pointer">12</div>
+                      <div class="pl-2 pr-2 pointer">12</div> -->
                     </div>
-                    <div class="ml-3 pointer unselect">Sau</div>
+                    <div
+                      class="ml-3 pointer"
+                      :class="{
+                        disableText: pageNumber * pageSize >= suppliersLength,
+                      }"
+                      @click="nextPage()"
+                    >
+                      Sau
+                    </div>
                   </div>
                 </div>
               </div>
@@ -713,63 +730,17 @@ export default {
     return {
       loading: false,
       isShowPopup: false,
-      // suppliers: [
-      //   {
-      //     supplierId: "1",
-      //     supplierCode: "123456",
-      //     supplierName: "Công ty trách nhiệm hữu hạn KT",
-      //     supplierAddress: "Khu ngoại giao đoàn",
-      //     supplierDebt: 0,
-      //     supplierTaxCode: "123456789",
-      //     supplierPhone: "0968866868",
-      //     branchName: "Đường Láng",
-      //   },
-      //   {
-      //     supplierId: "2",
-      //     supplierCode: "123456",
-      //     supplierName: "Công ty trách nhiệm hữu hạn KT",
-      //     supplierAddress: "Khu ngoại giao đoàn",
-      //     supplierDebt: 0,
-      //     supplierTaxCode: "123456789",
-      //     supplierPhone: "0968866868",
-      //     branchName: "Đường Láng",
-      //   },
-      //   {
-      //     supplierId: "3",
-      //     supplierCode: "123456",
-      //     supplierName: "Công ty trách nhiệm hữu hạn KT",
-      //     supplierAddress: "Khu ngoại giao đoàn",
-      //     supplierDebt: 0,
-      //     supplierTaxCode: "123456789",
-      //     supplierPhone: "0968866868",
-      //     branchName: "Đường Láng",
-      //   },
-      //   {
-      //     supplierId: "4",
-      //     supplierCode: "123456",
-      //     supplierName: "Công ty trách nhiệm hữu hạn KT",
-      //     supplierAddress: "Khu ngoại giao đoàn",
-      //     supplierDebt: 0,
-      //     supplierTaxCode: "123456789",
-      //     supplierPhone: "0968866868",
-      //     branchName: "Đường Láng",
-      //   },
-      //   {
-      //     supplierId: "5",
-      //     supplierCode: "123456",
-      //     supplierName: "Công ty trách nhiệm hữu hạn KT",
-      //     supplierAddress: "Khu ngoại giao đoàn",
-      //     supplierDebt: 0,
-      //     supplierTaxCode: "123456789",
-      //     supplierPhone: "0968866868",
-      //     branchName: "Đường Láng",
-      //   },
-      // ],
       idSupplier: "",
       idSupplierDelete: "",
       suppliers: [],
+      suppliersLength: 0,
+      pageNumber: 1,
+      pageSize: 20,
+      pageSizeInSelect: "20 bản ghi trên 1 trang",
 
       recordInPage: [
+        "2 bản ghi trên 1 trang",
+        "5 bản ghi trên 1 trang",
         "10 bản ghi trên 1 trang",
         "20 bản ghi trên 1 trang",
         "30 bản ghi trên 1 trang",
@@ -779,6 +750,18 @@ export default {
 
       keyWordSearch: "",
     };
+  },
+  watch: {
+    pageSizeInSelect(newV, oldV) {
+      if (newV) {
+        this.setPageSize();
+        // this.pageNumber = 1;
+        this.searchSupplier();
+      } else if (oldV) {
+        this.setPageSize();
+        this.searchSupplier();
+      }
+    },
   },
   methods: {
     setWidthForPagination() {
@@ -819,6 +802,7 @@ export default {
       this.idSupplier = id;
     },
 
+//dialog xóa
     showDeleteDialog(suppliercode) {
       console.log(suppliercode);
       document.getElementById("idMessageDelete").innerHTML =
@@ -830,6 +814,33 @@ export default {
       document.getElementById("delete-dialog").style.display = "none";
     },
 
+    setPageSize() {
+      switch (this.pageSizeInSelect) {
+        case "2 bản ghi trên 1 trang":
+          this.pageSize = 2;
+          break;
+        case "5 bản ghi trên 1 trang":
+          this.pageSize = 5;
+          break;
+        case "10 bản ghi trên 1 trang":
+          this.pageSize = 10;
+          break;
+        case "20 bản ghi trên 1 trang":
+          this.pageSize = 20;
+          break;
+        case "30 bản ghi trên 1 trang":
+          this.pageSize = 30;
+          break;
+        case "50 bản ghi trên 1 trang":
+          this.pageSize = 50;
+          break;
+        case "100 bản ghi trên 1 trang":
+          this.pageSize = 100;
+          break;
+      }
+    },
+
+//xóa nhà cung cấp
     async deleteSupplier() {
       let m = this;
       await axios({
@@ -841,7 +852,7 @@ export default {
           console.log(response);
           m.hideDeleteDialog();
           //load lại data sau khi xóa
-          m.loadData();
+          m.searchSupplier();
         })
         .catch(function (response) {
           //gặp lỗi
@@ -849,23 +860,77 @@ export default {
         });
     },
 
+    //phân trang
+    //trang trước
+    prePage() {
+      if (this.pageNumber == 1) {
+        return;
+      } else {
+        this.pageNumber--;
+        this.searchSupplier();
+      }
+    },
+
+    //trang sau
+    nextPage() {
+      if (this.pageNumber * this.pageSize >= this.suppliersLength) {
+        return;
+      } else {
+        this.pageNumber++;
+        this.searchSupplier();
+      }
+    },
+
+    //load dữ liệu theo số trang, số bản ghi trên 1 trang
     async loadData() {
       this.loading = true;
-      const response = await axios.get(localhost);
+      const response = await axios.get(
+        localhost +
+          "paging?pageNumber=" +
+          this.pageNumber +
+          "&pageSize=" +
+          this.pageSize
+      );
 
       console.log(response.data);
       this.loading = false;
       this.suppliers = response.data;
 
+      //lấy số bản ghi
+      const responseLength = await axios.get(localhost + "length");
+      this.suppliersLength = responseLength.data;
+
       this.idSupplier = "";
     },
 
+//tìm kiếm
     async searchSupplier() {
       if (!this.keyWordSearch) {
+        if ((this.pageNumber - 1) * this.pageSize >= this.suppliersLength) {
+          this.pageNumber = Math.ceil(this.suppliersLength / this.pageSize);
+          if (this.pageNumber <= 0) this.pageNumber = 1;
+        }
         this.loadData();
       } else {
         this.loading = true;
-        const response = await axios.get(localhost+"search?keyword="+this.keyWordSearch);
+        const responseLength = await axios.get(
+          localhost + "lengthSearch?keyword=" + this.keyWordSearch
+        );
+        this.suppliersLength = responseLength.data;
+
+        if ((this.pageNumber - 1) * this.pageSize >= this.suppliersLength) {
+          this.pageNumber = Math.ceil(this.suppliersLength / this.pageSize);
+          if (this.pageNumber <= 0) this.pageNumber = 1;
+        }
+        const response = await axios.get(
+          localhost +
+            "search?keyword=" +
+            this.keyWordSearch +
+            "&pageNumber=" +
+            this.pageNumber +
+            "&pageSize=" +
+            this.pageSize
+        );
 
         console.log(response.data);
         this.loading = false;
@@ -873,6 +938,16 @@ export default {
 
         this.idSupplier = "";
       }
+    },
+
+    searchSupplierKeyUp() {
+      if (this.timer) {
+        clearTimeout(this.timer);
+        this.timer = null;
+    }
+      this.timer = setTimeout(() => {
+        this.searchSupplier();
+      }, 800);
     },
   },
   async created() {

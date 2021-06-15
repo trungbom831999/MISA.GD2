@@ -76,6 +76,7 @@
                     :items="natureAccounts"
                     :itemDefault="0"
                     required
+                    v-model="account.natureaccount"
                   ></select-auto-complete>
                 </div>
               </div>
@@ -104,7 +105,11 @@
                     @click="changeHeightInfomation()"
                   >
                     <span
-                      class="icon-header ms-collapse-item--icon-header primary-collapse--icon"
+                      class="
+                        icon-header
+                        ms-collapse-item--icon-header
+                        primary-collapse--icon
+                      "
                     >
                       <div class="mi-arrow-right--black mi mi-16"></div>
                     </span>
@@ -321,7 +326,12 @@
                 <div class="flex align-right">
                   <div class="p-x-3">
                     <button
-                      class="ms-button-size-default ms-button-secondary ms-button-radius-false ms-button"
+                      class="
+                        ms-button-size-default
+                        ms-button-secondary
+                        ms-button-radius-false
+                        ms-button
+                      "
                     >
                       <div
                         class="ms-button-text ms-button--text flex align-center"
@@ -332,7 +342,12 @@
                   </div>
                   <div>
                     <button
-                      class="ms-button-size-default ms-button-primary ms-button-radius-false ms-button"
+                      class="
+                        ms-button-size-default
+                        ms-button-primary
+                        ms-button-radius-false
+                        ms-button
+                      "
                     >
                       <div
                         class="ms-button-text ms-button--text flex align-center"
@@ -346,7 +361,12 @@
 
               <div class="w-1/2" style="position: absolute">
                 <button
-                  class="ms-button-size-default ms-button-secondary ms-button-radius-false ms-button"
+                  class="
+                    ms-button-size-default
+                    ms-button-secondary
+                    ms-button-radius-false
+                    ms-button
+                  "
                   @click="closePopup()"
                 >
                   <div class="ms-button-text ms-button--text flex align-center">
@@ -397,24 +417,38 @@ export default {
       default: false,
     },
   },
-  watch:{
-    isShowPopup(newV){
-      if(newV){
+  watch: {
+    isShowPopup(newV) {
+      if (newV) {
         var m = this;
-        setTimeout(function(){ m.focusFirstInput(); }, 100);
+        setTimeout(function () {
+          m.focusFirstInput();
+        }, 100);
       }
       // console.log(oldV);
-    }
+    },
   },
   data() {
     return {
-      account:{
-          accountNumber: "123456",
-          accountName: "Tiền Việt",
-          accountNature: "Dư nợ",
-          accountNameInEnglish: "Vietnam dong",
-          description: "Tiền VND Polime",
-          accountStatus: "Đang sử dụng",
+      account: {
+        accountconstruction: "",
+        accountitemcp: "",
+        accountname: "",
+        accountnameinenglish: "",
+        accountnumber: "",
+        accountobjectdefault: "",
+        accountobjectthcp: "",
+        accountorder: "",
+        accountpurchasecontract: "",
+        accountsalecontract: "",
+        accountstatisticalcode: "",
+        accountunit: "",
+        description: "",
+        generalaccountnumber: "",
+        hasbankaccount: false,
+        idaccount: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+        isaccountexception: false,
+        natureaccount: "Dư nợ",
       },
       colGeneralAccount: [
         { name: "Số tài khoản", width: "120" },
@@ -431,7 +465,7 @@ export default {
           accountName: "Tiền Mỹ",
         },
         {
-          accountNumber: "5055",
+          accountNumber: "345",
           accountName: "Bitcoin",
         },
       ],
@@ -482,12 +516,12 @@ export default {
       this.$emit("closePopup", false);
     },
 
-    focusFirstInput(){
+    focusFirstInput() {
       this.$refs.input.focusInput();
       // document.getElementsByClassName('ms-input--input')[0].focus();
-        // this.$refs.msInput.$el.querySelectorAll("input")[0].focus();
-        // console.log(this.$refs.msInput.$el.querySelectorAll("input")[0]);
-    }
+      // this.$refs.msInput.$el.querySelectorAll("input")[0].focus();
+      // console.log(this.$refs.msInput.$el.querySelectorAll("input")[0]);
+    },
   },
 };
 </script>
@@ -659,7 +693,7 @@ export default {
 
 .con-content--item {
   font-size: 1rem;
-  padding: 0 10px 10px;
+  padding: 5px 10px 10px;
   opacity: 1;
   transition: all 0.2s ease-out;
 }

@@ -10,7 +10,16 @@
               <div class="flex">
                 <button
                   name="button"
-                  class="ms-component ms-button ms-button-secondary ms-con-dropdown-radius-true-true ms-padding-is-single-true-size-default expand-more-button ms-button-size-default mr-3"
+                  class="
+                    ms-component
+                    ms-button
+                    ms-button-secondary
+                    ms-con-dropdown-radius-true-true
+                    ms-padding-is-single-true-size-default
+                    expand-more-button
+                    ms-button-size-default
+                    mr-3
+                  "
                 >
                   <div class="ms-button-text ms-button--text flex align-center">
                     <span class="pr-1">Chuyển tài khoản hạch toán</span>
@@ -18,7 +27,14 @@
                 </button>
                 <button
                   name="button"
-                  class="ms-component ms-button ms-button-size-default ms-button-primary ms-button-radius-true ms-dropdown-style-default"
+                  class="
+                    ms-component
+                    ms-button
+                    ms-button-size-default
+                    ms-button-primary
+                    ms-button-radius-true
+                    ms-dropdown-style-default
+                  "
                   @click="showPopup()"
                 >
                   <div class="ms-button-text ms-button--text flex align-center">
@@ -51,7 +67,13 @@
                     placeholder="Tìm kiếm theo số, tên tài khoản"
                   />
                   <label
-                    class="icon-inputx notranslate ms-input--icon icon-after mi-search mi mi-16"
+                    class="
+                      icon-inputx
+                      notranslate
+                      ms-input--icon
+                      icon-after
+                      mi-search mi mi-16
+                    "
                     for="input-search-supplier"
                   ></label>
                 </div>
@@ -128,7 +150,7 @@
 
                     <th
                       class="ms-th-viewer dymamic-col header"
-                      style="min-width: 100px; top: 93px"
+                      style="min-width: 250px; top: 93px"
                     >
                       <span class="ms-head-title flex justify-left"
                         >Diễn giải
@@ -170,23 +192,21 @@
                 >
                   <td class="ms-out-left-white-16"></td>
                   <td class="ms-td-viewer text-left">
-                    {{ account.accountNumber }}
+                    {{ account.accountnumber }}
                   </td>
                   <td class="ms-td-viewer text-left">
-                    {{ account.accountName }}
+                    {{ account.accountname }}
                   </td>
                   <td class="ms-td-viewer text-left">
-                    {{ account.accountNature }}
+                    {{ account.natureaccount }}
                   </td>
                   <td class="ms-td-viewer text-left">
-                    {{ account.accountNameInEnglish }}
+                    {{ account.accountnameinenglish }}
                   </td>
                   <td class="ms-td-viewer text-left">
                     {{ account.description }}
                   </td>
-                  <td class="ms-td-viewer text-left">
-                    {{ account.accountStatus }}
-                  </td>
+                  <td class="ms-td-viewer text-left">Đang sử dụng</td>
                   <td class="ms-td-viewer ms-td-wiget text-right">
                     <div class="flex justify-end">
                       <div class="ms-dropdown">
@@ -200,11 +220,34 @@
                           </div>
                         </button>
 
-                        <button class="ms-button function-btn">
-                          <div class="ms-button-text flex align-center">
-                            <div class="mi mi-16 mi-arrow-up--blue">&nbsp;</div>
-                          </div>
-                        </button>
+                        <dropdown-button>
+                          <template slot="dropdown-button">
+                            <button class="ms-button function-btn">
+                              <div class="ms-button-text flex align-center">
+                                <div class="mi mi-16 mi-arrow-up--blue">
+                                  &nbsp;
+                                </div>
+                              </div>
+                            </button>
+                          </template>
+                          <template slot="dropdown-list">
+                            <div
+                              class="
+                                ms-component ms-dropdown-item-secondary-false
+                                ms-dropdown--item
+                              "
+                            >
+                              <a
+                                class="ms-dropdown--item-link"
+                                @click="
+                                  (idAccountDelete = account.idaccount),
+                                    showDeleteDialog(account.accountnumber)
+                                "
+                                >Xóa
+                              </a>
+                            </div>
+                          </template>
+                        </dropdown-button>
                       </div>
                     </div>
                   </td>
@@ -229,7 +272,7 @@
                 </div>
               </div>
             </div>
-            <div class="ms-pagination">
+            <div class="ms-pagination" style="width: 1357px">
               <div
                 class="flex items-center justify-between w-full pagination-bar"
               >
@@ -247,65 +290,158 @@
       </div>
     </div>
 
-    <add-account-dialog @closePopup="closePopup" :isShowPopup="isShowPopup"></add-account-dialog>
+    <!-- dialog xóa  -->
+    <div class="con-ms-message-box" id="delete-dialog" style="display: none">
+      <div class="message-center">
+        <div class="ms-message-bg"></div>
+        <div class="drag-it-dude">
+          <div class="ms-mesage-box">
+            <div style="width: 444px; min-width: 444px">
+              <div class="padding-32">
+                <div class="content">
+                  <div class="icon-message">
+                    <div class="mi mi-48 mi-exclamation-warning-48"></div>
+                  </div>
+                  <div class="message-content p-l-16 p-t-12">
+                    <span id="idMessageDelete" class="message"></span>
+                  </div>
+                </div>
+                <div class="mess-line"></div>
+                <div class="mess-footer">
+                  <div class="RightSecond">
+                    <button
+                      name="button"
+                      class="
+                        ms-component
+                        ms-button
+                        ms-button-size-default
+                        ms-button-primary
+                        ms-button-primary-disabled-false
+                        ms-button-radius-false
+                        ms-button
+                      "
+                      @click="deleteAccount()"
+                    >
+                      <div
+                        class="ms-button-text ms-button--text flex align-center"
+                      >
+                        Có
+                      </div>
+                    </button>
+                  </div>
+
+                  <div class="Left">
+                    <button
+                      name="button"
+                      class="
+                        ms-component
+                        ms-button
+                        ms-button-size-default
+                        ms-button-secondary
+                        ms-button-secondary-disabled-false
+                        ms-button-radius-false
+                        ms-button
+                      "
+                      @click="hideDeleteDialog()"
+                    >
+                      <div
+                        class="ms-button-text ms-button--text flex align-center"
+                      >
+                        Không
+                      </div>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <add-account-dialog
+      @closePopup="closePopup"
+      :isShowPopup="isShowPopup"
+    ></add-account-dialog>
   </div>
 </template>
 <script>
+var localhost = "https://localhost:44350/api/Accounts/";
+
 import AddAccountDialog from "../account/AddAccountDialog.vue";
+import DropdownButton from "../baseControl/DropdownButton.vue";
+
+import * as axios from "axios";
 
 export default {
   components: {
-    AddAccountDialog
+    AddAccountDialog,
+    DropdownButton,
   },
   data() {
-    return { 
+    return {
       loading: false,
       isShowPopup: false,
-      accounts: [
-        {
-          accountNumber: "123456",
-          accountName: "Tiền Việt",
-          accountNature: "Dư nợ",
-          accountNameInEnglish: "Vietnam dong",
-          description: "Tiền VND Polime",
-          accountStatus: "Đang sử dụng",
-        },
-        {
-          accountNumber: "123456",
-          accountName: "Tiền Mỹ",
-          accountNature: "Dư nợ",
-          accountNameInEnglish: "Vietnam dong",
-          description: "Tiền VND Polime",
-          accountStatus: "Đang sử dụng",
-        },
-        {
-          accountNumber: "123456",
-          accountName: "Tiền Ảo",
-          accountNature: "Dư nợ",
-          accountNameInEnglish: "Vietnam dong",
-          description: "Tiền VND Polime",
-          accountStatus: "Đang sử dụng",
-        },
-        {
-          accountNumber: "123456",
-          accountName: "Bitcoin",
-          accountNature: "Dư nợ",
-          accountNameInEnglish: "Vietnam dong",
-          description: "Tiền VND Polime",
-          accountStatus: "Đang sử dụng",
-        },
-      ],
+      accounts: [],
+      idAccount: "",
+      idAccountDelete: "",
     };
   },
-  methods:{
-    showPopup(){
+  methods: {
+    showPopup() {
       this.isShowPopup = true;
     },
 
     closePopup(value) {
       this.isShowPopup = value;
-    }
-  }
+    },
+
+    //load dữ liệu
+    async loadData() {
+      this.loading = true;
+      const response = await axios.get(localhost);
+
+      console.log(response.data);
+      this.loading = false;
+      this.accounts = response.data;
+
+      this.idSupplier = "";
+    },
+
+    //dialog xóa
+    showDeleteDialog(accountnumber) {
+      console.log(accountnumber);
+      document.getElementById("idMessageDelete").innerHTML =
+        "Bạn có thực sự muốn xóa Tài khoản < " + accountnumber + " > không?";
+      document.getElementById("delete-dialog").style.display = "block";
+    },
+
+    hideDeleteDialog() {
+      document.getElementById("delete-dialog").style.display = "none";
+    },
+
+    //xóa tài khoản
+    async deleteAccount() {
+      let m = this;
+      await axios({
+        method: "delete",
+        url: localhost + this.idAccountDelete,
+      })
+        .then(function (response) {
+          //thành công
+          console.log(response);
+          m.hideDeleteDialog();
+          //load lại data sau khi xóa
+         m.loadData();
+        })
+        .catch(function (response) {
+          //gặp lỗi
+          console.log(response);
+        });
+    },
+  },
+  created() {
+    this.loadData();
+  },
 };
 </script>
 <style scoped>

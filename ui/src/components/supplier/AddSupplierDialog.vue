@@ -1539,13 +1539,24 @@ export default {
 
     //ấn nút CẤT
     saveSupplier() {
-      if (this.checkInfoSupplier()) {
-        if (this.isEdit) {
-          this.editSupplier();
-        } else {
-          this.addSupplier();
+      if (!this.isReadOnly) {
+        if (this.checkInfoSupplier()) {
+          if (this.isEdit) {
+            this.editSupplier();
+          } else {
+            this.addSupplier();
+          }
         }
       }
+    },
+
+    //nút cất bằng phím tắt ctrl + s
+    saveSupplierByShortKey(e) {
+      if (!(e.keyCode === 83 && e.ctrlKey)) {
+        return;
+      }
+      e.preventDefault();
+      this.saveSupplier();
     },
 
     editSupplier() {
@@ -1722,6 +1733,9 @@ export default {
   created() {
     EventBus.$on("setIsEdit", (data) => (this.isEdit = data));
     EventBus.$on("setIsReadOnly", (data) => (this.isReadOnly = data));
+  },
+  mounted() {
+    document.addEventListener("keydown", this.saveSupplierByShortKey);
   },
 };
 </script>

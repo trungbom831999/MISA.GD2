@@ -27,6 +27,14 @@ namespace test2.Controllers
             return await _context.Suppliers.OrderBy(x => x.Suppliercode).ToListAsync();
         }
 
+        //lấy thông tin nhà cung cấp, phân trang
+        // GET: api/Suppliers
+        [HttpGet("paging")]
+        public async Task<ActionResult<IEnumerable<Supplier>>> GetSuppliers(int pageNumber, int pageSize)
+        {
+            return await _context.Suppliers.OrderBy(x => x.Suppliercode).Skip((pageNumber - 1) * pageSize).Take(pageSize).ToListAsync();
+        }
+
         // GET: api/Suppliers/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Supplier>> GetSupplier(Guid id)
@@ -142,9 +150,10 @@ namespace test2.Controllers
             return NoContent();
         }
 
+        // tìm kiếm nhà cung cấp theo các cột
         // GET: api/Suppliers/5
         [HttpGet("search")]
-        public async Task<ActionResult<IEnumerable<Supplier>>> SearchSupplier(string keyword)
+        public async Task<ActionResult<IEnumerable<Supplier>>> SearchSupplier(string keyword, int pageNumber, int pageSize)
         {
             keyword = keyword.ToLower();
             var supplier = await _context.Suppliers.Where(
@@ -152,18 +161,34 @@ namespace test2.Controllers
             s.Suppliername.ToLower().Contains(keyword) ||
             s.Supplieraddress.ToLower().Contains(keyword) ||
             s.Suppliertaxcode.ToLower().Contains(keyword) ||
-            s.Identitycardnumber.ToLower().Contains(keyword)).OrderBy(x => x.Suppliercode).ToListAsync();
-
-            //var supplier = await _context.Suppliers.Where(s =>
-            //s.Suppliercode.IndexOf(keyword, StringComparison.OrdinalIgnoreCase) != -1 ||
-            //s.Suppliername.IndexOf(keyword, StringComparison.OrdinalIgnoreCase) != -1 ||
-            //s.Supplieraddress.IndexOf(keyword, StringComparison.OrdinalIgnoreCase) != -1 ||
-            //s.Suppliertaxcode.IndexOf(keyword, StringComparison.OrdinalIgnoreCase) != -1 ||
-            //s.Identitycardnumber.IndexOf(keyword, StringComparison.OrdinalIgnoreCase) != -1).ToListAsync();
-
-
+            s.Identitycardnumber.ToLower().Contains(keyword)).OrderBy(x => x.Suppliercode).Skip((pageNumber - 1) * pageSize).Take(pageSize).ToListAsync();
 
             return supplier;
+        }
+
+        // số bản ghi nhà cung cấp trong tìm kiếm
+        // GET: api/Suppliers/length
+        [HttpGet("lengthSearch")]
+        public IActionResult GetLengthSuppliers(string keyword)
+        {
+            keyword = keyword.ToLower();
+            var rowEffects = _context.Suppliers.Where(
+            s => s.Suppliercode.ToLower().Contains(keyword) ||
+            s.Suppliername.ToLower().Contains(keyword) ||
+            s.Supplieraddress.ToLower().Contains(keyword) ||
+            s.Suppliertaxcode.ToLower().Contains(keyword) ||
+            s.Identitycardnumber.ToLower().Contains(keyword)).Count();
+            
+            return Ok(rowEffects);
+        }
+
+        // số bản ghi nhà cung cấp
+        // GET: api/Suppliers/length
+        [HttpGet("length")]
+        public IActionResult GetLengthSearchSuppliers()
+        {
+            var rowEffects = _context.Suppliers.Count();
+            return Ok(rowEffects);
         }
 
         private bool SupplierExists(Guid id)
