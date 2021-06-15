@@ -35,7 +35,7 @@
                     ms-button-radius-true
                     ms-dropdown-style-default
                   "
-                  @click="showPopup()"
+                  @click="showPopup(),setIsEditFalse(),(idAccount = '')"
                 >
                   <div class="ms-button-text ms-button--text flex align-center">
                     Thêm
@@ -212,8 +212,11 @@
                       <div class="ms-dropdown">
                         <button
                           class="ms-button edit-btn"
-                          data-toggle="modal"
-                          data-target="#add-supplier-dialog"
+                          @click="
+                            showPopup(),
+                              setIsEditTrue(),
+                              (idAccount = account.idaccount)
+                          "
                         >
                           <div class="ms-button-text flex align-center">
                             Sửa
@@ -361,6 +364,8 @@
     <add-account-dialog
       @closePopup="closePopup"
       :isShowPopup="isShowPopup"
+      @loadData="loadData"
+      :idAccount="idAccount"
     ></add-account-dialog>
   </div>
 </template>
@@ -369,6 +374,7 @@ var localhost = "https://localhost:44350/api/Accounts/";
 
 import AddAccountDialog from "../account/AddAccountDialog.vue";
 import DropdownButton from "../baseControl/DropdownButton.vue";
+import EventBus from "../../main.js";
 
 import * as axios from "axios";
 
@@ -393,6 +399,14 @@ export default {
 
     closePopup(value) {
       this.isShowPopup = value;
+    },
+
+    setIsEditTrue() {
+      EventBus.$emit("setIsEdit", true);
+    },
+
+    setIsEditFalse() {
+      EventBus.$emit("setIsEdit", false);
     },
 
     //load dữ liệu
@@ -431,7 +445,7 @@ export default {
           console.log(response);
           m.hideDeleteDialog();
           //load lại data sau khi xóa
-         m.loadData();
+          m.loadData();
         })
         .catch(function (response) {
           //gặp lỗi

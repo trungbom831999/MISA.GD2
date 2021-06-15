@@ -151,7 +151,7 @@ namespace test2.Controllers
         }
 
         // tìm kiếm nhà cung cấp theo các cột
-        // GET: api/Suppliers/5
+        // GET: api/Suppliers/search?keyword=nv&pageNumber=1&pageSize=10
         [HttpGet("search")]
         public async Task<ActionResult<IEnumerable<Supplier>>> SearchSupplier(string keyword, int pageNumber, int pageSize)
         {
@@ -167,7 +167,7 @@ namespace test2.Controllers
         }
 
         // số bản ghi nhà cung cấp trong tìm kiếm
-        // GET: api/Suppliers/length
+        // GET: api/Suppliers/lengthSearch?keyword=nv
         [HttpGet("lengthSearch")]
         public IActionResult GetLengthSuppliers(string keyword)
         {

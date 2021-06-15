@@ -47,17 +47,31 @@
                 <ms-input
                   label="Số tài khoản"
                   required
-                  ref="input"
-                  v-model="account.accountNumber"
+                  ref="inputAccountNumber"
+                  v-model="account.accountnumber"
+                  :error="
+                    (account.accountnumber ? false : true) && mustValidate
+                  "
                 ></ms-input>
               </div>
 
               <div class="flex row-input w-full">
                 <div class="w-1/2 p-r-12">
-                  <ms-input label="Tên tài khoản" required></ms-input>
+                  <ms-input
+                    label="Tên tài khoản"
+                    required
+                    ref="inputAccountName"
+                    v-model="account.accountname"
+                    :error="
+                    (account.accountname ? false : true) && mustValidate
+                  "
+                  ></ms-input>
                 </div>
                 <div class="w-1/2">
-                  <ms-input label="Tên tiếng Anh"></ms-input>
+                  <ms-input
+                    label="Tên tiếng Anh"
+                    v-model="account.accountnameinenglish"
+                  ></ms-input>
                 </div>
               </div>
 
@@ -68,6 +82,7 @@
                     :column="colGeneralAccount"
                     :items="generalAccounts"
                     mainItem="accountNumber"
+                    v-model="account.generalaccountnumber"
                   ></select-auto-complete-menu-table>
                 </div>
                 <div class="w-1/4 p-r-12">
@@ -86,11 +101,15 @@
                   label="Diễn giải"
                   maxlength="255"
                   rows="2"
+                  v-model="account.description"
                 ></ms-textarea>
               </div>
 
               <div class="w-full mb-5">
-                <check-box label="Có hạch toán ngoại tệ"></check-box>
+                <check-box
+                  label="Có hạch toán ngoại tệ"
+                  v-model="account.isaccountexception"
+                ></check-box>
               </div>
             </div>
 
@@ -140,8 +159,8 @@
                               <div class="w-1/2">
                                 <ms-select
                                   :items="objectDefaults"
-                                  :itemDefault="0"
                                   :disabled="!editableObjectDefault"
+                                  v-model="account.accountobjectdefault"
                                 ></ms-select>
                               </div>
                             </div>
@@ -152,6 +171,7 @@
                               <div class="w-full">
                                 <check-box
                                   label="Tài khoản ngân hàng"
+                                  v-model="account.hasbankaccount"
                                 ></check-box>
                               </div>
                             </div>
@@ -170,8 +190,8 @@
                               <div class="w-1/2">
                                 <ms-select
                                   :items="objectTHCPs"
-                                  :itemDefault="0"
                                   :disabled="!editableObjectTHCP"
+                                  v-model="account.accountobjectthcp"
                                 ></ms-select>
                               </div>
                             </div>
@@ -188,8 +208,8 @@
                               <div class="w-1/2">
                                 <ms-select
                                   :items="constructions"
-                                  :itemDefault="0"
                                   :disabled="!editableConstruction"
+                                  v-model="account.accountconstruction"
                                 ></ms-select>
                               </div>
                             </div>
@@ -208,8 +228,8 @@
                               <div class="w-1/2">
                                 <ms-select
                                   :items="orders"
-                                  :itemDefault="0"
                                   :disabled="!editableOrder"
+                                  v-model="account.accountorder"
                                 ></ms-select>
                               </div>
                             </div>
@@ -226,8 +246,8 @@
                               <div class="w-1/2">
                                 <ms-select
                                   :items="saleContracts"
-                                  :itemDefault="0"
                                   :disabled="!editableSaleContract"
+                                  v-model="account.accountsalecontract"
                                 ></ms-select>
                               </div>
                             </div>
@@ -246,8 +266,8 @@
                               <div class="w-1/2">
                                 <ms-select
                                   :items="purchaseContracts"
-                                  :itemDefault="0"
                                   :disabled="!editablePurchaseContract"
+                                  v-model="account.accountpurchasecontract"
                                 ></ms-select>
                               </div>
                             </div>
@@ -264,8 +284,8 @@
                               <div class="w-1/2">
                                 <ms-select
                                   :items="itemCPs"
-                                  :itemDefault="0"
                                   :disabled="!editableItemCP"
+                                  v-model="account.accountitemcp"
                                 ></ms-select>
                               </div>
                             </div>
@@ -284,8 +304,8 @@
                               <div class="w-1/2">
                                 <ms-select
                                   :items="units"
-                                  :itemDefault="0"
                                   :disabled="!editableUnit"
+                                  v-model="account.accountunit"
                                 ></ms-select>
                               </div>
                             </div>
@@ -302,8 +322,8 @@
                               <div class="w-1/2">
                                 <ms-select
                                   :items="statisticalCode"
-                                  :itemDefault="0"
                                   :disabled="!editableStatisticalCode"
+                                  v-model="account.accountstatisticalcode"
                                 ></ms-select>
                               </div>
                             </div>
@@ -332,6 +352,7 @@
                         ms-button-radius-false
                         ms-button
                       "
+                      @click="saveAccount()"
                     >
                       <div
                         class="ms-button-text ms-button--text flex align-center"
@@ -392,16 +413,68 @@
         </div>
       </div>
     </div>
+
+    <!-- thông báo lỗi  -->
+
+    <div class="con-ms-message-box" id="error-dialog">
+      <div class="message-center">
+        <div class="ms-message-bg"></div>
+        <div class="drag-it-dude">
+          <div class="ms-mesage-box">
+            <div style="width: 444px; min-width: 444px">
+              <div class="padding-32">
+                <div class="content">
+                  <div class="icon-message">
+                    <div class="mi mi-48 mi-exclamation-error-48-2"></div>
+                  </div>
+                  <div class="message-content p-l-16 p-t-12">
+                    <span id="idMessageError" class="message"></span>
+                  </div>
+                </div>
+                <div class="mess-line"></div>
+                <div class="mess-footer">
+                  <div class="Center">
+                    <button
+                      name="button"
+                      class="
+                        ms-component
+                        ms-button
+                        ms-button-size-default
+                        ms-button-primary
+                        ms-button-primary-disabled-false
+                        ms-button-radius-false
+                        ms-button
+                      "
+                      @click="hideErrorDialog()"
+                    >
+                      <div
+                        class="ms-button-text ms-button--text flex align-center"
+                      >
+                        Đóng
+                      </div>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 <script>
+var localhost = "https://localhost:44350/api/Accounts/";
+
 import MsInput from "../baseControl/MsInput.vue";
 import MsTextarea from "../baseControl/MsTextarea.vue";
 import MsSelect from "../baseControl/MsSelect";
 import CheckBox from "../baseControl/CheckBox.vue";
 import SelectAutoComplete from "../baseControl/SelectAutoComplete.vue";
 import SelectAutoCompleteMenuTable from "../baseControl/SelectAutoCompleteMenuTable.vue";
+import EventBus from "../../main.js";
 
+import * as axios from "axios";
 export default {
   components: {
     MsInput,
@@ -416,33 +489,62 @@ export default {
       type: Boolean,
       default: false,
     },
+    idAccount: {
+      type: String,
+      default: "",
+    },
   },
   watch: {
     isShowPopup(newV) {
       if (newV) {
         var m = this;
         setTimeout(function () {
-          m.focusFirstInput();
+          if (m.idAccount) {
+            m.getAccount(m.idAccount);
+          } else {
+            m.resetInfoAccount();
+          }
+          m.focusInput("inputAccountNumber");
+          m.mustValidate = false;
         }, 100);
       }
       // console.log(oldV);
     },
+    idAccount(newV, oldV) {
+      var m = this;
+      if (newV) {
+        setTimeout(function () {
+          m.getAccount(newV);
+          m.mustValidate = false;
+        }, 100);
+      } else {
+        setTimeout(function () {
+          m.resetInfoAccount();
+          m.mustValidate = false;
+        }, 100);
+      }
+      console.log(newV);
+      console.log(oldV);
+    },
   },
   data() {
     return {
+      isEdit: false,
+      mustValidate: false,
+      inputFocus: "",
       account: {
-        accountconstruction: "",
-        accountitemcp: "",
+        accountconstruction: "Chỉ cảnh báo",
+        accountitemcp: "Chỉ cảnh báo",
         accountname: "",
         accountnameinenglish: "",
         accountnumber: "",
-        accountobjectdefault: "",
-        accountobjectthcp: "",
-        accountorder: "",
-        accountpurchasecontract: "",
-        accountsalecontract: "",
-        accountstatisticalcode: "",
-        accountunit: "",
+        accountobjectdefault: "Nhà cung cấp",
+        accountobjectthcp: "Chỉ cảnh báo",
+        accountorder: "Chỉ cảnh báo",
+        accountpurchasecontract: "Chỉ cảnh báo",
+        accountsalecontract: "Chỉ cảnh báo",
+        accountstatisticalcode: "Chỉ cảnh báo",
+        accountunit: "Chỉ cảnh báo",
         description: "",
         generalaccountnumber: "",
         hasbankaccount: false,
@@ -516,12 +618,257 @@ export default {
       this.$emit("closePopup", false);
     },
 
-    focusFirstInput() {
-      this.$refs.input.focusInput();
-      // document.getElementsByClassName('ms-input--input')[0].focus();
-      // this.$refs.msInput.$el.querySelectorAll("input")[0].focus();
-      // console.log(this.$refs.msInput.$el.querySelectorAll("input")[0]);
+    loadData() {
+      this.$emit("loadData");
     },
+
+    focusInput(refInput) {
+      this.$refs[refInput].focusInput();
+    },
+
+    showErrorDialog(content) {
+      document.getElementById("idMessageError").innerHTML = content;
+      document.getElementById("error-dialog").style.display = "block";
+    },
+
+    hideErrorDialog() {
+      document.getElementById("error-dialog").style.display = "none";
+      // document.getElementById(this.inputFocus).focus();
+      this.focusInput(this.inputFocus);
+    },
+
+    //reset thông tin tài khoản
+    resetInfoAccount() {
+      this.mustValidate = false;
+      this.inputFocus = "";
+      this.isEdit = false;
+
+      this.account = {
+        accountconstruction: "Chỉ cảnh báo",
+        accountitemcp: "Chỉ cảnh báo",
+        accountname: "",
+        accountnameinenglish: "",
+        accountnumber: "",
+        accountobjectdefault: "Nhà cung cấp",
+        accountobjectthcp: "Chỉ cảnh báo",
+        accountorder: "Chỉ cảnh báo",
+        accountpurchasecontract: "Chỉ cảnh báo",
+        accountsalecontract: "Chỉ cảnh báo",
+        accountstatisticalcode: "Chỉ cảnh báo",
+        accountunit: "Chỉ cảnh báo",
+        description: "",
+        generalaccountnumber: "",
+        hasbankaccount: false,
+        idaccount: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+        isaccountexception: false,
+        natureaccount: "Dư nợ",
+      };
+      this.editableObjectDefault = false;
+      this.editableObjectTHCP = false;
+      this.editableConstruction = false;
+      this.editableOrder = false;
+      this.editableSaleContract = false;
+      this.editablePurchaseContract = false;
+      this.editableItemCP = false;
+      this.editableUnit = false;
+      this.editableStatisticalCode = false;
+    },
+
+    //validate
+    checkInfoAccount() {
+      if (this.account.accountnumber.trim() == "") {
+        this.showErrorDialog("Số tài khoản không được để trống");
+        this.mustValidate = true;
+        this.inputFocus = "inputAccountNumber";
+        return false;
+      } else if (this.account.accountname.trim() == "") {
+        this.showErrorDialog("Tên tài khoản không được để trống");
+        this.mustValidate = true;
+        this.inputFocus = "inputAccountName";
+        return false;
+      } else {
+        return true;
+      }
+    },
+
+    //kiểm tra các checkbox trong theo dõi chi tiết
+    checkCheckBox() {
+      if (this.editableObjectDefault == false) {
+        this.account.accountobjectdefault = "";
+      }
+
+      if (this.editableObjectTHCP == false) {
+        this.account.accountobjectthcp = "";
+      }
+
+      if (this.editableConstruction == false) {
+        this.account.accountconstruction = "";
+      }
+
+      if (this.editableOrder == false) {
+        this.account.accountorder = "";
+      }
+
+      if (this.editableSaleContract == false) {
+        this.account.accountsalecontract = "";
+      }
+
+      if (this.editablePurchaseContract == false) {
+        this.account.accountpurchasecontract = "";
+      }
+
+      if (this.editableItemCP == false) {
+        this.account.accountitemcp = "";
+      }
+
+      if (this.editableUnit == false) {
+        this.account.accountunit = "";
+      }
+
+      if (this.editableStatisticalCode == false) {
+        this.account.accountstatisticalcode = "";
+      }
+    },
+
+    //lấy dữ liệu tài khoản
+    async getAccount(id) {
+      let m = this;
+      axios({
+        method: "get",
+        url: localhost + id,
+      })
+        .then(function (response) {
+          //thành công
+          console.log(response.data);
+          m.account = response.data;
+          if (response.data.accountobjectdefault != "") {
+            m.editableObjectDefault = true;
+          } else {
+            m.editableObjectDefault = false;
+          }
+
+          if (response.data.accountobjectthcp != "") {
+            m.editableObjectTHCP = true;
+          } else {
+            m.editableObjectTHCP = false;
+          }
+
+          if (response.data.accountconstruction != "") {
+            m.editableConstruction = true;
+          } else {
+            m.editableConstruction = false;
+          }
+
+          if (response.data.accountorder != "") {
+            m.editableOrder = true;
+          } else {
+            m.editableOrder = false;
+          }
+
+          if (response.data.accountsalecontract != "") {
+            m.editableSaleContract = true;
+          } else {
+            m.editableSaleContract = false;
+          }
+
+          if (response.data.accountpurchasecontract != "") {
+            m.editablePurchaseContract = true;
+          } else {
+            m.editablePurchaseContract = false;
+          }
+
+          if (response.data.accountitemcp != "") {
+            m.editableItemCP = true;
+          } else {
+            m.editableItemCP = false;
+          }
+
+          if (response.data.accountunit != "") {
+            m.editableUnit = true;
+          } else {
+            m.editableUnit = false;
+          }
+
+          if (response.data.accountstatisticalcode != "") {
+            m.editableStatisticalCode = true;
+          } else {
+            m.editableStatisticalCode = false;
+          }
+          m.focusInput("inputAccountNumber");
+        })
+        .catch(function (error) {
+          //gặp lỗi
+          console.log(error);
+        });
+    },
+
+    //ấn nút CẤT
+    saveAccount() {
+      if (this.checkInfoAccount()) {
+        if (this.isEdit) {
+          this.editAccount();
+        } else {
+          this.addAccount();
+        }
+      }
+    },
+
+    //sửa
+    editAccount() {
+      this.checkCheckBox();
+      console.log(this.account);
+      var m = this;
+      axios({
+        method: "put",
+        url: localhost + this.idAccount,
+        data: this.account,
+      })
+        .then(function (response) {
+          //thành công
+          console.log(response);
+          m.resetInfoAccount();
+          m.closePopup();
+          m.loadData();
+        })
+        .catch(function (error) {
+          //gặp lỗi
+          var noti = error.response.data;
+          m.showErrorDialog(noti.userMsg);
+          if (noti.errorCode == "misa-001") {
+            m.inputFocus = "inputAccountNumber";
+          }
+        });
+    },
+
+    //thêm mới
+    addAccount() {
+      this.checkCheckBox();
+      console.log(this.account);
+      var m = this;
+      axios({
+        method: "post",
+        url: localhost,
+        data: this.account,
+      })
+        .then(function (response) {
+          //thành công
+          console.log(response);
+          m.resetInfoAccount();
+          m.closePopup();
+          m.loadData();
+        })
+        .catch(function (error) {
+          //gặp lỗi
+          var noti = error.response.data;
+          m.showErrorDialog(noti.userMsg);
+          if (noti.errorCode == "misa-001") {
+            m.inputFocus = "inputAccountNumber";
+          }
+        });
+    },
+  },
+  created() {
+    EventBus.$on("setIsEdit", (data) => (this.isEdit = data));
   },
 };
 </script>

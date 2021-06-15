@@ -9,9 +9,9 @@
       auto-select-first
       no-data-text="Không có dữ liệu hiển thị."
       :placeholder="placeholder"
-      v-model="pageSize"
+      v-model="valueSelect"
       v-bind:value="value"
-      v-on:input="$emit('input', pageSize)"
+      v-on:input="$emit('input', valueSelect)"
       color="#2ca01c"
       :readonly="readonly"
       :disabled="disabled"
@@ -61,12 +61,12 @@ export default {
   },
    watch:{
      value() {
-      this.temporaryList = this.value;
+      this.valueSelect = this.value;
     },
   },
   data() {
     return {
-      pageSize: ""
+      valueSelect: ""
     };
   },
   methods: {
@@ -89,12 +89,12 @@ export default {
       if (this.value) {
         for (let i = 0; i < this.items.length; i++) {
           if (this.value == this.items[i]) {
-            this.pageSize = this.items[i];
+            this.valueSelect = this.items[i];
             break;
           }
         }
       } else if (this.itemDefault) {
-        this.pageSize = this.items[this.itemDefault];
+        this.valueSelect = this.items[this.itemDefault];
       }
     },
   },

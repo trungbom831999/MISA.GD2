@@ -24,7 +24,7 @@ namespace test2.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Account>>> GetAccounts()
         {
-            return await _context.Accounts.ToListAsync();
+            return await _context.Accounts.OrderBy(a => a.Accountnumber).ToListAsync();
         }
 
         // GET: api/Accounts/5
@@ -53,6 +53,18 @@ namespace test2.Controllers
 
             _context.Entry(account).State = EntityState.Modified;
 
+            if (AccountNumberExists(id, account.Accountnumber)){
+                var erroInfo = new
+                {
+                    devMsg = "AccountNumber duplucate!",
+                    userMsg = "Số tài khoản <" + account.Accountnumber + "> đã tồn tại",
+                    errorCode = "misa-001",
+                    moreInfo = "https://openapi.misa.com.vn/errorcode/misa-001",
+                    traceId = "ba9587fd-1a79-4ac5-a0ca-2c9f74dfd3fb"
+                };
+
+                return BadRequest(erroInfo);
+            }
             try
             {
                 await _context.SaveChangesAsync();
@@ -63,26 +75,13 @@ namespace test2.Controllers
                 {
                     return NotFound();
                 }
-                else if (AccountCodeExists(account.Accountnumber))
-                {
-                    var erroInfo = new
-                    {
-                        devMsg = "AccountNumber duplucate!",
-                        userMsg = "Số tài khoản <" + account.Accountnumber + "> đã tồn tại",
-                        errorCode = "misa-001",
-                        moreInfo = "https://openapi.misa.com.vn/errorcode/misa-001",
-                        traceId = "ba9587fd-1a79-4ac5-a0ca-2c9f74dfd3fb"
-                    };
-
-                    return BadRequest(erroInfo);
-                }
                 else
                 {
                     throw;
                 }
             }
 
-            return NoContent();
+            return Ok(account);
         }
 
         // POST: api/Accounts
@@ -102,7 +101,7 @@ namespace test2.Controllers
                 {
                     return Conflict();
                 }
-                else if (AccountCodeExists(account.Accountnumber))
+                else if (AccountNumberExists(account.Accountnumber))
                 {
                     var erroInfo = new
                     {
@@ -146,9 +145,14 @@ namespace test2.Controllers
             return _context.Accounts.Any(e => e.Idaccount == id);
         }
 
-        private bool AccountCodeExists(string accountNumber)
+        private bool AccountNumberExists(string accountNumber)
         {
             return _context.Accounts.Any(e => e.Accountnumber == accountNumber);
+        }
+
+        private bool AccountNumberExists(Guid id, string accountNumber)
+        {
+            return _context.Accounts.Any(e => (e.Accountnumber == accountNumber && e.Idaccount != id));
         }
     }
 }

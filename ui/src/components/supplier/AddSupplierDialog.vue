@@ -1165,6 +1165,7 @@ export default {
       if (newV) {
         var m = this;
         setTimeout(function () {
+          m.getSupplier(m.idSupplier);
           if (m.supplier.typeofsupplier == "organization") {
             m.focusInput("inputSupplierTaxCode");
           } else if (m.supplier.typeofsupplier == "personal") {
@@ -1439,18 +1440,6 @@ export default {
     },
 
     async getSupplier(id) {
-      // const response = await axios.get(localhost + id);
-      // this.supplier = response.data;
-      // this.supplier.identitycarddateprovied = this.formatDateToShow(
-      //   response.data.identitycarddateprovied
-      // );
-      // if (this.supplier.typeofsupplier == "organization") {
-      //   this.focusInput("inputSupplierTaxCode");
-      // } else if (this.supplier.typeofsupplier == "personal") {
-      //   this.focusInput("inputSupplierCode");
-      // }
-      // console.log(response.data);
-
       let m = this;
       axios({
         method: "get",
