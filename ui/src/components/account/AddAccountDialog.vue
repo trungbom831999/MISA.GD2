@@ -369,6 +369,7 @@
                         ms-button-radius-false
                         ms-button
                       "
+                      @click="saveAccountAndAddNew()"
                     >
                       <div
                         class="ms-button-text ms-button--text flex align-center"
@@ -745,54 +746,63 @@ export default {
             m.editableObjectDefault = true;
           } else {
             m.editableObjectDefault = false;
+            m.account.accountobjectdefault = "Nhà cung cấp";
           }
 
           if (response.data.accountobjectthcp != "") {
             m.editableObjectTHCP = true;
           } else {
             m.editableObjectTHCP = false;
+            m.account.accountobjectthcp = "Chỉ cảnh báo";
           }
 
           if (response.data.accountconstruction != "") {
             m.editableConstruction = true;
           } else {
             m.editableConstruction = false;
+            m.account.accountconstruction = "Chỉ cảnh báo";
           }
 
           if (response.data.accountorder != "") {
             m.editableOrder = true;
           } else {
             m.editableOrder = false;
+            m.account.accountorder = "Chỉ cảnh báo";
           }
 
           if (response.data.accountsalecontract != "") {
             m.editableSaleContract = true;
           } else {
             m.editableSaleContract = false;
+            m.account.accountsalecontract = "Chỉ cảnh báo";
           }
 
           if (response.data.accountpurchasecontract != "") {
             m.editablePurchaseContract = true;
           } else {
             m.editablePurchaseContract = false;
+            m.account.accountpurchasecontract = "Chỉ cảnh báo";
           }
 
           if (response.data.accountitemcp != "") {
             m.editableItemCP = true;
           } else {
             m.editableItemCP = false;
+            m.account.accountitemcp = "Chỉ cảnh báo";
           }
 
           if (response.data.accountunit != "") {
             m.editableUnit = true;
           } else {
             m.editableUnit = false;
+            m.account.accountunit = "Chỉ cảnh báo";
           }
 
           if (response.data.accountstatisticalcode != "") {
             m.editableStatisticalCode = true;
           } else {
             m.editableStatisticalCode = false;
+            m.account.accountstatisticalcode = "Chỉ cảnh báo";
           }
           m.focusInput("inputAccountNumber");
         })
@@ -866,6 +876,67 @@ export default {
           }
         });
     },
+
+    //ấn nút cất và thêm
+    saveAccountAndAddNew() {
+      if (this.checkInfoAccount()) {
+        if (this.isEdit) {
+          this.editAccountAndAddNew();
+        } else {
+          this.addAccountAndAddNew();
+        }
+      }
+    },
+
+    editAccountAndAddNew(){
+      this.checkCheckBox();
+      console.log(this.account);
+      var m = this;
+      axios({
+        method: "put",
+        url: localhost + this.idAccount,
+        data: this.account,
+      })
+        .then(function (response) {
+          //thành công
+          console.log(response);
+          m.resetInfoAccount();
+          m.loadData();
+        })
+        .catch(function (error) {
+          //gặp lỗi
+          var noti = error.response.data;
+          m.showErrorDialog(noti.userMsg);
+          if (noti.errorCode == "misa-001") {
+            m.inputFocus = "inputAccountNumber";
+          }
+        });
+    },
+
+    addAccountAndAddNew(){
+      this.checkCheckBox();
+      console.log(this.account);
+      var m = this;
+      axios({
+        method: "post",
+        url: localhost,
+        data: this.account,
+      })
+        .then(function (response) {
+          //thành công
+          console.log(response);
+          m.resetInfoAccount();
+          m.loadData();
+        })
+        .catch(function (error) {
+          //gặp lỗi
+          var noti = error.response.data;
+          m.showErrorDialog(noti.userMsg);
+          if (noti.errorCode == "misa-001") {
+            m.inputFocus = "inputAccountNumber";
+          }
+        });
+    }
   },
   created() {
     EventBus.$on("setIsEdit", (data) => (this.isEdit = data));
