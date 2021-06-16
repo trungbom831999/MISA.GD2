@@ -667,14 +667,8 @@
                       bottom: 46px;
                     "
                   ></th>
-                  <th
-                    class="ms-out-right-white-30"
-                    style="bottom: 46px"
-                  ></th>
-                  <th
-                    class="ms-out-right-grey-30"
-                    style="bottom: 46px"
-                  ></th>
+                  <th class="ms-out-right-white-30" style="bottom: 46px"></th>
+                  <th class="ms-out-right-grey-30" style="bottom: 46px"></th>
                 </tr>
               </tfoot>
             </table>
@@ -727,7 +721,7 @@
                     <div
                       class="ml-3 pointer"
                       :class="{
-                        disableText: pageNumber * pageSize >= suppliersLength,
+                        disableText: pageNumber * pageSize >= paymentsLength,
                       }"
                       @click="nextPage()"
                     >
@@ -819,6 +813,7 @@
 import DropdownButton from "../baseControl/DropdownButton.vue";
 import Payment from "./Payment.vue";
 import CheckBox from "../baseControl/CheckBox.vue";
+import MsSelect from "../baseControl/MsSelect.vue";
 
 export default {
   name: "Cash",
@@ -826,6 +821,7 @@ export default {
     DropdownButton,
     Payment,
     CheckBox,
+    MsSelect
   },
   data() {
     return {
@@ -836,7 +832,31 @@ export default {
       pageNumber: 1,
       pageSize: 20,
       pageSizeInSelect: "20 bản ghi trên 1 trang",
+
+      recordInPage: [
+        "2 bản ghi trên 1 trang",
+        "5 bản ghi trên 1 trang",
+        "10 bản ghi trên 1 trang",
+        "20 bản ghi trên 1 trang",
+        "30 bản ghi trên 1 trang",
+        "50 bản ghi trên 1 trang",
+        "100 bản ghi trên 1 trang",
+      ],
+
+      keyWordSearch: "",
     };
+  },
+  watch: {
+    pageSizeInSelect(newV, oldV) {
+      if (newV) {
+        this.setPageSize();
+        // this.pageNumber = 1;
+        // this.searchSupplier();
+      } else if (oldV) {
+        this.setPageSize();
+        // this.searchSupplier();
+      }
+    },
   },
   methods: {
     showPaymentPopup() {
@@ -845,6 +865,32 @@ export default {
 
     closePaymentPopup(value) {
       this.isShowPaymentPopup = value;
+    },
+
+    setPageSize() {
+      switch (this.pageSizeInSelect) {
+        case "2 bản ghi trên 1 trang":
+          this.pageSize = 2;
+          break;
+        case "5 bản ghi trên 1 trang":
+          this.pageSize = 5;
+          break;
+        case "10 bản ghi trên 1 trang":
+          this.pageSize = 10;
+          break;
+        case "20 bản ghi trên 1 trang":
+          this.pageSize = 20;
+          break;
+        case "30 bản ghi trên 1 trang":
+          this.pageSize = 30;
+          break;
+        case "50 bản ghi trên 1 trang":
+          this.pageSize = 50;
+          break;
+        case "100 bản ghi trên 1 trang":
+          this.pageSize = 100;
+          break;
+      }
     },
   },
   mounted() {},

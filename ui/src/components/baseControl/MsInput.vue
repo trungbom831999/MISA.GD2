@@ -18,6 +18,7 @@
           class="ms-input--input normal ms-input-normal"
           :class="error ? 'input-validate-error' : ''"
           :style="[textRight ? { 'text-align': 'right' } : '']"
+          @keypress="isNumber($event)"
         />
       </div>
     </div>
@@ -43,6 +44,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    numberInput: {
+      type: Boolean,
+      default: false,
+    },
     value: {},
   },
   methods: {
@@ -50,6 +55,24 @@ export default {
       // console.log(this.$refs.input);
       this.$refs.input.focus();
       // return this.$refs.msInput;
+    },
+
+    //input chỉ có số
+    isNumber: function (evt) {
+      if (this.numberInput) {
+        evt = evt ? evt : window.event;
+        var charCode = evt.which ? evt.which : evt.keyCode;
+        if (
+          charCode > 31 &&
+          (charCode < 48 || charCode > 57) &&
+          charCode !== 43
+          && charCode !== 45
+        ) {
+          evt.preventDefault();
+        } else {
+          return true;
+        }
+      }
     },
   },
 };

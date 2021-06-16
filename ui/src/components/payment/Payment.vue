@@ -23,10 +23,13 @@
                       </div>
                     </div>
 
-                    <div class="title">Phiếu chi PC00001</div>
+                    <div class="title">
+                      Phiếu chi {{ payment.paymentNumber }}
+                    </div>
                     <div class="header-detail-input">
                       <div class="combo-header combo-editor width-350">
                         <ms-select
+                          ref="selectTypePayment"
                           :items="typeOfPayment"
                           :itemDefault="4"
                         ></ms-select>
@@ -168,7 +171,9 @@
                                   <ms-input
                                     label="Kèm theo"
                                     placeholder="Số lượng"
-                                    :textRight="true"
+                                    textRight
+                                    numberInput
+                                    v-model="payment.numberoflicense"
                                   ></ms-input>
                                   <div class="root-invoice px-2">
                                     chứng từ gốc
@@ -222,7 +227,13 @@
                   <!-- bảng hạch toán   -->
                   <div class="grid-tab">
                     <div
-                      class="ms-tabs con-ms-tabs tab-grid ms-tabs-position-top grid-tab-single"
+                      class="
+                        ms-tabs
+                        con-ms-tabs
+                        tab-grid
+                        ms-tabs-position-top
+                        grid-tab-single
+                      "
                     >
                       <div class="con-ms-ul-tabs tab-detail">
                         <ul class="ul-tabs ms-tabs-ul ms-ul-tabs-left">
@@ -246,8 +257,16 @@
                               ></select-auto-complete-menu-table>
                             </div>
 
-                            <div v-if="typeOfMoney != 'VND'" class="label-option">Tỷ giá</div>
-                            <div v-if="typeOfMoney != 'VND'" class="cls-width-exchange-rate">
+                            <div
+                              v-if="typeOfMoney != 'VND'"
+                              class="label-option"
+                            >
+                              Tỷ giá
+                            </div>
+                            <div
+                              v-if="typeOfMoney != 'VND'"
+                              class="cls-width-exchange-rate"
+                            >
                               <ms-input textRight></ms-input>
                             </div>
                           </div>
@@ -291,7 +310,11 @@
                                                   "
                                                 ></th>
                                                 <th
-                                                  class="check-multiple-columns text-center left-30"
+                                                  class="
+                                                    check-multiple-columns
+                                                    text-center
+                                                    left-30
+                                                  "
                                                   style="top: 0px"
                                                 >
                                                   #
@@ -305,10 +328,19 @@
                                                   "
                                                 >
                                                   <div
-                                                    class="flex th-height text-left"
+                                                    class="
+                                                      flex
+                                                      th-height
+                                                      text-left
+                                                    "
                                                   >
                                                     <div
-                                                      class="th-table padding-th w-full cursor-pointer"
+                                                      class="
+                                                        th-table
+                                                        padding-th
+                                                        w-full
+                                                        cursor-pointer
+                                                      "
                                                       style="
                                                         justify-content: left;
                                                       "
@@ -327,10 +359,19 @@
                                                   "
                                                 >
                                                   <div
-                                                    class="flex th-height text-left"
+                                                    class="
+                                                      flex
+                                                      th-height
+                                                      text-left
+                                                    "
                                                   >
                                                     <div
-                                                      class="th-table padding-th w-full cursor-pointer"
+                                                      class="
+                                                        th-table
+                                                        padding-th
+                                                        w-full
+                                                        cursor-pointer
+                                                      "
                                                       style="
                                                         justify-content: left;
                                                       "
@@ -349,10 +390,19 @@
                                                   "
                                                 >
                                                   <div
-                                                    class="flex th-height text-left"
+                                                    class="
+                                                      flex
+                                                      th-height
+                                                      text-left
+                                                    "
                                                   >
                                                     <div
-                                                      class="th-table padding-th w-full cursor-pointer"
+                                                      class="
+                                                        th-table
+                                                        padding-th
+                                                        w-full
+                                                        cursor-pointer
+                                                      "
                                                       style="
                                                         justify-content: left;
                                                       "
@@ -371,10 +421,19 @@
                                                   "
                                                 >
                                                   <div
-                                                    class="flex th-height text-right"
+                                                    class="
+                                                      flex
+                                                      th-height
+                                                      text-right
+                                                    "
                                                   >
                                                     <div
-                                                      class="th-table padding-th w-full cursor-pointer"
+                                                      class="
+                                                        th-table
+                                                        padding-th
+                                                        w-full
+                                                        cursor-pointer
+                                                      "
                                                       style="
                                                         justify-content: flex-end;
                                                       "
@@ -384,7 +443,8 @@
                                                   </div>
                                                 </th>
 
-                                                <th v-if="typeOfMoney != 'VND'"
+                                                <th
+                                                  v-if="typeOfMoney != 'VND'"
                                                   class="dynamic-header p-0"
                                                   style="
                                                     min-width: 150px;
@@ -393,10 +453,19 @@
                                                   "
                                                 >
                                                   <div
-                                                    class="flex th-height text-right"
+                                                    class="
+                                                      flex
+                                                      th-height
+                                                      text-right
+                                                    "
                                                   >
                                                     <div
-                                                      class="th-table padding-th w-full cursor-pointer"
+                                                      class="
+                                                        th-table
+                                                        padding-th
+                                                        w-full
+                                                        cursor-pointer
+                                                      "
                                                       style="
                                                         justify-content: flex-end;
                                                       "
@@ -415,10 +484,19 @@
                                                   "
                                                 >
                                                   <div
-                                                    class="flex th-height text-left"
+                                                    class="
+                                                      flex
+                                                      th-height
+                                                      text-left
+                                                    "
                                                   >
                                                     <div
-                                                      class="th-table padding-th w-full cursor-pointer"
+                                                      class="
+                                                        th-table
+                                                        padding-th
+                                                        w-full
+                                                        cursor-pointer
+                                                      "
                                                       style="
                                                         justify-content: left;
                                                       "
@@ -437,10 +515,19 @@
                                                   "
                                                 >
                                                   <div
-                                                    class="flex th-height text-left"
+                                                    class="
+                                                      flex
+                                                      th-height
+                                                      text-left
+                                                    "
                                                   >
                                                     <div
-                                                      class="th-table padding-th w-full cursor-pointer"
+                                                      class="
+                                                        th-table
+                                                        padding-th
+                                                        w-full
+                                                        cursor-pointer
+                                                      "
                                                       style="
                                                         justify-content: left;
                                                       "
@@ -451,255 +538,12 @@
                                                 </th>
 
                                                 <th
-                                                  class="dynamic-header p-0"
-                                                  style="
-                                                    min-width: 151px;
-                                                    width: 151px;
-                                                    top: 0px;
-                                                  "
-                                                  title="Khoản mục chi phí"
-                                                >
-                                                  <div
-                                                    class="flex th-height text-left"
-                                                  >
-                                                    <div
-                                                      class="th-table padding-th w-full cursor-pointer"
-                                                      style="
-                                                        justify-content: left;
-                                                      "
-                                                    >
-                                                      <span>Khoản mục CP</span>
-                                                    </div>
-                                                  </div>
-                                                </th>
-
-                                                <th
-                                                  class="dynamic-header p-0"
-                                                  style="
-                                                    min-width: 250px;
-                                                    width: 250px;
-                                                    top: 0px;
-                                                  "
-                                                  title="Tên khoản mục chi phí"
-                                                >
-                                                  <div
-                                                    class="flex th-height text-left"
-                                                  >
-                                                    <div
-                                                      class="th-table padding-th w-full cursor-pointer"
-                                                      style="
-                                                        justify-content: left;
-                                                      "
-                                                    >
-                                                      <span
-                                                        >Tên khoản mục CP</span
-                                                      >
-                                                    </div>
-                                                  </div>
-                                                </th>
-
-                                                <th
-                                                  class="dynamic-header p-0"
-                                                  style="
-                                                    min-width: 150px;
-                                                    width: 150px;
-                                                    top: 0px;
-                                                  "
-                                                >
-                                                  <div
-                                                    class="flex th-height text-left"
-                                                  >
-                                                    <div
-                                                      class="th-table padding-th w-full cursor-pointer"
-                                                      style="
-                                                        justify-content: left;
-                                                      "
-                                                    >
-                                                      <span>Đơn vị</span>
-                                                    </div>
-                                                  </div>
-                                                </th>
-
-                                                <th
-                                                  class="dynamic-header p-0"
-                                                  style="
-                                                    min-width: 150px;
-                                                    width: 150px;
-                                                    top: 0px;
-                                                  "
-                                                >
-                                                  <div
-                                                    class="flex th-height text-left"
-                                                  >
-                                                    <div
-                                                      class="th-table padding-th w-full cursor-pointer"
-                                                      style="
-                                                        justify-content: left;
-                                                      "
-                                                    >
-                                                      <span>Tên đơn vị</span>
-                                                    </div>
-                                                  </div>
-                                                </th>
-
-                                                <th
-                                                  class="dynamic-header p-0"
-                                                  style="
-                                                    min-width: 150px;
-                                                    width: 150px;
-                                                    top: 0px;
-                                                  "
-                                                  title="Đối tượng tập hợp chi phí"
-                                                >
-                                                  <div
-                                                    class="flex th-height text-left"
-                                                  >
-                                                    <div
-                                                      class="th-table padding-th w-full cursor-pointer"
-                                                      style="
-                                                        justify-content: left;
-                                                      "
-                                                    >
-                                                      <span>Đối tượng THCP</span>
-                                                    </div>
-                                                  </div>
-                                                </th>
-
-                                                <th
-                                                  class="dynamic-header p-0"
-                                                  style="
-                                                    min-width: 150px;
-                                                    width: 150px;
-                                                    top: 0px;
-                                                  "
-                                                >
-                                                  <div
-                                                    class="flex th-height text-left"
-                                                  >
-                                                    <div
-                                                      class="th-table padding-th w-full cursor-pointer"
-                                                      style="
-                                                        justify-content: left;
-                                                      "
-                                                    >
-                                                      <span>Công trình</span>
-                                                    </div>
-                                                  </div>
-                                                </th>
-
-                                                <th
-                                                  class="dynamic-header p-0"
-                                                  style="
-                                                    min-width: 150px;
-                                                    width: 150px;
-                                                    top: 0px;
-                                                  "
-                                                >
-                                                  <div
-                                                    class="flex th-height text-left"
-                                                  >
-                                                    <div
-                                                      class="th-table padding-th w-full cursor-pointer"
-                                                      style="
-                                                        justify-content: left;
-                                                      "
-                                                    >
-                                                      <span>Đơn đặt hàng</span>
-                                                    </div>
-                                                  </div>
-                                                </th>
-
-                                                <th
-                                                  class="dynamic-header p-0"
-                                                  style="
-                                                    min-width: 150px;
-                                                    width: 150px;
-                                                    top: 0px;
-                                                  "
-                                                >
-                                                  <div
-                                                    class="flex th-height text-left"
-                                                  >
-                                                    <div
-                                                      class="th-table padding-th w-full cursor-pointer"
-                                                      style="
-                                                        justify-content: left;
-                                                      "
-                                                    >
-                                                      <span>Hợp đồng bán</span>
-                                                    </div>
-                                                  </div>
-                                                </th>
-
-                                                <th
-                                                  class="dynamic-header p-0"
-                                                  style="
-                                                    min-width: 150px;
-                                                    width: 150px;
-                                                    top: 0px;
-                                                  "
-                                                >
-                                                  <div
-                                                    class="flex th-height text-left"
-                                                  >
-                                                    <div
-                                                      class="th-table padding-th w-full cursor-pointer"
-                                                      style="
-                                                        justify-content: left;
-                                                      "
-                                                    >
-                                                      <span>Đơn mua hàng</span>
-                                                    </div>
-                                                  </div>
-                                                </th>
-
-                                                <th
-                                                  class="dynamic-header p-0"
-                                                  style="
-                                                    min-width: 150px;
-                                                    width: 150px;
-                                                    top: 0px;
-                                                  "
-                                                >
-                                                  <div
-                                                    class="flex th-height text-left"
-                                                  >
-                                                    <div
-                                                      class="th-table padding-th w-full cursor-pointer"
-                                                      style="
-                                                        justify-content: left;
-                                                      "
-                                                    >
-                                                      <span>Hợp đồng mua</span>
-                                                    </div>
-                                                  </div>
-                                                </th>
-
-                                                <th
-                                                  class="dynamic-header p-0"
-                                                  style="
-                                                    min-width: 150px;
-                                                    width: 150px;
-                                                    top: 0px;
-                                                  "
-                                                >
-                                                  <div
-                                                    class="flex th-height text-left"
-                                                  >
-                                                    <div
-                                                      class="th-table padding-th w-full cursor-pointer"
-                                                      style="
-                                                        justify-content: left;
-                                                      "
-                                                    >
-                                                      <span>Mã thống kê</span>
-                                                    </div>
-                                                  </div>
-                                                </th>
-
-                                                <th
                                                   rowspan="2"
-                                                  class="text-right wiget wiget-title right-30"
+                                                  class="
+                                                    text-right
+                                                    wiget wiget-title
+                                                    right-30
+                                                  "
                                                   style="
                                                     min-width: 40px;
                                                     width: 40px;
@@ -730,7 +574,12 @@
                                                   account, index
                                                 ) in accounting"
                                                 :key="index"
-                                                class="tr-values vs-table--tr tr-table-state-null selected"
+                                                class="
+                                                  tr-values
+                                                  vs-table--tr
+                                                  tr-table-state-null
+                                                  selected
+                                                "
                                               >
                                                 <td
                                                   style="
@@ -745,7 +594,12 @@
                                                   "
                                                 ></td>
                                                 <td
-                                                  class="td ms-table--td text-center ms-grid-row-number"
+                                                  class="
+                                                    td
+                                                    ms-table--td
+                                                    text-center
+                                                    ms-grid-row-number
+                                                  "
                                                 >
                                                   <div class="stt-cell">
                                                     {{ index + 1 }}
@@ -753,7 +607,11 @@
                                                 </td>
 
                                                 <td
-                                                  class="td ms-table--td dynamic-column"
+                                                  class="
+                                                    td
+                                                    ms-table--td
+                                                    dynamic-column
+                                                  "
                                                 >
                                                   <div class="editable">
                                                     <div style="width: 100%">
@@ -770,7 +628,11 @@
                                                 </td>
 
                                                 <td
-                                                  class="td ms-table--td dynamic-column"
+                                                  class="
+                                                    td
+                                                    ms-table--td
+                                                    dynamic-column
+                                                  "
                                                 >
                                                   <div class="editable">
                                                     <select-auto-complete-menu-table
@@ -785,7 +647,11 @@
                                                 </td>
 
                                                 <td
-                                                  class="td ms-table--td dynamic-column"
+                                                  class="
+                                                    td
+                                                    ms-table--td
+                                                    dynamic-column
+                                                  "
                                                 >
                                                   <div class="editable">
                                                     <select-auto-complete-menu-table
@@ -799,19 +665,30 @@
                                                   </div>
                                                 </td>
 
+                                                <!-- số tiền  -->
                                                 <td
-                                                  class="td ms-table--td dynamic-column"
+                                                  class="
+                                                    td
+                                                    ms-table--td
+                                                    dynamic-column
+                                                  "
                                                 >
                                                   <div class="editable">
                                                     <ms-input
-                                                      textRight
                                                       v-model="account.money"
+                                                      textRight
+                                                      numberInput
                                                     ></ms-input>
                                                   </div>
                                                 </td>
 
-                                                <td v-if="typeOfMoney != 'VND'"
-                                                  class="td ms-table--td dynamic-column"
+                                                <td
+                                                  v-if="typeOfMoney != 'VND'"
+                                                  class="
+                                                    td
+                                                    ms-table--td
+                                                    dynamic-column
+                                                  "
                                                 >
                                                   <div class="editable">
                                                     <ms-input
@@ -821,7 +698,11 @@
                                                 </td>
 
                                                 <td
-                                                  class="td ms-table--td dynamic-column"
+                                                  class="
+                                                    td
+                                                    ms-table--td
+                                                    dynamic-column
+                                                  "
                                                 >
                                                   <div class="editable">
                                                     <select-auto-complete-menu-table
@@ -834,7 +715,11 @@
                                                 </td>
 
                                                 <td
-                                                  class="td ms-table--td dynamic-column"
+                                                  class="
+                                                    td
+                                                    ms-table--td
+                                                    dynamic-column
+                                                  "
                                                 >
                                                   <div class="editable">
                                                     <ms-input></ms-input>
@@ -842,98 +727,20 @@
                                                 </td>
 
                                                 <td
-                                                  class="td ms-table--td dynamic-column"
-                                                >
-                                                  <div class="editable">
-                                                    <ms-input></ms-input>
-                                                  </div>
-                                                </td>
-                                                
-                                                <td
-                                                  class="td ms-table--td dynamic-column"
-                                                >
-                                                  <div class="editable">
-                                                    <ms-input></ms-input>
-                                                  </div>
-                                                </td>
-                                                
-                                                <td
-                                                  class="td ms-table--td dynamic-column"
-                                                >
-                                                  <div class="editable">
-                                                    <ms-input></ms-input>
-                                                  </div>
-                                                </td>
-                                                
-                                                <td
-                                                  class="td ms-table--td dynamic-column"
-                                                >
-                                                  <div class="editable">
-                                                    <ms-input></ms-input>
-                                                  </div>
-                                                </td>
-                                                
-                                                <td
-                                                  class="td ms-table--td dynamic-column"
-                                                >
-                                                  <div class="editable">
-                                                    <ms-input></ms-input>
-                                                  </div>
-                                                </td>
-                                                
-                                                <td
-                                                  class="td ms-table--td dynamic-column"
-                                                >
-                                                  <div class="editable">
-                                                    <ms-input></ms-input>
-                                                  </div>
-                                                </td>
-                                                
-                                                <td
-                                                  class="td ms-table--td dynamic-column"
-                                                >
-                                                  <div class="editable">
-                                                    <ms-input></ms-input>
-                                                  </div>
-                                                </td>
-                                                
-                                                <td
-                                                  class="td ms-table--td dynamic-column"
-                                                >
-                                                  <div class="editable">
-                                                    <ms-input></ms-input>
-                                                  </div>
-                                                </td>
-                                                
-                                                <td
-                                                  class="td ms-table--td dynamic-column"
-                                                >
-                                                  <div class="editable">
-                                                    <ms-input></ms-input>
-                                                  </div>
-                                                </td>
-                                                
-                                                <td
-                                                  class="td ms-table--td dynamic-column"
-                                                >
-                                                  <div class="editable">
-                                                    <ms-input></ms-input>
-                                                  </div>
-                                                </td>
-                                                
-                                                <td
-                                                  class="td ms-table--td dynamic-column"
-                                                >
-                                                  <div class="editable">
-                                                    <ms-input></ms-input>
-                                                  </div>
-                                                </td>
-
-                                                <td
-                                                  class="td ms-table--td wiget right-30"
+                                                  class="
+                                                    td
+                                                    ms-table--td
+                                                    wiget
+                                                    right-30
+                                                  "
                                                 >
                                                   <div
-                                                    class="delete-function flex justify-center align-center"
+                                                    class="
+                                                      delete-function
+                                                      flex
+                                                      justify-center
+                                                      align-center
+                                                    "
                                                     @click="
                                                       deleteRowAccounting(index)
                                                     "
@@ -1000,77 +807,12 @@
                                                 >
                                                   <span>0,0</span>
                                                 </th>
-                                                <th v-if="typeOfMoney != 'VND'"
+                                                <th
+                                                  v-if="typeOfMoney != 'VND'"
                                                   class="dynamic-column"
                                                   style="text-align: right"
                                                 >
                                                   <span>0</span>
-                                                </th>
-                                                <th
-                                                  class="dynamic-column"
-                                                  style="text-align: left"
-                                                >
-                                                  <span></span>
-                                                </th>
-                                                <th
-                                                  class="dynamic-column"
-                                                  style="text-align: left"
-                                                >
-                                                  <span></span>
-                                                </th>
-                                                <th
-                                                  class="dynamic-column"
-                                                  style="text-align: left"
-                                                >
-                                                  <span></span>
-                                                </th>
-                                                <th
-                                                  class="dynamic-column"
-                                                  style="text-align: left"
-                                                >
-                                                  <span></span>
-                                                </th>
-                                                <th
-                                                  class="dynamic-column"
-                                                  style="text-align: left"
-                                                >
-                                                  <span></span>
-                                                </th>
-                                                <th
-                                                  class="dynamic-column"
-                                                  style="text-align: left"
-                                                >
-                                                  <span></span>
-                                                </th>
-                                                <th
-                                                  class="dynamic-column"
-                                                  style="text-align: left"
-                                                >
-                                                  <span></span>
-                                                </th>
-                                                <th
-                                                  class="dynamic-column"
-                                                  style="text-align: left"
-                                                >
-                                                  <span></span>
-                                                </th>
-                                                <th
-                                                  class="dynamic-column"
-                                                  style="text-align: left"
-                                                >
-                                                  <span></span>
-                                                </th>
-                                                <th
-                                                  class="dynamic-column"
-                                                  style="text-align: left"
-                                                >
-                                                  <span></span>
-                                                </th>
-                                                <th
-                                                  class="dynamic-column"
-                                                  style="text-align: left"
-                                                >
-                                                  <span></span>
                                                 </th>
                                                 <th
                                                   class="dynamic-column"
@@ -1117,22 +859,48 @@
                     <div class="w-3/4">
                       <div class="btn-grid-control">
                         <button
-                          class="ms-component ms-button ms-button-size-small ms-button-secondary ms-button-secondary-disabled-false ms-button-radius-false ms-button"
+                          class="
+                            ms-component
+                            ms-button
+                            ms-button-size-small
+                            ms-button-secondary
+                            ms-button-secondary-disabled-false
+                            ms-button-radius-false
+                            ms-button
+                          "
                           @click="addRowAccounting()"
                         >
                           <div
-                            class="ms-button-text ms-button--text flex align-center"
+                            class="
+                              ms-button-text
+                              ms-button--text
+                              flex
+                              align-center
+                            "
                           >
                             <div>Thêm dòng</div>
                           </div>
                         </button>
 
                         <button
-                          class="ms-component ms-button ms-button-size-small ms-button-secondary ms-button-secondary-disabled-false ms-button-radius-false ms-button"
+                          class="
+                            ms-component
+                            ms-button
+                            ms-button-size-small
+                            ms-button-secondary
+                            ms-button-secondary-disabled-false
+                            ms-button-radius-false
+                            ms-button
+                          "
                           @click="removeAllRowAccounting()"
                         >
                           <div
-                            class="ms-button-text ms-button--text flex align-center"
+                            class="
+                              ms-button-text
+                              ms-button--text
+                              flex
+                              align-center
+                            "
                           >
                             <div>Xóa hết dòng</div>
                           </div>
@@ -1145,7 +913,11 @@
                             <div class="ms-title-upload">
                               <div class="attach-text">
                                 <div
-                                  class="mi mi-18 mi-attach m-r-8 cursor-default"
+                                  class="
+                                    mi mi-18 mi-attach
+                                    m-r-8
+                                    cursor-default
+                                  "
                                 ></div>
                                 <div>Đính kèm</div>
                               </div>
@@ -1187,24 +959,88 @@
                             <div class="footer-main-button">
                               <div class="ms-dropdown">
                                 <button
+                                  v-if="isSaveAndClose"
                                   name="button"
-                                  class="ms-component ms-button ms-button-size-footer ms-button-primary ms-button-primary-disabled-false ms-button-radius-false ms-button ms-radius-false ms-dropdown-style-footer ms-radius-false ms-dropdown-type-primary ms-dropdown-padding-custom-primary"
+                                  class="
+                                    ms-component
+                                    ms-button
+                                    ms-button-size-footer
+                                    ms-button-primary
+                                    ms-button-primary-disabled-false
+                                    ms-button-radius-false
+                                    ms-button
+                                    ms-radius-false
+                                    ms-dropdown-style-footer
+                                    ms-radius-false
+                                    ms-dropdown-type-primary
+                                    ms-dropdown-padding-custom-primary
+                                  "
                                 >
                                   <div
-                                    v-if="isSaveAndAddNew"
-                                    class="ms-button-text ms-button--text flex align-center"
-                                  >
-                                    Cất và Thêm
-                                  </div>
-                                  <div
-                                    v-if="isSaveAndClose"
-                                    class="ms-button-text ms-button--text flex align-center"
+                                    class="
+                                      ms-button-text
+                                      ms-button--text
+                                      flex
+                                      align-center
+                                    "
                                   >
                                     Cất và Đóng
                                   </div>
+                                </button>
+                                <button
+                                  v-if="isSaveAndAddNew"
+                                  name="button"
+                                  class="
+                                    ms-component
+                                    ms-button
+                                    ms-button-size-footer
+                                    ms-button-primary
+                                    ms-button-primary-disabled-false
+                                    ms-button-radius-false
+                                    ms-button
+                                    ms-radius-false
+                                    ms-dropdown-style-footer
+                                    ms-radius-false
+                                    ms-dropdown-type-primary
+                                    ms-dropdown-padding-custom-primary
+                                  "
+                                >
                                   <div
-                                    v-if="isSaveAndPrint"
-                                    class="ms-button-text ms-button--text flex align-center"
+                                    class="
+                                      ms-button-text
+                                      ms-button--text
+                                      flex
+                                      align-center
+                                    "
+                                  >
+                                    Cất và Thêm
+                                  </div>
+                                </button>
+                                <button
+                                  v-if="isSaveAndPrint"
+                                  name="button"
+                                  class="
+                                    ms-component
+                                    ms-button
+                                    ms-button-size-footer
+                                    ms-button-primary
+                                    ms-button-primary-disabled-false
+                                    ms-button-radius-false
+                                    ms-button
+                                    ms-radius-false
+                                    ms-dropdown-style-footer
+                                    ms-radius-false
+                                    ms-dropdown-type-primary
+                                    ms-dropdown-padding-custom-primary
+                                  "
+                                >
+                                  <div
+                                    class="
+                                      ms-button-text
+                                      ms-button--text
+                                      flex
+                                      align-center
+                                    "
                                   >
                                     Cất và In
                                   </div>
@@ -1213,14 +1049,40 @@
                                   <template slot="dropdown-button">
                                     <button
                                       name="button"
-                                      class="ms-component ms-button ms-con-dropdown parent-dropdown expand-more-button ms-button-size-footer ms-button-primary ms-button-primary-disabled-false ms-button-radius-false ms-button ms-dropdown-type-primary ms-con-dropdown-radius-false-false ms-con-dropdown-radius-false-primary ms-padding-is-single-false-size-footer ms-dropdown-style ms-con-dropdown parent-dropdown expand-more-button"
+                                      class="
+                                        ms-component ms-button ms-con-dropdown
+                                        parent-dropdown
+                                        expand-more-button
+                                        ms-button-size-footer
+                                        ms-button-primary
+                                        ms-button-primary-disabled-false
+                                        ms-button-radius-false
+                                        ms-button
+                                        ms-dropdown-type-primary
+                                        ms-con-dropdown-radius-false-false
+                                        ms-con-dropdown-radius-false-primary
+                                        ms-padding-is-single-false-size-footer
+                                        ms-dropdown-style
+                                        ms-con-dropdown
+                                        parent-dropdown
+                                        expand-more-button
+                                      "
                                     >
                                       <div
-                                        class="ms-button-text ms-button--text flex align-center"
+                                        class="
+                                          ms-button-text
+                                          ms-button--text
+                                          flex
+                                          align-center
+                                        "
                                       >
                                         <div class="line"></div>
                                         <div
-                                          class="mi mi-16 mi-arrow-up--white bg-green"
+                                          class="
+                                            mi mi-16
+                                            mi-arrow-up--white
+                                            bg-green
+                                          "
                                         >
                                           &nbsp;
                                         </div>
@@ -1229,7 +1091,11 @@
                                   </template>
                                   <template slot="dropdown-list">
                                     <div
-                                      class="ms-component ms-dropdown-item-secondary-false ms-dropdown--item"
+                                      class="
+                                        ms-component
+                                        ms-dropdown-item-secondary-false
+                                        ms-dropdown--item
+                                      "
                                       @click="setButtonSaveAndAddNew()"
                                     >
                                       <a class="ms-dropdown--item-link"
@@ -1237,7 +1103,11 @@
                                       </a>
                                     </div>
                                     <div
-                                      class="ms-component ms-dropdown-item-secondary-false ms-dropdown--item"
+                                      class="
+                                        ms-component
+                                        ms-dropdown-item-secondary-false
+                                        ms-dropdown--item
+                                      "
                                       @click="setButtonSaveAndClose()"
                                     >
                                       <a class="ms-dropdown--item-link"
@@ -1245,7 +1115,11 @@
                                       </a>
                                     </div>
                                     <div
-                                      class="ms-component ms-dropdown-item-secondary-false ms-dropdown--item"
+                                      class="
+                                        ms-component
+                                        ms-dropdown-item-secondary-false
+                                        ms-dropdown--item
+                                      "
                                       @click="setButtonSaveAndPrint()"
                                     >
                                       <a class="ms-dropdown--item-link"
@@ -1258,10 +1132,24 @@
                             </div>
 
                             <button
-                              class="ms-component ms-button first-right-button-footer class-button-custom ms-button-size-footer ms-button-footer ms-button-footer-disabled-false ms-button-radius-false ms-button"
+                              class="
+                                ms-component ms-button
+                                first-right-button-footer
+                                class-button-custom
+                                ms-button-size-footer
+                                ms-button-footer
+                                ms-button-footer-disabled-false
+                                ms-button-radius-false
+                                ms-button
+                              "
                             >
                               <div
-                                class="ms-button-text ms-button--text flex align-center"
+                                class="
+                                  ms-button-text
+                                  ms-button--text
+                                  flex
+                                  align-center
+                                "
                               >
                                 Cất
                               </div>
@@ -1274,10 +1162,24 @@
                             <div class="inner-left-group-button flex">
                               <button
                                 name="button"
-                                class="ms-component ms-button m-r-6 class-button-custom ms-button-size-footer ms-button-footer ms-button-footer-disabled-false ms-button-radius-false ms-button"
+                                class="
+                                  ms-component ms-button
+                                  m-r-6
+                                  class-button-custom
+                                  ms-button-size-footer
+                                  ms-button-footer
+                                  ms-button-footer-disabled-false
+                                  ms-button-radius-false
+                                  ms-button
+                                "
                               >
                                 <div
-                                  class="ms-button-text ms-button--text flex align-center"
+                                  class="
+                                    ms-button-text
+                                    ms-button--text
+                                    flex
+                                    align-center
+                                  "
                                 >
                                   Hủy
                                 </div>
@@ -1315,15 +1217,41 @@ export default {
     SelectAutoCompleteMenuTable,
     DropdownButton,
   },
+  props: {
+    isShowPopup: {
+      type: Boolean,
+      default: false,
+    },
+  },
+  isShowPopup(newV) {
+    if (newV) {
+      var m = this;
+      setTimeout(function () {
+        // if (m.idAccount) {
+        //   m.getAccount(m.idAccount);
+        // } else {
+        //   m.resetInfoAccount();
+        // }
+        m.focusInput("selectTypePayment");
+        m.mustValidate = false;
+      }, 100);
+    }
+    // console.log(oldV);
+  },
   data() {
     return {
+      isEdit: false,
+      mustValidate: false,
+      inputFocus: "",
+
       payment: {
         reasonPay: "Chi tiền cho",
         accountingDate: "",
         paymentDate: "",
         paymentNumber: "PC0123",
+        numberoflicense: ""
       },
-      typeOfMoney: 'VND',
+      typeOfMoney: "VND",
 
       typeOfPayment: [
         "1. Tạm ứng cho nhân viên",
@@ -1370,14 +1298,14 @@ export default {
           phone: "09696854321",
         },
         {
-          objectCode: "NV123",
+          objectCode: "NCC566",
           objectName: "Công ty Cổ phần Havico",
           taxCode: "123456",
           address: "Số 1 Ngoại Giao Đoàn",
           phone: "09696854321",
         },
         {
-          objectCode: "NV123",
+          objectCode: "NCC6688",
           objectName: "Học viện Pro",
           taxCode: "123456",
           address: "Số 1 Ngoại Giao Đoàn",
@@ -1459,21 +1387,16 @@ export default {
           description: "Chi tiền cho",
           accountDebt: "12345",
           accountReceive: "6688",
-          money: "0",
+          money: "",
           object: "NV123",
         },
       ],
 
-      isSaveAndAddNew: true,
-      isSaveAndClose: false,
+      //nút dưới footer
+      isSaveAndAddNew: false,
+      isSaveAndClose: true,
       isSaveAndPrint: false,
     };
-  },
-  props: {
-    isShowPopup: {
-      type: Boolean,
-      default: false,
-    },
   },
   methods: {
     closePopup() {
@@ -1491,7 +1414,7 @@ export default {
         description: "",
         accountDebt: "",
         accountReceive: "",
-        money: "0",
+        money: "",
         object: "",
       };
       this.accounting.push(newAccount);
@@ -1504,7 +1427,7 @@ export default {
         description: "",
         accountDebt: "",
         accountReceive: "",
-        money: "0",
+        money: "",
         object: "",
       };
       this.accounting.push(newAccount);
@@ -1532,6 +1455,11 @@ export default {
         current.getMonth() + 1
       }/${current.getFullYear()}`;
       return date;
+    },
+
+    //focus vào input
+    focusInput(refInput) {
+      this.$refs[refInput].focusInput();
     },
   },
 
@@ -1848,7 +1776,7 @@ export default {
 }
 
 .cls-width-exchange-rate {
-    width: 90px;
+  width: 90px;
 }
 
 .ms-tabs-position-top .con-slot-tabs {

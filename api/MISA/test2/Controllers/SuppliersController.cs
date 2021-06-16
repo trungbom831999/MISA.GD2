@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -189,6 +190,24 @@ namespace test2.Controllers
         {
             var rowEffects = _context.Suppliers.Count();
             return Ok(rowEffects);
+        }
+
+        // mã nhà cung cấp mới
+        // GET: api/Suppliers/newsuppliercode
+        [HttpGet("newsuppliercode")]
+        public IActionResult GetNewSupplierCode()
+        {
+            var rowEffects = _context.Suppliers.Max(s => s.Suppliercode);
+            if (rowEffects == null)
+            {
+                rowEffects = "NCC0001";
+                return Ok(rowEffects);
+            }
+            var prefix = Regex.Match(rowEffects, "^\\D+").Value;
+            var number = Regex.Replace(rowEffects, "^\\D+", "");
+            var i = int.Parse(number) + 1;
+            var newString = prefix + i.ToString(new string('0', number.Length));
+            return Ok(newString);
         }
 
         private bool SupplierExists(Guid id)

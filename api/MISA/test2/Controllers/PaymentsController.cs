@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -89,6 +90,19 @@ namespace test2.Controllers
                 {
                     return Conflict();
                 }
+                else if (PaymentNumberExists(payment.Paymentnumber))
+                {
+                    var erroInfo = new
+                    {
+                        devMsg = "Paymentnumber duplucate!",
+                        userMsg = "Số phiếu chi <" + payment.Paymentnumber + "> đã tồn tại",
+                        errorCode = "misa-001",
+                        moreInfo = "https://openapi.misa.com.vn/errorcode/misa-001",
+                        traceId = "ba9587fd-1a79-4ac5-a0ca-2c9f74dfd3fb"
+                    };
+
+                    return BadRequest(erroInfo);
+                }
                 else
                 {
                     throw;
@@ -114,9 +128,39 @@ namespace test2.Controllers
             return NoContent();
         }
 
+        // mã phiếu chi mới
+        // GET: api/Suppliers/newpaymentnumber
+        [HttpGet("newpaymentnumber")]
+        public IActionResult GetNewSupplierCode()
+        {
+            var rowEffects = _context.Payments.Max(p => p.Paymentnumber);
+            if (rowEffects == null)
+            {
+                rowEffects = "PC0001";
+                return Ok(rowEffects);
+            }
+            var prefix = Regex.Match(rowEffects, "^\\D+").Value;
+            var number = Regex.Replace(rowEffects, "^\\D+", "");
+            var i = int.Parse(number) + 1;
+            var newString = prefix + i.ToString(new string('0', number.Length));
+            return Ok(newString);
+        }
+
         private bool PaymentExists(Guid id)
         {
             return _context.Payments.Any(e => e.Idpayment == id);
+        }
+
+        //check số phiếu chi
+        private bool PaymentNumberExists(string paymentNumber)
+        {
+            return _context.Payments.Any(e => e.Paymentnumber == paymentNumber);
+        }
+
+        //check số phiếu chi khi sửa
+        private bool PaymentNumberExists(Guid id, string paymentNumber)
+        {
+            return _context.Payments.Any(p => p.Paymentnumber == paymentNumber && p.Idpayment != id);
         }
     }
 }

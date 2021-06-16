@@ -1,2 +1,5 @@
 v-bind:class="'w-' + column[i].width"
 v-bind:style="{ width: column[i].width + 'px' }"
+
+//so sánh date
+new Date("2021-06-17").getTime() - new Date("2021-06-16").getTime()

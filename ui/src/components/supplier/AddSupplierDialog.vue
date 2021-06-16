@@ -1165,7 +1165,9 @@ export default {
       if (newV) {
         var m = this;
         setTimeout(function () {
-          m.getSupplier(m.idSupplier);
+          if(m.idSupplier){m.getSupplier(m.idSupplier);}
+          else{m.resetInfoSupplier();}
+          
           if (m.supplier.typeofsupplier == "organization") {
             m.focusInput("inputSupplierTaxCode");
           } else if (m.supplier.typeofsupplier == "personal") {
@@ -1522,6 +1524,21 @@ export default {
         suppliertaxcode: "",
         idsupplier: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
       };
+
+      let m = this;
+      axios({
+        method: "get",
+        url: localhost + "newsuppliercode",
+      })
+        .then(function (response) {
+          //thành công
+          console.log(response.data);
+         m.supplier.suppliercode = response.data;
+        })
+        .catch(function (error) {
+          //gặp lỗi
+          console.log(error);
+        });
 
       this.isEdit = false;
     },
