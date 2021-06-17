@@ -21,11 +21,10 @@ namespace test2.Models
         public DateTime? Accountingdate { get; set; }
         public DateTime? Paymentdate { get; set; }
         public string Typeofmoney { get; set; }
-        public string Accountinglist { get; set; }
+        //public string Accountinglist { get; set; }
         public double? Totalmoney { get; set; }
         public string Paymentnumber { get; set; }
         public Guid Idpayment { get; set; }
-
         public virtual ICollection<Accouting> Accoutings { get; set; }
     }
 }

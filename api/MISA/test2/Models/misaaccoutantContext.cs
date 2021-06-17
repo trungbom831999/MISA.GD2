@@ -188,10 +188,10 @@ namespace test2.Models
                     .HasColumnName("accountingdate")
                     .HasComment("ngày hạch toán");
 
-                entity.Property(e => e.Accountinglist)
-                    .HasColumnType("json")
-                    .HasColumnName("accountinglist")
-                    .HasComment("danh sách tài khoản ngân hàng");
+                //entity.Property(e => e.Accountinglist)
+                //    .HasColumnType("json")
+                //    .HasColumnName("accountinglist")
+                //    .HasComment("danh sách tài khoản ngân hàng");
 
                 entity.Property(e => e.Numberoflicense)
                     .HasColumnName("numberoflicense")

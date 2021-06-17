@@ -187,7 +187,7 @@ export default {
         )[0].children[0].id;
         var header = "<div class='header-menu-select-autocomplete-menu'>";
         for (var i = 0; i < cols.length; i++) {
-          header += `<div title="${cols[i].name}" class="menu-header__th w-${cols[i].width}" style="width: ${cols[i].width}px; text-align: left">
+          header += `<div title="${cols[i].name}" class="menu-header__th w-${cols[i].width}" style="width: ${cols[i].width}px; min-width: ${cols[i].width}px; text-align: left">
             <span>${cols[i].name}</span>
           </div>`;
         }

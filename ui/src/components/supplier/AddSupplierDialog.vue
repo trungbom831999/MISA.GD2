@@ -1079,7 +1079,6 @@
     </div>
 
     <!-- thông báo lỗi  -->
-
     <div class="con-ms-message-box" id="error-dialog">
       <div class="message-center">
         <div class="ms-message-bg"></div>

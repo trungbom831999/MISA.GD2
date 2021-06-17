@@ -50,6 +50,20 @@ namespace test2.Controllers
             return supplier;
         }
 
+        // GET: api/Suppliers/supplierCode?supplierCode=NVX3
+        [HttpGet("supplierCode")]
+        public async Task<ActionResult<Supplier>> GetSupplierBySupplierCode(string supplierCode)
+        {
+            var supplier = await _context.Suppliers.SingleAsync(s => s.Suppliercode == supplierCode);
+
+            if (supplier == null)
+            {
+                return NotFound();
+            }
+
+            return supplier;
+        }
+
         // PUT: api/Suppliers/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]

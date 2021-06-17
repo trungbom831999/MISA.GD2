@@ -24,7 +24,7 @@
                     </div>
 
                     <div class="title">
-                      Phiếu chi {{ payment.paymentNumber }}
+                      Phiếu chi {{ payment.paymentnumber }}
                     </div>
                     <div class="header-detail-input">
                       <div class="combo-header combo-editor width-350">
@@ -32,6 +32,8 @@
                           ref="selectTypePayment"
                           :items="typeOfPayment"
                           :itemDefault="4"
+                          autofocus
+                          :readonly="isReadOnly ? true : false"
                         ></ms-select>
                       </div>
 
@@ -105,12 +107,19 @@
                                     label="Đối tượng"
                                     :column="colTheObject"
                                     :items="theObjects"
+                                    valueItem="objectCode"
                                     mainItem="objectName"
                                     :hasAddButton="true"
+                                    v-model="payment.paymentobjectcode"
+                                    :readonly="isReadOnly ? true : false"
                                   ></select-auto-complete-menu-table>
                                 </div>
                                 <div class="w-4/7 flex-grow pxs-4">
-                                  <ms-input label="Người nhận"></ms-input>
+                                  <ms-input
+                                    label="Người nhận"
+                                    v-model="payment.paymentobjectname"
+                                    :readonly="isReadOnly ? true : false"
+                                  ></ms-input>
                                 </div>
                               </div>
 
@@ -130,7 +139,11 @@
 
                               <div class="m-row flex row-input">
                                 <div class="w-full p-r-16">
-                                  <ms-input label="Địa chỉ"></ms-input>
+                                  <ms-input
+                                    label="Địa chỉ"
+                                    v-model="payment.paymentaddress"
+                                    :readonly="isReadOnly ? true : false"
+                                  ></ms-input>
                                 </div>
                               </div>
 
@@ -138,7 +151,8 @@
                                 <div class="w-full p-r-16">
                                   <ms-input
                                     label="Lý do chi"
-                                    v-model="payment.reasonPay"
+                                    v-model="payment.reasonpay"
+                                    :readonly="isReadOnly ? true : false"
                                   ></ms-input>
                                 </div>
                               </div>
@@ -152,7 +166,10 @@
                                     :column="colEmployee"
                                     :items="employees"
                                     mainItem="employeeName"
+                                    valueItem="employeeCode"
                                     :hasAddButton="true"
+                                    v-model="payment.paymentemployeecode"
+                                    :readonly="isReadOnly ? true : false"
                                   ></select-auto-complete-menu-table>
                                 </div>
                                 <!-- <div class="w-4/7 p-l-12 p-r-16">
@@ -174,6 +191,7 @@
                                     textRight
                                     numberInput
                                     v-model="payment.numberoflicense"
+                                    :readonly="isReadOnly ? true : false"
                                   ></ms-input>
                                   <div class="root-invoice px-2">
                                     chứng từ gốc
@@ -194,7 +212,13 @@
                                 <ms-input-date
                                   label="Ngày hạch toán"
                                   placeholder="dd/mm/yyyy"
-                                  v-model="payment.accountingDate"
+                                  ref="inputAccountingDate"
+                                  v-model="payment.accountingdate"
+                                  :isError="
+                                    (validateAccountingDate() ? false : true) &&
+                                    mustValidate
+                                  "
+                                  :readonly="isReadOnly ? true : false"
                                 ></ms-input-date>
                               </div>
 
@@ -202,14 +226,21 @@
                                 <ms-input-date
                                   label="Ngày phiếu chi"
                                   placeholder="dd/mm/yyyy"
-                                  v-model="payment.paymentDate"
+                                  v-model="payment.paymentdate"
+                                  :readonly="isReadOnly ? true : false"
                                 ></ms-input-date>
                               </div>
 
                               <div class="row-input-right">
                                 <ms-input
                                   label="Số phiếu chi"
-                                  v-model="payment.paymentNumber"
+                                  ref="inputPaymentNumber"
+                                  v-model="payment.paymentnumber"
+                                  :error="
+                                    (payment.paymentnumber ? false : true) &&
+                                    mustValidate
+                                  "
+                                  :readonly="isReadOnly ? true : false"
                                 ></ms-input>
                               </div>
                             </div>
@@ -218,7 +249,9 @@
 
                         <div class="w-1/4 summary-info">
                           <div class="summary-info-title">Tổng tiền</div>
-                          <h1 class="summary-info-number">0,0</h1>
+                          <h1 class="summary-info-number">
+                            {{ payment.totalmoney * exchangeRate }}
+                          </h1>
                         </div>
                       </div>
                     </div>
@@ -249,25 +282,32 @@
                             <div class="label-option">Loại tiền</div>
                             <div class="combo-editor currency-combobox">
                               <select-auto-complete-menu-table
-                                v-model="typeOfMoney"
+                                v-model="payment.typeofmoney"
                                 :column="colTypeOfMoney"
                                 :items="typeOfMoneys"
                                 itemDefault="0"
                                 mainItem="moneyCode"
+                                @input="getExchangeRate()"
+                                :readonly="isReadOnly ? true : false"
                               ></select-auto-complete-menu-table>
                             </div>
 
                             <div
-                              v-if="typeOfMoney != 'VND'"
+                              v-if="payment.typeofmoney != 'VND'"
                               class="label-option"
                             >
                               Tỷ giá
                             </div>
                             <div
-                              v-if="typeOfMoney != 'VND'"
+                              v-if="payment.typeofmoney != 'VND'"
                               class="cls-width-exchange-rate"
                             >
-                              <ms-input textRight></ms-input>
+                              <ms-input
+                                textRight
+                                v-model="exchangeRate"
+                                :readonly="isReadOnly ? true : false"
+                                numberInput
+                              ></ms-input>
                             </div>
                           </div>
                         </div>
@@ -444,7 +484,9 @@
                                                 </th>
 
                                                 <th
-                                                  v-if="typeOfMoney != 'VND'"
+                                                  v-if="
+                                                    payment.typeofmoney != 'VND'
+                                                  "
                                                   class="dynamic-header p-0"
                                                   style="
                                                     min-width: 150px;
@@ -622,6 +664,11 @@
                                                         v-model="
                                                           account.description
                                                         "
+                                                        :readonly="
+                                                          isReadOnly
+                                                            ? true
+                                                            : false
+                                                        "
                                                       ></ms-textarea>
                                                     </div>
                                                   </div>
@@ -640,7 +687,12 @@
                                                       :items="accountDebt"
                                                       mainItem="accountNumber"
                                                       v-model="
-                                                        account.accountDebt
+                                                        account.accountdebtnumber
+                                                      "
+                                                      :readonly="
+                                                        isReadOnly
+                                                          ? true
+                                                          : false
                                                       "
                                                     ></select-auto-complete-menu-table>
                                                   </div>
@@ -659,7 +711,12 @@
                                                       :items="accountDebt"
                                                       mainItem="accountNumber"
                                                       v-model="
-                                                        account.accountReceive
+                                                        account.accountreceivenumber
+                                                      "
+                                                      :readonly="
+                                                        isReadOnly
+                                                          ? true
+                                                          : false
                                                       "
                                                     ></select-auto-complete-menu-table>
                                                   </div>
@@ -678,12 +735,20 @@
                                                       v-model="account.money"
                                                       textRight
                                                       numberInput
+                                                      @input="sumMoney()"
+                                                      :readonly="
+                                                        isReadOnly
+                                                          ? true
+                                                          : false
+                                                      "
                                                     ></ms-input>
                                                   </div>
                                                 </td>
 
                                                 <td
-                                                  v-if="typeOfMoney != 'VND'"
+                                                  v-if="
+                                                    payment.typeofmoney != 'VND'
+                                                  "
                                                   class="
                                                     td
                                                     ms-table--td
@@ -693,6 +758,15 @@
                                                   <div class="editable">
                                                     <ms-input
                                                       textRight
+                                                      :value="
+                                                        account.money *
+                                                        exchangeRate
+                                                      "
+                                                      :readonly="
+                                                        isReadOnly
+                                                          ? true
+                                                          : false
+                                                      "
                                                     ></ms-input>
                                                   </div>
                                                 </td>
@@ -709,7 +783,20 @@
                                                       :column="colTheObject"
                                                       :items="theObjects"
                                                       mainItem="objectCode"
-                                                      v-model="account.object"
+                                                      v-model="
+                                                        account.objectcode
+                                                      "
+                                                      :readonly="
+                                                        isReadOnly
+                                                          ? true
+                                                          : false
+                                                      "
+                                                      @input="
+                                                        fillObjectName(
+                                                          account.objectcode,
+                                                          index
+                                                        )
+                                                      "
                                                     ></select-auto-complete-menu-table>
                                                   </div>
                                                 </td>
@@ -722,7 +809,12 @@
                                                   "
                                                 >
                                                   <div class="editable">
-                                                    <ms-input></ms-input>
+                                                    <ms-input
+                                                      v-model="
+                                                        account.objectname
+                                                      "
+                                                      readonly
+                                                    ></ms-input>
                                                   </div>
                                                 </td>
 
@@ -735,6 +827,7 @@
                                                   "
                                                 >
                                                   <div
+                                                    v-if="!isReadOnly"
                                                     class="
                                                       delete-function
                                                       flex
@@ -805,14 +898,23 @@
                                                   class="dynamic-column"
                                                   style="text-align: right"
                                                 >
-                                                  <span>0,0</span>
+                                                  <span>{{
+                                                    payment.totalmoney
+                                                  }}</span>
                                                 </th>
                                                 <th
-                                                  v-if="typeOfMoney != 'VND'"
+                                                  v-if="
+                                                    payment.typeofmoney != 'VND'
+                                                  "
                                                   class="dynamic-column"
                                                   style="text-align: right"
                                                 >
-                                                  <span>0</span>
+                                                  <span
+                                                    >{{
+                                                      payment.totalmoney *
+                                                      exchangeRate
+                                                    }}
+                                                  </span>
                                                 </th>
                                                 <th
                                                   class="dynamic-column"
@@ -857,7 +959,7 @@
 
                   <div class="grid-control-item flex sticky left-0">
                     <div class="w-3/4">
-                      <div class="btn-grid-control">
+                      <div v-if="!isReadOnly" class="btn-grid-control">
                         <button
                           class="
                             ms-component
@@ -950,7 +1052,7 @@
                 </div>
 
                 <!-- footer dialog  -->
-                <div class="footer-container">
+                <div v-if="!isReadOnly" class="footer-container">
                   <div class="footer">
                     <div class="ms-footer-component" style="width: 100%">
                       <div class="m-row footer-button-group flex-row-reverse">
@@ -975,6 +1077,7 @@
                                     ms-dropdown-type-primary
                                     ms-dropdown-padding-custom-primary
                                   "
+                                  @click="savePayment()"
                                 >
                                   <div
                                     class="
@@ -1142,6 +1245,7 @@
                                 ms-button-radius-false
                                 ms-button
                               "
+                              @click="savePayment()"
                             >
                               <div
                                 class="
@@ -1197,17 +1301,69 @@
         </div>
       </div>
     </div>
+
+    <!-- thông báo lỗi  -->
+    <div class="con-ms-message-box" id="error-dialog">
+      <div class="message-center">
+        <div class="ms-message-bg"></div>
+        <div class="drag-it-dude">
+          <div class="ms-mesage-box">
+            <div style="width: 444px; min-width: 444px">
+              <div class="padding-32">
+                <div class="content">
+                  <div class="icon-message">
+                    <div class="mi mi-48 mi-exclamation-error-48-2"></div>
+                  </div>
+                  <div class="message-content p-l-16 p-t-12">
+                    <span id="idMessageError" class="message"></span>
+                  </div>
+                </div>
+                <div class="mess-line"></div>
+                <div class="mess-footer">
+                  <div class="Center">
+                    <button
+                      name="button"
+                      class="
+                        ms-component
+                        ms-button
+                        ms-button-size-default
+                        ms-button-primary
+                        ms-button-primary-disabled-false
+                        ms-button-radius-false
+                        ms-button
+                      "
+                      @click="hideErrorDialog()"
+                    >
+                      <div
+                        class="ms-button-text ms-button--text flex align-center"
+                      >
+                        Đóng
+                      </div>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
+var localhost = "https://localhost:44350/api/Payments/";
+var localhostSupplier = "https://localhost:44350/api/Suppliers/";
+
 import MsInput from "../baseControl/MsInput.vue";
 import MsInputDate from "../baseControl/MsInputDate.vue";
 import MsTextarea from "../baseControl/MsTextarea.vue";
 import MsSelect from "../baseControl/MsSelect.vue";
 import SelectAutoCompleteMenuTable from "../baseControl/SelectAutoCompleteMenuTable.vue";
 import DropdownButton from "../baseControl/DropdownButton.vue";
+import EventBus from "../../main.js";
 
+import * as axios from "axios";
 export default {
   components: {
     MsInput,
@@ -1222,36 +1378,32 @@ export default {
       type: Boolean,
       default: false,
     },
-  },
-  isShowPopup(newV) {
-    if (newV) {
-      var m = this;
-      setTimeout(function () {
-        // if (m.idAccount) {
-        //   m.getAccount(m.idAccount);
-        // } else {
-        //   m.resetInfoAccount();
-        // }
-        m.focusInput("selectTypePayment");
-        m.mustValidate = false;
-      }, 100);
-    }
-    // console.log(oldV);
+    idPayment: {
+      type: String,
+      default: "",
+    },
   },
   data() {
     return {
       isEdit: false,
+      isReadOnly: false,
       mustValidate: false,
       inputFocus: "",
 
       payment: {
-        reasonPay: "Chi tiền cho",
-        accountingDate: "",
-        paymentDate: "",
-        paymentNumber: "PC0123",
-        numberoflicense: ""
+        paymentobjectcode: "NV123",
+        paymentobjectname: "",
+        paymentaddress: "Hà nội",
+        reasonpay: "Chi tiền cho",
+        paymentemployeecode: "NV3610",
+        numberoflicense: 5,
+        accountingdate: "",
+        paymentdate: "",
+        typeofmoney: "VND",
+        totalmoney: 0,
+        paymentnumber: "PC002",
+        idpayment: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
       },
-      typeOfMoney: "VND",
 
       typeOfPayment: [
         "1. Tạm ứng cho nhân viên",
@@ -1289,29 +1441,7 @@ export default {
         { name: "Địa chỉ", width: "300" },
         { name: "Điện thoại", width: "100" },
       ],
-      theObjects: [
-        {
-          objectCode: "NV123",
-          objectName: "Trần Trân",
-          taxCode: "123456",
-          address: "Số 1 Ngoại Giao Đoàn",
-          phone: "09696854321",
-        },
-        {
-          objectCode: "NCC566",
-          objectName: "Công ty Cổ phần Havico",
-          taxCode: "123456",
-          address: "Số 1 Ngoại Giao Đoàn",
-          phone: "09696854321",
-        },
-        {
-          objectCode: "NCC6688",
-          objectName: "Học viện Pro",
-          taxCode: "123456",
-          address: "Số 1 Ngoại Giao Đoàn",
-          phone: "09696854321",
-        },
-      ],
+      theObjects: [],
 
       colAccountReceive: [
         { name: "Số tài khoản", width: "120" },
@@ -1377,26 +1507,61 @@ export default {
           accountName: "Tiền Việt",
         },
         {
-          accountNumber: "6688",
+          accountNumber: "1111",
           accountName: "Tiền Mỹ",
         },
       ],
 
       accounting: [
         {
+          idaccounting: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+          idpayment: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
           description: "Chi tiền cho",
-          accountDebt: "12345",
-          accountReceive: "6688",
+          accountdebtnumber: "12345",
+          accountreceivenumber: "1111",
           money: "",
-          object: "NV123",
+          objectcode: "",
+          objectname: "",
         },
       ],
+
+      exchangeRate: 1,
 
       //nút dưới footer
       isSaveAndAddNew: false,
       isSaveAndClose: true,
       isSaveAndPrint: false,
     };
+  },
+  computed: {
+    reasonpay() {
+      return this.payment.reasonpay;
+    },
+    paymentobjectcode() {
+      return this.payment.paymentobjectcode;
+    },
+  },
+  watch: {
+    isShowPopup(newV) {
+      if (newV) {
+        var m = this;
+        setTimeout(function () {
+          if (m.idPayment) {
+            // m.getSupplier(m.idSupplier);
+          } else {
+            m.resetInfoPaymnet();
+          }
+          m.mustValidate = false;
+        }, 100);
+      }
+      // console.log(oldV);
+    },
+    reasonpay(newV, oldV) {
+      this.changeReasonPayInGrid(newV, oldV);
+    },
+    paymentobjectcode(newV, oldV) {
+      this.fillInfo(newV, oldV);
+    },
   },
   methods: {
     closePopup() {
@@ -1410,13 +1575,33 @@ export default {
 
     //thêm dòng bảng hạch toán
     addRowAccounting() {
-      let newAccount = {
-        description: "",
-        accountDebt: "",
-        accountReceive: "",
-        money: "",
-        object: "",
-      };
+      let newAccount = {};
+      if (this.accounting.length == 0) {
+        newAccount = {
+           idaccounting: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+          idpayment: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+          description: "Chi tiền cho",
+          accountdebtnumber: "12345",
+          accountreceivenumber: "1111",
+          money: "",
+          objectcode: "",
+          objectname: "",
+        };
+      } else {
+        // newAccount = this.accounting[this.accounting.length - 1];
+        newAccount = {
+           idaccounting: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+          idpayment: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+          description: this.accounting[this.accounting.length - 1].description,
+          accountdebtnumber:
+            this.accounting[this.accounting.length - 1].accountdebtnumber,
+          accountreceivenumber:
+            this.accounting[this.accounting.length - 1].accountreceivenumber,
+          money: "",
+          objectcode: this.accounting[this.accounting.length - 1].objectcode,
+          objectname: this.accounting[this.accounting.length - 1].objectname,
+        };
+      }
       this.accounting.push(newAccount);
     },
 
@@ -1424,11 +1609,14 @@ export default {
     removeAllRowAccounting() {
       this.accounting = [];
       let newAccount = {
-        description: "",
-        accountDebt: "",
-        accountReceive: "",
+         idaccounting: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+          idpayment: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+        description: "Chi tiền cho",
+        accountdebtnumber: "12345",
+        accountreceivenumber: "1111",
         money: "",
-        object: "",
+        objectcode: "",
+        objectname: "",
       };
       this.accounting.push(newAccount);
     },
@@ -1461,11 +1649,257 @@ export default {
     focusInput(refInput) {
       this.$refs[refInput].focusInput();
     },
+
+    //ẩn hiện thông báo lỗi
+    showErrorDialog(content) {
+      document.getElementById("idMessageError").innerHTML = content;
+      document.getElementById("error-dialog").style.display = "block";
+    },
+
+    hideErrorDialog() {
+      document.getElementById("error-dialog").style.display = "none";
+      // document.getElementById(this.inputFocus).focus();
+      this.focusInput(this.inputFocus);
+    },
+
+    //tính tổng tiền
+    sumMoney() {
+      // console.log("tính tổng");
+      let sum = 0;
+      for (let i = 0; i < this.accounting.length; i++) {
+        // console.log(this.accounting[i].money);
+        if (this.accounting[i].money) {
+          sum += parseFloat(this.accounting[i].money);
+        }
+      }
+      // console.log(sum);
+      this.payment.totalmoney = sum;
+    },
+
+    //thay đổi diễn giải dưới phần hạch toán
+    changeReasonPayInGrid(newReasonPay, oldReasonPay) {
+      for (let i = 0; i < this.accounting.length; i++) {
+        if (this.accounting[i].description != oldReasonPay) {
+          continue;
+        }
+        this.accounting[i].description = this.payment.reasonpay;
+      }
+    },
+
+    //tự điền thông tin  đối tượng
+    async fillInfo(newObjectCode, oldObjectCode) {
+      let m = this;
+      await axios({
+        method: "get",
+        url: localhostSupplier + "supplierCode?supplierCode=" + newObjectCode,
+      })
+        .then(function (response) {
+          //thành công
+          console.log(response.data);
+          let object = response.data;
+          if (object.typeofsupplier == "personal") {
+            m.payment.paymentobjectname = object.suppliername;
+          } else if (object.typeofsupplier == "organization") {
+            m.payment.paymentobjectname = object.legalrepresentation;
+          }
+          m.payment.paymentaddress = object.supplieraddress;
+          m.payment.reasonpay = "Chi tiền cho " + object.suppliername;
+
+          for (let i = 0; i < m.accounting.length; i++) {
+            // console.log(m.accounting[i].objectcode);
+            // console.log(oldObjectCode);
+            if (
+              m.accounting[i].objectcode != oldObjectCode &&
+              m.accounting[i].objectcode != ""
+            ) {
+              continue;
+            }
+            m.accounting[i].objectcode = object.suppliercode;
+            m.accounting[i].objectname = object.suppliername;
+          }
+        })
+        .catch(function (error) {
+          //gặp lỗi
+          console.log(error);
+        });
+    },
+
+    //điền tên đối tượng hạch toán
+    fillObjectName(objectCode, i) {
+      let m = this;
+      axios({
+        method: "get",
+        url: localhostSupplier + "supplierCode?supplierCode=" + objectCode,
+      })
+        .then(function (response) {
+          //thành công
+          console.log(response.data);
+          m.accounting[i].objectname = response.data.suppliername;
+        })
+        .catch(function (error) {
+          //gặp lỗi
+          console.log(error);
+        });
+    },
+
+    //tỷ giá
+    getExchangeRate() {
+      switch (this.payment.typeofmoney) {
+        case "VND":
+          this.exchangeRate = 1;
+          break;
+        case "USD":
+          this.exchangeRate = 23;
+          break;
+      }
+    },
+
+    //đổi định dạng ngày để push
+    formatDateToPush(date) {
+      if (!date) return null;
+
+      let [day, month, year] = date.split("/");
+      let newDate = `${year}-${month}-${day}`;
+      return new Date(newDate).toISOString();
+    },
+
+    //đổi định dạng ngày để hiển thị
+    formatDateToShow(date) {
+      if (!date) return "";
+
+      date = new Date(date);
+      let day = date.getDate();
+      let month = date.getMonth() + 1;
+      let year = date.getFullYear();
+      return `${day}/${month}/${year}`;
+    },
+
+    //chuyển kiểu dd/mm/yyyy sang yyyy-mm-dd
+    parseDate(date) {
+      if (!date) return "";
+      // console.log(date);
+      let [day, month, year] = date.split("/");
+      return `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
+    },
+    //so sánh ngày hạch toán phải lớn hơn ngày phiếu chi
+    validateAccountingDate() {
+      let accountingDate = this.parseDate(this.payment.accountingdate);
+      let paymentDate = this.parseDate(this.payment.paymentdate);
+      if (
+        new Date(accountingDate).getTime() - new Date(paymentDate).getTime() >=
+        0
+      ) {
+        return true;
+      } else {
+        return false;
+      }
+    },
+
+    //validate
+    checkInfoPayment() {
+      if (this.payment.paymentnumber.trim() == "") {
+        this.showErrorDialog("Số phiếu chi không được để trống");
+        this.mustValidate = true;
+        this.inputFocus = "inputPaymentNumber";
+        return false;
+      } else if (!this.validateAccountingDate()) {
+        this.showErrorDialog("Ngày hạch toán phải lớn hơn ngày phiếu chi");
+        this.mustValidate = true;
+        this.inputFocus = "inputAccountingDate";
+        return false;
+      } else {
+        return true;
+      }
+    },
+
+    //reset thông tin payment
+    async resetInfoPaymnet() {
+      this.mustValidate = false;
+      this.inputFocus = "";
+
+      //lấy dữ liệu vào select đối tượng
+      const response = await axios.get(localhostSupplier);
+      let objects = response.data;
+      this.theObjects = [];
+      for (let i = 0; i < objects.length; i++) {
+        let obj = {};
+        obj.objectCode = objects[i].suppliercode;
+        obj.objectName = objects[i].suppliername;
+        obj.taxCode = objects[i].suppliertaxcode;
+        obj.address = objects[i].supplieraddress;
+        obj.phone = objects[i].supplierphone;
+
+        this.theObjects.push(obj);
+      }
+
+      //reset payment và lấy mã mới
+      this.payment = {
+        paymentobjectcode: "",
+        paymentobjectname: "",
+        paymentaddress: "",
+        reasonpay: "Chi tiền cho",
+        paymentemployeecode: "",
+        numberoflicense: "",
+        accountingdate: "",
+        paymentdate: "",
+        typeofmoney: "VND",
+        totalmoney: 0,
+        paymentnumber: "",
+        idpayment: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+      };
+
+      this.removeAllRowAccounting();
+
+      let m = this;
+      axios({
+        method: "get",
+        url: localhost + "newpaymentnumber",
+      })
+        .then(function (response) {
+          //thành công
+          console.log(response.data);
+          m.payment.paymentnumber = response.data;
+        })
+        .catch(function (error) {
+          //gặp lỗi
+          console.log(error);
+        });
+
+      //set ngày hạch toán và ngày phiếu chi
+      this.payment.accountingdate = this.currentDate();
+      this.payment.paymentdate = this.currentDate();
+
+      this.isEdit = false;
+    },
+
+    //ấn cất hoặc cất và đóng
+    savePayment() {
+      if (this.checkInfoPayment()) {
+        if (this.isEdit) {
+            this.editPayment();
+          } else {
+            this.addPayment();
+          }
+      }
+    },
+
+    editPayment(){},
+
+    addPayment(){
+      let newPayment = {};
+      newPayment = Object.assign(newPayment, this.payment)
+      newPayment.accountingdate = this.formatDateToPush(this.payment.accountingdate);
+      newPayment.paymentdate = this.formatDateToPush(this.payment.paymentdate);
+      newPayment.accoutings = this.accounting;
+      console.log(newPayment);
+    },
   },
 
   created() {
-    this.payment.accountingDate = this.currentDate();
-    this.payment.paymentDate = this.currentDate();
+    this.payment.accountingdate = this.currentDate();
+    this.payment.paymentdate = this.currentDate();
+    EventBus.$on("setIsEdit", (data) => (this.isEdit = data));
+    EventBus.$on("setIsReadOnly", (data) => (this.isReadOnly = data));
   },
 };
 </script>

@@ -34,6 +34,7 @@
           outlined
           :placeholder="placeholder"
           onfocus="(this.type='date')"
+          :error="isError"
           :readonly="readonly"
         >
           <template v-slot:append>
@@ -70,6 +71,10 @@ export default {
       default: false,
     },
     required: {
+      type: Boolean,
+      default: false,
+    },
+    isError: {
       type: Boolean,
       default: false,
     },
@@ -118,7 +123,7 @@ export default {
     },
     parseDate(date) {
       if (!date) return "";
-      console.log(date);
+      // console.log(date);
       let [day, month, year] = date.split("/");
       return `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
     },

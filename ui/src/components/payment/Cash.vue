@@ -433,10 +433,10 @@
                         <button
                           class="ms-button edit-btn"
                           @click="
-                            showPopup(),
+                            showPaymentPopup(),
                               setIsEditTrue(),
                               setIsReadOnlyFalse(),
-                              (idSupplier = supplier.idsupplier)
+                              (idPayment = payment.idpayment)
                           "
                         >
                           <div class="ms-button-text flex align-center">
@@ -463,9 +463,9 @@
                               <a
                                 class="ms-dropdown--item-link"
                                 @click="
-                                  showPopup(),
+                                  showPaymentPopup(),
                                     setIsReadOnlyTrue(),
-                                    (idSupplier = supplier.idsupplier)
+                                    (idPayment = payment.idpayment)
                                 "
                                 >Xem
                               </a>
@@ -479,8 +479,8 @@
                               <a
                                 class="ms-dropdown--item-link"
                                 @click="
-                                  (idSupplierDelete = supplier.idsupplier),
-                                    showDeleteDialog(supplier.suppliercode)
+                                  (idPaymentDelete = payment.idpayment),
+                                    showDeleteDialog(payment.paymentnumber)
                                 "
                                 >Xóa
                               </a>
@@ -740,6 +740,7 @@
     <payment
       @closePaymentPopup="closePaymentPopup"
       :isShowPopup="isShowPaymentPopup"
+      :idPayment="idPayment"
     ></payment>
     <div class="con-ms-message-box" id="delete-dialog" style="display: none">
       <div class="message-center">
@@ -810,10 +811,16 @@
 </template>
 
 <script>
+// var localhost = "https://localhost:44350/api/Payments/";
+// var localhostSupplier = "https://localhost:44350/api/Suppliers/";
+
 import DropdownButton from "../baseControl/DropdownButton.vue";
 import Payment from "./Payment.vue";
 import CheckBox from "../baseControl/CheckBox.vue";
 import MsSelect from "../baseControl/MsSelect.vue";
+import EventBus from "../../main.js";
+
+// import * as axios from "axios";
 
 export default {
   name: "Cash",
@@ -827,6 +834,8 @@ export default {
     return {
       loading: false,
       isShowPaymentPopup: false,
+      idPayment: "",
+      idPaymentDelete: "",
       payments: [],
       paymentsLength: 0,
       pageNumber: 1,
@@ -865,6 +874,34 @@ export default {
 
     closePaymentPopup(value) {
       this.isShowPaymentPopup = value;
+    },
+
+    setIsEditTrue() {
+      EventBus.$emit("setIsEdit", true);
+    },
+
+    setIsEditFalse() {
+      EventBus.$emit("setIsEdit", false);
+    },
+
+    setIsReadOnlyTrue() {
+      EventBus.$emit("setIsReadOnly", true);
+    },
+
+    setIsReadOnlyFalse() {
+      EventBus.$emit("setIsReadOnly", false);
+    },
+
+    //dialog xóa
+    showDeleteDialog(paymentNumber) {
+      console.log(paymentNumber);
+      document.getElementById("idMessageDelete").innerHTML =
+        "Bạn có thực sự muốn xóa Phiếu chi số < " + paymentNumber + " > không?";
+      document.getElementById("delete-dialog").style.display = "block";
+    },
+
+    hideDeleteDialog() {
+      document.getElementById("delete-dialog").style.display = "none";
     },
 
     setPageSize() {

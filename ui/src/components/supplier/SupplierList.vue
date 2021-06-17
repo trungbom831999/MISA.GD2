@@ -798,11 +798,7 @@ export default {
       EventBus.$emit("setIsReadOnly", false);
     },
 
-    setIdSupplier(id) {
-      this.idSupplier = id;
-    },
-
-//dialog xóa
+    //dialog xóa
     showDeleteDialog(suppliercode) {
       console.log(suppliercode);
       document.getElementById("idMessageDelete").innerHTML =
@@ -840,7 +836,7 @@ export default {
       }
     },
 
-//xóa nhà cung cấp
+    //xóa nhà cung cấp
     async deleteSupplier() {
       let m = this;
       await axios({
@@ -903,7 +899,7 @@ export default {
       this.idSupplier = "";
     },
 
-//tìm kiếm
+    //tìm kiếm
     async searchSupplier() {
       if (!this.keyWordSearch) {
         if ((this.pageNumber - 1) * this.pageSize >= this.suppliersLength) {
@@ -944,7 +940,7 @@ export default {
       if (this.timer) {
         clearTimeout(this.timer);
         this.timer = null;
-    }
+      }
       this.timer = setTimeout(() => {
         this.searchSupplier();
       }, 800);

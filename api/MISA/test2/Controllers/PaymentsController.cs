@@ -70,7 +70,7 @@ namespace test2.Controllers
                 }
             }
 
-            return NoContent();
+            return Ok(payment);
         }
 
         // POST: api/Payments
@@ -79,7 +79,27 @@ namespace test2.Controllers
         public async Task<ActionResult<Payment>> PostPayment(Payment payment)
         {
             payment.Idpayment = Guid.NewGuid();
+    
+            List<Accouting> accoutings = (List<Accouting>)payment.Accoutings;
+            payment.Accoutings.Clear();
+
             _context.Payments.Add(payment);
+
+            //kiểm tra số phiếu chi có bị trùng hay không
+            if (PaymentNumberExists(payment.Paymentnumber))
+            {
+                var erroInfo = new
+                {
+                    devMsg = "Paymentnumber duplucate!",
+                    userMsg = "Số phiếu chi <" + payment.Paymentnumber + "> đã tồn tại",
+                    errorCode = "misa-001",
+                    moreInfo = "https://openapi.misa.com.vn/errorcode/misa-001",
+                    traceId = "ba9587fd-1a79-4ac5-a0ca-2c9f74dfd3fb"
+                };
+
+                return BadRequest(erroInfo);
+            }
+
             try
             {
                 await _context.SaveChangesAsync();
@@ -90,26 +110,43 @@ namespace test2.Controllers
                 {
                     return Conflict();
                 }
-                else if (PaymentNumberExists(payment.Paymentnumber))
-                {
-                    var erroInfo = new
-                    {
-                        devMsg = "Paymentnumber duplucate!",
-                        userMsg = "Số phiếu chi <" + payment.Paymentnumber + "> đã tồn tại",
-                        errorCode = "misa-001",
-                        moreInfo = "https://openapi.misa.com.vn/errorcode/misa-001",
-                        traceId = "ba9587fd-1a79-4ac5-a0ca-2c9f74dfd3fb"
-                    };
-
-                    return BadRequest(erroInfo);
-                }
+                
                 else
                 {
                     throw;
                 }
             }
 
-            return CreatedAtAction("GetPayment", new { id = payment.Idpayment }, payment);
+            //tạo từng accounting
+            for (int i = 0; i < accoutings.Count; i++)
+            {
+                Accouting accouting = accoutings[i];
+                accouting.Idaccounting = Guid.NewGuid();
+                accouting.Idpayment = payment.Idpayment;
+                _context.Accoutings.Add(accouting);
+
+                try
+                {
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateException)
+                {
+                    if (AccoutingExists(accouting.Idaccounting))
+                    {
+                        return Conflict();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+
+                CreatedAtAction("GetAccouting", new { id = accouting.Idaccounting }, accouting);
+            }
+
+
+            CreatedAtAction("GetPayment", new { id = payment.Idpayment }, payment);
+            return Ok(payment);
         }
 
         // DELETE: api/Payments/5
@@ -151,6 +188,11 @@ namespace test2.Controllers
             return _context.Payments.Any(e => e.Idpayment == id);
         }
 
+        private bool AccoutingExists(Guid id)
+        {
+            return _context.Accoutings.Any(e => e.Idaccounting == id);
+        }
+
         //check số phiếu chi
         private bool PaymentNumberExists(string paymentNumber)
         {
@@ -162,5 +204,7 @@ namespace test2.Controllers
         {
             return _context.Payments.Any(p => p.Paymentnumber == paymentNumber && p.Idpayment != id);
         }
+
+
     }
 }

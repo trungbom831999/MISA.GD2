@@ -2,6 +2,7 @@
   <div class="ms-select">
     <div v-if="label" class="label-input">{{ label }}</div>
     <v-select
+      ref="input"
       class="border-radius-2"
       :items="items"
       outlined
@@ -16,6 +17,7 @@
       :readonly="readonly"
       :disabled="disabled"
       :menu-props="{ offsetOverflow: true, offsetY: true }"
+      v-bind="$attrs"
     >
       <template v-slot:item="data">
         <template>
@@ -57,19 +59,24 @@ export default {
       type: String,
       default: "",
     },
-    value:{}
+    value: {},
   },
-   watch:{
-     value() {
+  watch: {
+    value() {
       this.valueSelect = this.value;
     },
   },
   data() {
     return {
-      valueSelect: ""
+      valueSelect: "",
     };
   },
   methods: {
+    focusInput() {
+      // console.log(this.$refs.input);
+      this.$refs.input.focus();
+      // return this.$refs.msInput;
+    },
     setReadOnly() {
       if (this.readonly == true) {
         document
