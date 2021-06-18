@@ -123,6 +123,31 @@ namespace test2.Controllers
             return NoContent();
         }
 
+        // DELETE: api/Accoutings/5
+        [HttpPost("deleteAccountings")]
+        public async Task<IActionResult> DeleteAccoutings(List<Guid> idAccountings)
+        {
+            
+            for(int i=0; i<idAccountings.Count; i++)
+            {
+                if(idAccountings[i].ToString() == "3fa85f64-5717-4562-b3fc-2c963f66afa6")
+                {
+                    continue;
+                }
+                var accouting = await _context.Accoutings.FindAsync(idAccountings[i]);
+                if (accouting == null)
+                {
+                    return NotFound();
+                }
+
+                _context.Accoutings.Remove(accouting);
+                await _context.SaveChangesAsync();
+            }
+            
+
+            return NoContent();
+        }
+
         private bool AccoutingExists(Guid id)
         {
             return _context.Accoutings.Any(e => e.Idaccounting == id);

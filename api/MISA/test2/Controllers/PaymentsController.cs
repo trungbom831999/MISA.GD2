@@ -64,7 +64,26 @@ namespace test2.Controllers
                 return BadRequest();
             }
 
+            List<Accouting> accoutings = new List<Accouting>((List<Accouting>)payment.Accoutings);
+
+            payment.Accoutings.Clear();
+
             _context.Entry(payment).State = EntityState.Modified;
+
+            //kiểm tra số phiếu chi có bị trùng hay không
+            if (PaymentNumberExists(id, payment.Paymentnumber))
+            {
+                var erroInfo = new
+                {
+                    devMsg = "Paymentnumber duplucate!",
+                    userMsg = "Số phiếu chi <" + payment.Paymentnumber + "> đã tồn tại",
+                    errorCode = "misa-001",
+                    moreInfo = "https://openapi.misa.com.vn/errorcode/misa-001",
+                    traceId = "ba9587fd-1a79-4ac5-a0ca-2c9f74dfd3fb"
+                };
+
+                return BadRequest(erroInfo);
+            }
 
             try
             {
@@ -79,6 +98,60 @@ namespace test2.Controllers
                 else
                 {
                     throw;
+                }
+            }
+
+            //cập nhật hạch toán
+            //tạo từng accounting
+            for (int i = 0; i < accoutings.Count; i++)
+            {
+                //nếu là id mặc định thì sẽ tạo mới
+                if (accoutings[i].Idaccounting.ToString() == "3fa85f64-5717-4562-b3fc-2c963f66afa6")
+                {
+                    Accouting accouting = accoutings[i];
+                    accouting.Idaccounting = Guid.NewGuid();
+                    accouting.Idpayment = payment.Idpayment;
+                    accouting.PaymentIdpayment = accouting.Idpayment;
+                    _context.Accoutings.Add(accouting);
+
+                    try
+                    {
+                        await _context.SaveChangesAsync();
+                    }
+                    catch (DbUpdateException)
+                    {
+                        if (AccoutingExists(accouting.Idaccounting))
+                        {
+                            return Conflict();
+                        }
+                        else
+                        {
+                            throw;
+                        }
+                    }
+
+                    CreatedAtAction("GetAccouting", new { id = accouting.Idaccounting }, accouting);
+                }
+                //nếu là id đã có thì cập nhật
+                else 
+                {
+                    _context.Entry(accoutings[i]).State = EntityState.Modified;
+
+                    try
+                    {
+                        await _context.SaveChangesAsync();
+                    }
+                    catch (DbUpdateConcurrencyException)
+                    {
+                        if (!AccoutingExists(id))
+                        {
+                            return NotFound();
+                        }
+                        else
+                        {
+                            throw;
+                        }
+                    }
                 }
             }
 

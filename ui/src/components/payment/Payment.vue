@@ -112,7 +112,7 @@
                                     :hasAddButton="true"
                                     v-model="payment.paymentobjectcode"
                                     :readonly="isReadOnly ? true : false"
-                                    @input="(startWatch=true)"
+                                    @input="startWatch = true"
                                   ></select-auto-complete-menu-table>
                                 </div>
                                 <div class="w-4/7 flex-grow pxs-4">
@@ -154,7 +154,7 @@
                                     label="Lý do chi"
                                     v-model="payment.reasonpay"
                                     :readonly="isReadOnly ? true : false"
-                                    @input="(startWatch=true)"
+                                    @input="startWatch = true"
                                   ></ms-input>
                                 </div>
                               </div>
@@ -838,7 +838,10 @@
                                                       align-center
                                                     "
                                                     @click="
-                                                      deleteRowAccounting(index)
+                                                      deleteRowAccounting(
+                                                        index,
+                                                        account.idaccounting
+                                                      )
                                                     "
                                                   >
                                                     <div
@@ -1110,6 +1113,7 @@
                                     ms-dropdown-type-primary
                                     ms-dropdown-padding-custom-primary
                                   "
+                                  @click="savePaymentAndAddNew()"
                                 >
                                   <div
                                     class="
@@ -1357,6 +1361,7 @@
 <script>
 var localhost = "https://localhost:44350/api/Payments/";
 var localhostSupplier = "https://localhost:44350/api/Suppliers/";
+var localhostAccounting = "https://localhost:44350/api/Accoutings/";
 
 import MsInput from "../baseControl/MsInput.vue";
 import MsInputDate from "../baseControl/MsInputDate.vue";
@@ -1529,6 +1534,8 @@ export default {
         },
       ],
 
+      idAccountingsDelete: [],
+
       exchangeRate: 1,
 
       //nút dưới footer
@@ -1588,9 +1595,10 @@ export default {
     },
 
     //xóa 1 dòng trong bảng hạch toán
-    deleteRowAccounting(i) {
+    deleteRowAccounting(i, idAccounting) {
       this.accounting.splice(i, 1);
       this.sumMoney();
+      this.idAccountingsDelete.push(idAccounting);
     },
 
     //thêm dòng bảng hạch toán
@@ -1608,7 +1616,6 @@ export default {
           objectname: "",
         };
         newAccount.description = this.payment.reasonpay;
-        
       } else {
         // newAccount = this.accounting[this.accounting.length - 1];
         newAccount = {
@@ -1630,6 +1637,9 @@ export default {
 
     //xóa tất cả dòng trong bảng hạch toán
     removeAllRowAccounting() {
+      for (let i = 0; i < this.accounting.length; i++) {
+        this.idAccountingsDelete.push(this.accounting[i].idaccounting);
+      }
       this.accounting = [];
       let newAccount = {
         idaccounting: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
@@ -1783,8 +1793,8 @@ export default {
       if (!date) return null;
 
       let [day, month, year] = date.split("/");
-      day++;
-      let newDate = `${year}-${month}-${day}`;
+      
+      let newDate = `${year}-${month}-${day} 08:00:00`;
       return new Date(newDate).toISOString();
     },
 
@@ -1880,6 +1890,7 @@ export default {
       };
 
       this.removeAllRowAccounting();
+      this.idAccountingsDelete = [];
 
       let m = this;
       axios({
@@ -1927,6 +1938,24 @@ export default {
         });
     },
 
+    //delete nhiều accounting
+    async deleteAccountings() {
+      await axios({
+        method: "post",
+        url: localhostAccounting + "deleteAccountings",
+        data: this.idAccountingsDelete,
+      })
+        .then(function (response) {
+          //thành công
+          console.log(response);
+          console.log("xóa accountings");
+        })
+        .catch(function (error) {
+          //gặp lỗi
+          console.log(error);
+        });
+    },
+
     //ấn cất hoặc cất và đóng
     savePayment() {
       if (this.checkInfoPayment()) {
@@ -1938,7 +1967,39 @@ export default {
       }
     },
 
-    editPayment() {},
+    editPayment() {
+      this.deleteAccountings();
+      let newPayment = {};
+      newPayment = Object.assign(newPayment, this.payment);
+      newPayment.accountingdate = this.formatDateToPush(
+        this.payment.accountingdate
+      );
+      newPayment.paymentdate = this.formatDateToPush(this.payment.paymentdate);
+      newPayment.accoutings = this.accounting;
+      console.log(newPayment);
+
+      var m = this;
+      axios({
+        method: "put",
+        url: localhost + this.idPayment,
+        data: newPayment,
+      })
+        .then(function (response) {
+          //thành công
+          console.log(response);
+          m.resetInfoPaymnet();
+          m.closePopup();
+          m.loadData();
+        })
+        .catch(function (error) {
+          //gặp lỗi
+          var noti = error.response.data;
+          m.showErrorDialog(noti.userMsg);
+          if (noti.errorCode == "misa-001") {
+            m.inputFocus = "inputPaymentNumber";
+          }
+        });
+    },
 
     addPayment() {
       let newPayment = {};
@@ -1961,6 +2022,83 @@ export default {
           console.log(response);
           m.resetInfoPaymnet();
           m.closePopup();
+          m.loadData();
+        })
+        .catch(function (error) {
+          //gặp lỗi
+          var noti = error.response.data;
+          m.showErrorDialog(noti.userMsg);
+          if (noti.errorCode == "misa-001") {
+            m.inputFocus = "inputPaymentNumber";
+          }
+        });
+    },
+
+    //ấn cất và thêm
+    savePaymentAndAddNew() {
+      if (this.checkInfoPayment()) {
+        if (this.isEdit) {
+          this.editPaymentAndAddNew();
+        } else {
+          this.addPaymentAndAddNew();
+        }
+      }
+    },
+
+    editPaymentAndAddNew() {
+      this.deleteAccountings();
+      let newPayment = {};
+      newPayment = Object.assign(newPayment, this.payment);
+      newPayment.accountingdate = this.formatDateToPush(
+        this.payment.accountingdate
+      );
+      newPayment.paymentdate = this.formatDateToPush(this.payment.paymentdate);
+      newPayment.accoutings = this.accounting;
+      console.log(newPayment);
+
+      var m = this;
+      axios({
+        method: "put",
+        url: localhost + this.idPayment,
+        data: newPayment,
+      })
+        .then(function (response) {
+          //thành công
+          console.log(response);
+          m.resetInfoPaymnet();
+          m.loadData();
+        })
+        .catch(function (error) {
+          //gặp lỗi
+          var noti = error.response.data;
+          m.showErrorDialog(noti.userMsg);
+          if (noti.errorCode == "misa-001") {
+            m.inputFocus = "inputPaymentNumber";
+          }
+        });
+    },
+
+    addPaymentAndAddNew() {
+      let newPayment = {};
+      newPayment = Object.assign(newPayment, this.payment);
+      newPayment.accountingdate = this.formatDateToPush(
+        this.payment.accountingdate
+      );
+      newPayment.paymentdate = this.formatDateToPush(this.payment.paymentdate);
+      newPayment.accoutings = this.accounting;
+      console.log(newPayment);
+
+      var m = this;
+      axios({
+        method: "post",
+        url: localhost,
+        data: newPayment,
+      })
+        .then(function (response) {
+          //thành công
+          console.log(response);
+          m.resetInfoPaymnet();
+
           m.loadData();
         })
         .catch(function (error) {
