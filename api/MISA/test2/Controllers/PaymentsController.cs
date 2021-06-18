@@ -41,7 +41,10 @@ namespace test2.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Payment>> GetPayment(Guid id)
         {
+            var accountings = await _context.Accoutings.Where(a => a.Idpayment == id).ToListAsync();
             var payment = await _context.Payments.FindAsync(id);
+
+            payment.accoutings = accountings;
 
             if (payment == null)
             {
@@ -133,6 +136,7 @@ namespace test2.Controllers
                 Accouting accouting = accoutings[i];
                 accouting.Idaccounting = Guid.NewGuid();
                 accouting.Idpayment = payment.Idpayment;
+                accouting.PaymentIdpayment = accouting.Idpayment;
                 _context.Accoutings.Add(accouting);
 
                 try
@@ -163,6 +167,11 @@ namespace test2.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeletePayment(Guid id)
         {
+            //xóa tất cả accounting liên quan
+            var accountings = _context.Accoutings.Where(a => a.Idpayment == id);
+            _context.Accoutings.RemoveRange(accountings);
+            _context.SaveChanges();
+
             var payment = await _context.Payments.FindAsync(id);
             if (payment == null)
             {

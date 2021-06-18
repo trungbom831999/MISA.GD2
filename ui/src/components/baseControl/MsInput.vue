@@ -19,6 +19,7 @@
           :class="error ? 'input-validate-error' : ''"
           :style="[textRight ? { 'text-align': 'right' } : '']"
           @keypress="isNumber($event)"
+          @keyup="formatNumber()"
         />
       </div>
     </div>
@@ -74,6 +75,15 @@ export default {
         }
       }
     },
+
+    // formatNumber() {
+    //   if (this.numberInput) {
+    //     this.value = this.value
+    //       .split(".")
+    //       .join("")
+    //       .replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+    //   }
+    // },
   },
 };
 </script>

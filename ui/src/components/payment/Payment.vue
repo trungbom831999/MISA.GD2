@@ -112,6 +112,7 @@
                                     :hasAddButton="true"
                                     v-model="payment.paymentobjectcode"
                                     :readonly="isReadOnly ? true : false"
+                                    @input="(startWatch=true)"
                                   ></select-auto-complete-menu-table>
                                 </div>
                                 <div class="w-4/7 flex-grow pxs-4">
@@ -153,6 +154,7 @@
                                     label="Lý do chi"
                                     v-model="payment.reasonpay"
                                     :readonly="isReadOnly ? true : false"
+                                    @input="(startWatch=true)"
                                   ></ms-input>
                                 </div>
                               </div>
@@ -758,6 +760,7 @@
                                                   <div class="editable">
                                                     <ms-input
                                                       textRight
+                                                      numberInput
                                                       :value="
                                                         account.money *
                                                         exchangeRate
@@ -1389,6 +1392,7 @@ export default {
       isReadOnly: false,
       mustValidate: false,
       inputFocus: "",
+      startWatch: false,
 
       payment: {
         paymentobjectcode: "NV123",
@@ -1396,7 +1400,7 @@ export default {
         paymentaddress: "Hà nội",
         reasonpay: "Chi tiền cho",
         paymentemployeecode: "NV3610",
-        numberoflicense: 5,
+        numberoflicense: null,
         accountingdate: "",
         paymentdate: "",
         typeofmoney: "VND",
@@ -1519,7 +1523,7 @@ export default {
           description: "Chi tiền cho",
           accountdebtnumber: "12345",
           accountreceivenumber: "1111",
-          money: "",
+          money: null,
           objectcode: "",
           objectname: "",
         },
@@ -1540,6 +1544,9 @@ export default {
     paymentobjectcode() {
       return this.payment.paymentobjectcode;
     },
+    typeofmoney() {
+      return this.payment.typeofmoney;
+    },
   },
   watch: {
     isShowPopup(newV) {
@@ -1547,7 +1554,8 @@ export default {
         var m = this;
         setTimeout(function () {
           if (m.idPayment) {
-            // m.getSupplier(m.idSupplier);
+            m.startWatch = false;
+            m.getPayment(m.idPayment);
           } else {
             m.resetInfoPaymnet();
           }
@@ -1557,10 +1565,17 @@ export default {
       // console.log(oldV);
     },
     reasonpay(newV, oldV) {
-      this.changeReasonPayInGrid(newV, oldV);
+      if (this.startWatch) {
+        this.changeReasonPayInGrid(newV, oldV);
+      }
     },
     paymentobjectcode(newV, oldV) {
-      this.fillInfo(newV, oldV);
+      if (this.startWatch) {
+        this.fillInfo(newV, oldV);
+      }
+    },
+    typeofmoney() {
+      this.getExchangeRate();
     },
   },
   methods: {
@@ -1585,13 +1600,15 @@ export default {
         newAccount = {
           idaccounting: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
           idpayment: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-          description: "Chi tiền cho",
+          description: "",
           accountdebtnumber: "12345",
           accountreceivenumber: "1111",
-          money: "",
+          money: null,
           objectcode: "",
           objectname: "",
         };
+        newAccount.description = this.payment.reasonpay;
+        
       } else {
         // newAccount = this.accounting[this.accounting.length - 1];
         newAccount = {
@@ -1602,7 +1619,7 @@ export default {
             this.accounting[this.accounting.length - 1].accountdebtnumber,
           accountreceivenumber:
             this.accounting[this.accounting.length - 1].accountreceivenumber,
-          money: "",
+          money: null,
           objectcode: this.accounting[this.accounting.length - 1].objectcode,
           objectname: this.accounting[this.accounting.length - 1].objectname,
         };
@@ -1620,7 +1637,7 @@ export default {
         description: "Chi tiền cho",
         accountdebtnumber: "12345",
         accountreceivenumber: "1111",
-        money: "",
+        money: null,
         objectcode: "",
         objectname: "",
       };
@@ -1702,7 +1719,7 @@ export default {
       })
         .then(function (response) {
           //thành công
-          console.log(response.data);
+          // console.log(response.data);
           let object = response.data;
           if (object.typeofsupplier == "personal") {
             m.payment.paymentobjectname = object.suppliername;
@@ -1766,7 +1783,7 @@ export default {
       if (!date) return null;
 
       let [day, month, year] = date.split("/");
-
+      day++;
       let newDate = `${year}-${month}-${day}`;
       return new Date(newDate).toISOString();
     },
@@ -1821,11 +1838,7 @@ export default {
       }
     },
 
-    //reset thông tin payment
-    async resetInfoPaymnet() {
-      this.mustValidate = false;
-      this.inputFocus = "";
-
+    async getObjectSupplier() {
       //lấy dữ liệu vào select đối tượng
       const response = await axios.get(localhostSupplier);
       let objects = response.data;
@@ -1840,6 +1853,15 @@ export default {
 
         this.theObjects.push(obj);
       }
+    },
+
+    //reset thông tin payment
+    async resetInfoPaymnet() {
+      this.mustValidate = false;
+      this.inputFocus = "";
+      this.startWatch = true;
+
+      this.getObjectSupplier();
 
       //reset payment và lấy mã mới
       this.payment = {
@@ -1848,7 +1870,7 @@ export default {
         paymentaddress: "",
         reasonpay: "Chi tiền cho",
         paymentemployeecode: "",
-        numberoflicense: "",
+        numberoflicense: null,
         accountingdate: "",
         paymentdate: "",
         typeofmoney: "VND",
@@ -1881,6 +1903,30 @@ export default {
       this.isEdit = false;
     },
 
+    //lấy thông tin phiếu chi
+    getPayment(id) {
+      let m = this;
+      axios({
+        method: "get",
+        url: localhost + id,
+      })
+        .then(function (response) {
+          //thành công
+          console.log(response.data);
+          m.payment = response.data;
+          m.payment.accountingdate = m.formatDateToShow(
+            response.data.accountingdate
+          );
+          m.payment.paymentdate = m.formatDateToShow(response.data.paymentdate);
+
+          m.accounting = response.data.accoutings;
+        })
+        .catch(function (error) {
+          //gặp lỗi
+          console.log(error);
+        });
+    },
+
     //ấn cất hoặc cất và đóng
     savePayment() {
       if (this.checkInfoPayment()) {
@@ -1903,7 +1949,7 @@ export default {
       newPayment.paymentdate = this.formatDateToPush(this.payment.paymentdate);
       newPayment.accoutings = this.accounting;
       console.log(newPayment);
-      
+
       var m = this;
       axios({
         method: "post",
@@ -1929,6 +1975,8 @@ export default {
   },
 
   created() {
+    this.getObjectSupplier();
+
     this.payment.accountingdate = this.currentDate();
     this.payment.paymentdate = this.currentDate();
     EventBus.$on("setIsEdit", (data) => (this.isEdit = data));

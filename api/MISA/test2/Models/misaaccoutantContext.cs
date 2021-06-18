@@ -154,6 +154,8 @@ namespace test2.Models
 
                 entity.Property(e => e.Idpayment).HasColumnName("idpayment");
 
+                entity.Property(e => e.PaymentIdpayment).HasColumnName("paymentidpayment");
+
                 entity.Property(e => e.Money).HasColumnName("money");
 
                 entity.Property(e => e.Objectcode)

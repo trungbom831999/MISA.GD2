@@ -1164,9 +1164,12 @@ export default {
       if (newV) {
         var m = this;
         setTimeout(function () {
-          if(m.idSupplier){m.getSupplier(m.idSupplier);}
-          else{m.resetInfoSupplier();}
-          
+          if (m.idSupplier) {
+            m.getSupplier(m.idSupplier);
+          } else {
+            m.resetInfoSupplier();
+          }
+
           if (m.supplier.typeofsupplier == "organization") {
             m.focusInput("inputSupplierTaxCode");
           } else if (m.supplier.typeofsupplier == "personal") {
@@ -1532,7 +1535,7 @@ export default {
         .then(function (response) {
           //thành công
           console.log(response.data);
-         m.supplier.suppliercode = response.data;
+          m.supplier.suppliercode = response.data;
         })
         .catch(function (error) {
           //gặp lỗi

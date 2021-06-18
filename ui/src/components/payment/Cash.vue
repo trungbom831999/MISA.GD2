@@ -667,7 +667,7 @@
 
                   <th class="ms-th-viewer dymamic-col" style="bottom: 46px">
                     <div class="flex justify-end">
-                      <span>1.000.000,0</span>
+                      <span>{{sumMoney()}}</span>
                     </div>
                   </th>
 
@@ -694,6 +694,7 @@
                       width: 110px;
                       min-width: 110px;
                       bottom: 46px;
+                      z-index: 3;
                     "
                   ></th>
                   <th class="ms-out-right-white-30" style="bottom: 46px"></th>
@@ -801,6 +802,7 @@
                         ms-button-radius-false
                         ms-button
                       "
+                      @click="deletePayment()"
                     >
                       <div
                         class="ms-button-text ms-button--text flex align-center"
@@ -822,6 +824,7 @@
                         ms-button-radius-false
                         ms-button
                       "
+                      @click="hideDeleteDialog()"
                     >
                       <div
                         class="ms-button-text ms-button--text flex align-center"
@@ -971,6 +974,20 @@ export default {
       return `${day}/${month}/${year}`;
     },
 
+     //tính tổng tiền
+    sumMoney() {
+      // console.log("tính tổng");
+      let sum = 0;
+      for (let i = 0; i < this.payments.length; i++) {
+        // console.log(this.accounting[i].money);
+        if (this.payments[i].totalmoney) {
+          sum += parseFloat(this.payments[i].totalmoney);
+        }
+      }
+      // console.log(sum);
+      return sum;
+    },
+
     //phân trang
     //trang trước
     prePage() {
@@ -1011,6 +1028,7 @@ export default {
       const responseLength = await axios.get(localhost + "length");
       this.paymentsLength = responseLength.data;
 
+      this.sumMoney();
       this.idPayment = "";
     },
 
@@ -1047,6 +1065,8 @@ export default {
         this.loading = false;
         this.payments = response.data;
 
+        this.sumMoney();
+
         this.idPayment = "";
       }
     },
@@ -1060,6 +1080,26 @@ export default {
         this.searchPayment();
       }, 800);
     },
+
+    //xóa phiếu chi
+    async deletePayment(){
+      let m = this;
+      await axios({
+        method: "delete",
+        url: localhost + this.idPaymentDelete,
+      })
+        .then(function (response) {
+          //thành công
+          console.log(response);
+          m.hideDeleteDialog();
+          //load lại data sau khi xóa
+          m.searchPayment();
+        })
+        .catch(function (response) {
+          //gặp lỗi
+          console.log(response);
+        });
+    }
   },
   async created() {
     this.loadData();

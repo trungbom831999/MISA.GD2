@@ -7,6 +7,8 @@ namespace test2.Models
 {
     public partial class Payment
     {
+        internal List<Accouting> accoutings;
+
         public Payment()
         {
             Accoutings = new HashSet<Accouting>();

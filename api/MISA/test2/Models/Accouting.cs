@@ -15,6 +15,7 @@ namespace test2.Models
         public string Objectname { get; set; }
         public Guid Idaccounting { get; set; }
         public Guid? Idpayment { get; set; }
+        public Guid? PaymentIdpayment { get; set; }
 
         //public virtual Payment IdpaymentNavigation { get; }
     }
