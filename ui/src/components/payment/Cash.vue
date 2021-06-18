@@ -1,7 +1,7 @@
 <template>
   <div class="content-area__content">
     <div class="body body-di">
-      <!-- Phần thêm nhà cung cấp  -->
+      <!-- Phần thêm phiếu chi  -->
       <div class="title-distance lock-title-distance">
         <div class="header-di">
           <div class="title-di">Thu chi tiền mặt</div>
@@ -57,7 +57,12 @@
                     ms-radius-true
                     ms-dropdown-style-default
                   "
-                  @click="showPaymentPopup()"
+                  @click="
+                    showPaymentPopup(),
+                      setIsEditFalse(),
+                      setIsReadOnlyFalse(),
+                      (idPayment = '')
+                  "
                 >
                   <div class="ms-button-text ms-button--text flex align-center">
                     Thêm chi tiền
@@ -267,6 +272,8 @@
                   type="text"
                   placeholder="Nhập từ khóa tìm kiếm"
                   v-model="keyWordSearch"
+                  @keydown="searchPaymentKeyUp()"
+                  @keyup.enter="searchPayment()"
                 />
                 <label
                   class="
@@ -277,6 +284,7 @@
                     mi-search mi mi-16
                   "
                   for="input-search-supplier"
+                  @click="searchPayment()"
                 ></label>
               </div>
             </div>
@@ -414,19 +422,40 @@
               </thead>
 
               <tbody class="dis-contents ms-tbody-viewer">
-                <tr class="ms-tr-viewer">
+                <tr
+                  class="ms-tr-viewer"
+                  v-for="payment in payments"
+                  :key="payment.idpayment"
+                  :idpayment="payment.idpayment"
+                >
                   <td class="ms-out-left-white-16"></td>
                   <td class="ms-td-viewer ms-td-multi" style="left: 16px">
                     <check-box></check-box>
                   </td>
-                  <td class="ms-td-viewer text-left">15/06/2021</td>
-                  <td class="ms-td-viewer text-left">15/06/2021</td>
-                  <td class="ms-td-viewer text-left">PC0005</td>
-                  <td class="ms-td-viewer text-left">Chi tiền cho nhân viên</td>
-                  <td class="ms-td-viewer text-right">50.000.000</td>
-                  <td class="ms-td-viewer text-left">Trần dần</td>
-                  <td class="ms-td-viewer text-left">NV1150</td>
-                  <td class="ms-td-viewer text-left">SỐ 1 cầu giấy</td>
+                  <td class="ms-td-viewer text-left">
+                    {{ formatDateToShow(payment.accountingdate) }}
+                  </td>
+                  <td class="ms-td-viewer text-left">
+                    {{ formatDateToShow(payment.paymentdate) }}
+                  </td>
+                  <td class="ms-td-viewer text-left">
+                    {{ payment.paymentnumber }}
+                  </td>
+                  <td class="ms-td-viewer text-left">
+                    {{ payment.reasonpay }}
+                  </td>
+                  <td class="ms-td-viewer text-right">
+                    {{ payment.totalmoney }}
+                  </td>
+                  <td class="ms-td-viewer text-left">
+                    {{ payment.paymentobjectname }}
+                  </td>
+                  <td class="ms-td-viewer text-left">
+                    {{ payment.paymentobjectcode }}
+                  </td>
+                  <td class="ms-td-viewer text-left">
+                    {{ payment.paymentaddress }}
+                  </td>
                   <td class="ms-td-viewer ms-td-wiget text-right">
                     <div class="flex justify-end">
                       <div class="ms-dropdown">
@@ -739,6 +768,7 @@
     </div>
     <payment
       @closePaymentPopup="closePaymentPopup"
+      @loadData="searchPayment"
       :isShowPopup="isShowPaymentPopup"
       :idPayment="idPayment"
     ></payment>
@@ -811,7 +841,7 @@
 </template>
 
 <script>
-// var localhost = "https://localhost:44350/api/Payments/";
+var localhost = "https://localhost:44350/api/Payments/";
 // var localhostSupplier = "https://localhost:44350/api/Suppliers/";
 
 import DropdownButton from "../baseControl/DropdownButton.vue";
@@ -820,7 +850,7 @@ import CheckBox from "../baseControl/CheckBox.vue";
 import MsSelect from "../baseControl/MsSelect.vue";
 import EventBus from "../../main.js";
 
-// import * as axios from "axios";
+import * as axios from "axios";
 
 export default {
   name: "Cash",
@@ -828,7 +858,7 @@ export default {
     DropdownButton,
     Payment,
     CheckBox,
-    MsSelect
+    MsSelect,
   },
   data() {
     return {
@@ -860,10 +890,10 @@ export default {
       if (newV) {
         this.setPageSize();
         // this.pageNumber = 1;
-        // this.searchSupplier();
+        this.searchPayment();
       } else if (oldV) {
         this.setPageSize();
-        // this.searchSupplier();
+        this.searchPayment();
       }
     },
   },
@@ -929,6 +959,110 @@ export default {
           break;
       }
     },
+
+    //đổi định dạng ngày để hiển thị
+    formatDateToShow(date) {
+      if (!date) return "";
+
+      date = new Date(date);
+      let day = date.getDate();
+      let month = date.getMonth() + 1;
+      let year = date.getFullYear();
+      return `${day}/${month}/${year}`;
+    },
+
+    //phân trang
+    //trang trước
+    prePage() {
+      if (this.pageNumber == 1) {
+        return;
+      } else {
+        this.pageNumber--;
+        this.searchPayment();
+      }
+    },
+
+    //trang sau
+    nextPage() {
+      if (this.pageNumber * this.pageSize >= this.paymentsLength) {
+        return;
+      } else {
+        this.pageNumber++;
+        this.searchPayment();
+      }
+    },
+
+    //load dữ liệu theo số trang, số bản ghi trên 1 trang
+    async loadData() {
+      this.loading = true;
+      const response = await axios.get(
+        localhost +
+          "paging?pageNumber=" +
+          this.pageNumber +
+          "&pageSize=" +
+          this.pageSize
+      );
+
+      // console.log(response.data);
+      this.loading = false;
+      this.payments = response.data;
+
+      //lấy số bản ghi
+      const responseLength = await axios.get(localhost + "length");
+      this.paymentsLength = responseLength.data;
+
+      this.idPayment = "";
+    },
+
+    //tìm kiếm
+    async searchPayment() {
+      if (!this.keyWordSearch) {
+        if ((this.pageNumber - 1) * this.pageSize >= this.paymentsLength) {
+          this.pageNumber = Math.ceil(this.paymentsLength / this.pageSize);
+          if (this.pageNumber <= 0) this.pageNumber = 1;
+        }
+        this.loadData();
+      } else {
+        this.loading = true;
+        const responseLength = await axios.get(
+          localhost + "lengthSearch?keyword=" + this.keyWordSearch
+        );
+        this.paymentsLength = responseLength.data;
+
+        if ((this.pageNumber - 1) * this.pageSize >= this.paymentsLength) {
+          this.pageNumber = Math.ceil(this.paymentsLength / this.pageSize);
+          if (this.pageNumber <= 0) this.pageNumber = 1;
+        }
+        const response = await axios.get(
+          localhost +
+            "search?keyword=" +
+            this.keyWordSearch +
+            "&pageNumber=" +
+            this.pageNumber +
+            "&pageSize=" +
+            this.pageSize
+        );
+
+        // console.log(response.data);
+        this.loading = false;
+        this.payments = response.data;
+
+        this.idPayment = "";
+      }
+    },
+
+    searchPaymentKeyUp() {
+      if (this.timer) {
+        clearTimeout(this.timer);
+        this.timer = null;
+      }
+      this.timer = setTimeout(() => {
+        this.searchPayment();
+      }, 800);
+    },
+  },
+  async created() {
+    this.loadData();
   },
   mounted() {},
 };

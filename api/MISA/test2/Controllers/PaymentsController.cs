@@ -28,6 +28,15 @@ namespace test2.Controllers
             return await _context.Payments.ToListAsync();
         }
 
+        //lấy thông tin phiếu chi
+        // GET: api/Payments/paging?pageNumber=1&pageSize=2
+        [HttpGet("paging")]
+        public async Task<ActionResult<IEnumerable<Payment>>> GetPaymentsPaging(int pageNumber, int pageSize)
+        {
+            return await _context.Payments.OrderBy(x => x.Paymentnumber).Skip((pageNumber - 1) * pageSize).Take(pageSize).ToListAsync();
+        }
+
+
         // GET: api/Payments/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Payment>> GetPayment(Guid id)
@@ -80,7 +89,8 @@ namespace test2.Controllers
         {
             payment.Idpayment = Guid.NewGuid();
     
-            List<Accouting> accoutings = (List<Accouting>)payment.Accoutings;
+            List<Accouting> accoutings = new List<Accouting>((List<Accouting>)payment.Accoutings);
+
             payment.Accoutings.Clear();
 
             _context.Payments.Add(payment);
@@ -110,7 +120,7 @@ namespace test2.Controllers
                 {
                     return Conflict();
                 }
-                
+
                 else
                 {
                     throw;
@@ -182,6 +192,46 @@ namespace test2.Controllers
             var newString = prefix + i.ToString(new string('0', number.Length));
             return Ok(newString);
         }
+
+        // tìm kiếm phiếu chi theo số chứng từ, đối tượng, mã đối tượng
+        // GET: api/Payments/search?keyword=nv&pageNumber=1&pageSize=10
+        [HttpGet("search")]
+        public async Task<ActionResult<IEnumerable<Payment>>> SearchPayments(string keyword, int pageNumber, int pageSize)
+        {
+            keyword = keyword.ToLower();
+            var payments = await _context.Payments.Where(
+            p => p.Paymentnumber.ToLower().Contains(keyword) ||
+            p.Paymentobjectcode.ToLower().Contains(keyword) ||
+            p.Paymentobjectname.ToLower().Contains(keyword)).OrderBy(x => x.Paymentnumber).Skip((pageNumber - 1) * pageSize).Take(pageSize).ToListAsync();
+
+            return payments;
+        }
+
+
+        // số bản ghi phiếu chi
+        // GET: api/Payments/length
+        [HttpGet("length")]
+        public IActionResult GetLengthPayments()
+        {
+            var rowEffects = _context.Payments.Count();
+            return Ok(rowEffects);
+        }
+
+
+        // số bản ghi phiếu chi trong tìm kiếm
+        // GET: api/Payments/lengthSearch?keyword=nv
+        [HttpGet("lengthSearch")]
+        public IActionResult GetLengthSearchPayments(string keyword)
+        {
+            keyword = keyword.ToLower();
+            var rowEffects = _context.Payments.Where(
+            p => p.Paymentnumber.ToLower().Contains(keyword) ||
+            p.Paymentobjectcode.ToLower().Contains(keyword) ||
+            p.Paymentobjectname.ToLower().Contains(keyword)).Count();
+
+            return Ok(rowEffects);
+        }
+
 
         private bool PaymentExists(Guid id)
         {

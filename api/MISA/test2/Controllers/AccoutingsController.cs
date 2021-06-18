@@ -79,21 +79,29 @@ namespace test2.Controllers
         {
             accouting.Idaccounting = Guid.NewGuid();
             _context.Accoutings.Add(accouting);
-            try
+
+            if (AccoutingExists(accouting.Idaccounting))
             {
+                return Conflict();
+            }
+            else {
                 await _context.SaveChangesAsync();
             }
-            catch (DbUpdateException)
-            {
-                if (AccoutingExists(accouting.Idaccounting))
-                {
-                    return Conflict();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+            //try
+            //{
+            //    await _context.SaveChangesAsync();
+            //}
+            //catch (DbUpdateException)
+            //{
+            //    if (AccoutingExists(accouting.Idaccounting))
+            //    {
+            //        return Conflict();
+            //    }
+            //    else
+            //    {
+            //        throw;
+            //    }
+            //}
 
             return CreatedAtAction("GetAccouting", new { id = accouting.Idaccounting }, accouting);
         }

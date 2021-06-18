@@ -29,7 +29,7 @@ namespace test2.Controllers
         }
 
         //lấy thông tin nhà cung cấp, phân trang
-        // GET: api/Suppliers
+        // GET: api/Suppliers/paging?pageNumber=1&pageSize=2
         [HttpGet("paging")]
         public async Task<ActionResult<IEnumerable<Supplier>>> GetSuppliers(int pageNumber, int pageSize)
         {

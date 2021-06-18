@@ -16,6 +16,6 @@ namespace test2.Models
         public Guid Idaccounting { get; set; }
         public Guid? Idpayment { get; set; }
 
-        //public virtual Payment IdpaymentNavigation { get; set; }
+        //public virtual Payment IdpaymentNavigation { get; }
     }
 }

@@ -1400,7 +1400,7 @@ export default {
         accountingdate: "",
         paymentdate: "",
         typeofmoney: "VND",
-        totalmoney: 0,
+        totalmoney: "0",
         paymentnumber: "PC002",
         idpayment: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
       },
@@ -1568,9 +1568,14 @@ export default {
       this.$emit("closePaymentPopup", false);
     },
 
+    loadData() {
+      this.$emit("loadData");
+    },
+
     //xóa 1 dòng trong bảng hạch toán
     deleteRowAccounting(i) {
       this.accounting.splice(i, 1);
+      this.sumMoney();
     },
 
     //thêm dòng bảng hạch toán
@@ -1578,7 +1583,7 @@ export default {
       let newAccount = {};
       if (this.accounting.length == 0) {
         newAccount = {
-           idaccounting: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+          idaccounting: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
           idpayment: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
           description: "Chi tiền cho",
           accountdebtnumber: "12345",
@@ -1590,7 +1595,7 @@ export default {
       } else {
         // newAccount = this.accounting[this.accounting.length - 1];
         newAccount = {
-           idaccounting: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+          idaccounting: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
           idpayment: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
           description: this.accounting[this.accounting.length - 1].description,
           accountdebtnumber:
@@ -1603,14 +1608,15 @@ export default {
         };
       }
       this.accounting.push(newAccount);
+      this.sumMoney();
     },
 
     //xóa tất cả dòng trong bảng hạch toán
     removeAllRowAccounting() {
       this.accounting = [];
       let newAccount = {
-         idaccounting: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-          idpayment: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+        idaccounting: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+        idpayment: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
         description: "Chi tiền cho",
         accountdebtnumber: "12345",
         accountreceivenumber: "1111",
@@ -1619,6 +1625,7 @@ export default {
         objectname: "",
       };
       this.accounting.push(newAccount);
+      this.sumMoney();
     },
 
     //Đổi kiểu cho button Cất
@@ -1733,7 +1740,7 @@ export default {
       })
         .then(function (response) {
           //thành công
-          console.log(response.data);
+          // console.log(response.data);
           m.accounting[i].objectname = response.data.suppliername;
         })
         .catch(function (error) {
@@ -1759,6 +1766,7 @@ export default {
       if (!date) return null;
 
       let [day, month, year] = date.split("/");
+
       let newDate = `${year}-${month}-${day}`;
       return new Date(newDate).toISOString();
     },
@@ -1779,6 +1787,7 @@ export default {
       if (!date) return "";
       // console.log(date);
       let [day, month, year] = date.split("/");
+
       return `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
     },
     //so sánh ngày hạch toán phải lớn hơn ngày phiếu chi
@@ -1843,7 +1852,7 @@ export default {
         accountingdate: "",
         paymentdate: "",
         typeofmoney: "VND",
-        totalmoney: 0,
+        totalmoney: "0",
         paymentnumber: "",
         idpayment: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
       };
@@ -1876,22 +1885,46 @@ export default {
     savePayment() {
       if (this.checkInfoPayment()) {
         if (this.isEdit) {
-            this.editPayment();
-          } else {
-            this.addPayment();
-          }
+          this.editPayment();
+        } else {
+          this.addPayment();
+        }
       }
     },
 
-    editPayment(){},
+    editPayment() {},
 
-    addPayment(){
+    addPayment() {
       let newPayment = {};
-      newPayment = Object.assign(newPayment, this.payment)
-      newPayment.accountingdate = this.formatDateToPush(this.payment.accountingdate);
+      newPayment = Object.assign(newPayment, this.payment);
+      newPayment.accountingdate = this.formatDateToPush(
+        this.payment.accountingdate
+      );
       newPayment.paymentdate = this.formatDateToPush(this.payment.paymentdate);
       newPayment.accoutings = this.accounting;
       console.log(newPayment);
+      
+      var m = this;
+      axios({
+        method: "post",
+        url: localhost,
+        data: newPayment,
+      })
+        .then(function (response) {
+          //thành công
+          console.log(response);
+          m.resetInfoPaymnet();
+          m.closePopup();
+          m.loadData();
+        })
+        .catch(function (error) {
+          //gặp lỗi
+          var noti = error.response.data;
+          m.showErrorDialog(noti.userMsg);
+          if (noti.errorCode == "misa-001") {
+            m.inputFocus = "inputPaymentNumber";
+          }
+        });
     },
   },
 
